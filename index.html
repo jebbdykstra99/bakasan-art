@@ -84,8 +84,10 @@
 
     /* Level 1 */
     .sidebar nav > ul > li > a {
-      display: block;
-      padding: 0.55rem 1.8rem;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.5rem 1.8rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 0.8rem; font-weight: 400;
       letter-spacing: 0.12em; text-transform: uppercase;
@@ -107,8 +109,10 @@
     .nav-sub.open { max-height: 600px; }
 
     .nav-sub > li > a {
-      display: block;
-      padding: 0.45rem 1.8rem 0.45rem 2.6rem;
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0.4rem 1.8rem 0.4rem 2.6rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 0.76rem; font-weight: 400;
       letter-spacing: 0.08em;
@@ -132,8 +136,10 @@
     .nav-sub2.open { max-height: 400px; }
 
     .nav-sub2 > li > a {
-      display: block;
-      padding: 0.38rem 1.8rem 0.38rem 2.2rem;
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0.3rem 1.8rem 0.3rem 2.2rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 0.7rem; font-style: italic;
       letter-spacing: 0.04em;
@@ -215,7 +221,7 @@
 
     .page-header h1 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 3rem; font-weight: 300;
+      font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 300;
       letter-spacing: 0.03em; line-height: 1.1;
       color: var(--text);
     }
@@ -429,7 +435,7 @@
 
     .home-welcome-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 3.8rem; font-weight: 300;
+      font-size: clamp(2rem, 5.5vw, 3.8rem); font-weight: 300;
       letter-spacing: 0.06em; color: var(--text);
       margin-bottom: 0.7rem;
     }
@@ -1015,14 +1021,13 @@
     @media (max-width: 768px) {
       /* ── Layout ─────────────────── */
       .page-header { padding: 5rem 1.4rem 2.5rem; }
-      .page-header h1 { font-size: 2.2rem; }
+      /* h1 scales via clamp() */
       .page-body { padding: 2rem 1.4rem; }
       .page-footer { padding: 1.5rem 1.4rem 2rem; }
       .section-intro { padding: 2rem 1.4rem 0; }
 
       /* ── Home welcome ─────────────── */
       .home-welcome { padding: 3.5rem 1.4rem 3rem; }
-      .home-welcome-title { font-size: 2.4rem; }
       .home-welcome-sub   { font-size: 1rem; }
       .home-welcome-photos {
         flex-wrap: wrap;
@@ -1104,13 +1109,9 @@
 
     @media (max-width: 480px) {
       /* ── Home ──────────────────────── */
-      .home-welcome-title { font-size: 2rem; }
       .home-welcome-photos { gap: 0.8rem; }
-      .home-welcome-photo { flex: 0 1 100%; max-width: 220px; }
-      .home-welcome-photo img { height: 180px; }
 
-      /* ── Page titles ─────────────── */
-      .page-header h1 { font-size: 1.9rem; }
+      /* ── Page titles: handled by clamp() ─── */
       .page-kicker { letter-spacing: 0.18em; }
 
       /* ── Grids ───────────────────── */
@@ -1125,6 +1126,76 @@
       .statement-rotator { max-width: 220px; }
       .statement-rotator .rotator-front,
       .statement-rotator .rotator-back { height: 180px; }
+    }
+
+    /* ══ RESPONSIVE POLISH ════════════════════════════════ */
+
+    /* ── Drop 2-col text to single col at 1024px (too narrow on laptops/tablets) ── */
+    @media (max-width: 1024px) {
+      #page-introduction .page-body,
+      #page-biography    .page-body {
+        column-count: 1;
+      }
+      /* Only apply 4rem padding on screens wider than 768px to avoid overriding mobile rules */
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .page-header  { padding: 4rem 4rem 3rem; }
+      .page-body    { padding: 3rem 4rem; }
+      .page-footer  { padding: 1.5rem 4rem 2.5rem; }
+      .section-intro { padding: 2rem 4rem 0; }
+      .women-grid    { margin: 0 4rem; }
+      .iconography-grid { margin: 0 4rem; }
+      .collections-grid { margin: 0 4rem 3rem; }
+    }
+
+    /* ── Scroll margin so section headers clear the hamburger on all small screens ── */
+    @media (max-width: 1024px) {
+      .page.main-section { scroll-margin-top: 56px; }
+    }
+
+    /* ── Tablet home photos: keep all 3 in one row ── */
+    @media (max-width: 900px) {
+      .home-welcome-photos { gap: 0.8rem; }
+      .home-welcome-photo  { flex: 0 1 30%; max-width: 30%; }
+      .home-welcome-photo img { height: 150px; }
+    }
+
+    /* ── Mobile: horizontal-scroll strip for the 3 Bakasan photos ── */
+    @media (max-width: 600px) {
+      /* Constrain the welcome section so photos don't expand .main */
+      .home-welcome {
+        overflow: hidden;
+      }
+      .home-welcome-photos {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        gap: 0.6rem;
+        padding-bottom: 0.4rem;
+        width: 100%;
+        scrollbar-width: none;
+      }
+      .home-welcome-photos::-webkit-scrollbar { display: none; }
+      .home-welcome-photo {
+        flex: 0 0 58%;
+        max-width: 58%;
+        scroll-snap-align: start;
+      }
+      .home-welcome-photo img { height: 175px; }
+    }
+
+    /* ── Prevent horizontal overflow on all screens ── */
+    html, body { overflow-x: hidden; }
+
+    /* ── Larger hamburger tap area on mobile ── */
+    @media (max-width: 768px) {
+      .hamburger {
+        width: 48px;
+        height: 48px;
+        top: 0.75rem;
+        left: 0.75rem;
+      }
     }
 
     /* ── Comment System ───────────────────────────────── */
