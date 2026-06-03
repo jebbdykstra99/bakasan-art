@@ -1,0 +1,3236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bakasan — A California Buddhist Artist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f0ebe0;
+      --surface:     #faf7f2;
+      --nav-bg:      #1a1410;
+      --nav-text:    #b8a888;
+      --nav-hover:   #e0cfa8;
+      --nav-active:  #f5f0e8;
+      --text:        #1c1410;
+      --text-muted:  #5a4a38;
+      --text-light:  #8a7060;
+      --accent:      #8b6d3f;
+      --accent-dark: #5e4825;
+      --border:      #ddd0bc;
+      --nav-w:       240px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────── */
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--nav-w);
+      background: var(--nav-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3.8rem 0 3rem;
+      z-index: 100;
+      overflow-y: auto;
+      transition: transform 0.28s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.18);
+    }
+
+    .sidebar-brand {
+      text-align: center;
+      padding: 0 1.5rem 1.8rem;
+      width: 100%;
+    }
+
+    .brand-lotus { display: block; width: 58px; margin: 0 auto 1rem; }
+
+    .brand-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.4rem; font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--nav-active);
+      line-height: 1.1; margin-bottom: 0.3rem;
+    }
+
+    .brand-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem; font-weight: 300; font-style: italic;
+      letter-spacing: 0.12em; color: var(--nav-text);
+    }
+
+    .sidebar-rule { width: 32px; height: 1px; background: var(--accent); margin: 0 auto 1.5rem; }
+
+    /* ── Nav levels ───────────────────────────────────── */
+
+    .sidebar nav { width: 100%; }
+    .sidebar nav ul { list-style: none; }
+
+    /* Level 1 */
+    .sidebar nav > ul > li > a {
+      display: block;
+      padding: 0.55rem 1.8rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--nav-text); text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .sidebar nav > ul > li > a:hover { color: var(--nav-hover); background: rgba(255,255,255,0.03); }
+    .sidebar nav > ul > li > a.active { color: var(--nav-active); border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+    /* Level 2 (collection sub-nav) */
+    .nav-sub {
+      list-style: none;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease;
+    }
+    .nav-sub.open { max-height: 600px; }
+
+    .nav-sub > li > a {
+      display: block;
+      padding: 0.45rem 1.8rem 0.45rem 2.6rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.76rem; font-weight: 400;
+      letter-spacing: 0.08em;
+      color: rgba(184,168,136,0.75);
+      text-decoration: none;
+      border-left: 1px solid rgba(139,109,63,0.25);
+      margin-left: 1.3rem;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-sub > li > a:hover { color: var(--nav-hover); background: rgba(255,255,255,0.02); }
+    .nav-sub > li > a.active { color: var(--nav-active); border-left-color: var(--accent); }
+
+    /* Level 3 (individual women) */
+    .nav-sub2 {
+      list-style: none;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+    .nav-sub2.open { max-height: 400px; }
+
+    .nav-sub2 > li > a {
+      display: block;
+      padding: 0.38rem 1.8rem 0.38rem 2.2rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.7rem; font-style: italic;
+      letter-spacing: 0.04em;
+      color: rgba(184,168,136,0.6);
+      text-decoration: none;
+      border-left: 1px solid rgba(139,109,63,0.15);
+      margin-left: 2.6rem;
+      transition: color 0.2s;
+    }
+
+    .nav-sub2 > li > a:hover { color: var(--nav-hover); }
+    .nav-sub2 > li > a.active { color: var(--nav-active); border-left-color: var(--accent); font-style: normal; }
+
+    /* ── Main ─────────────────────────────────────────── */
+
+    .main { margin-left: var(--nav-w); flex: 1; min-height: 100vh; transition: margin-left 0.28s ease; }
+
+    /* Main sections scroll continuously — always visible */
+    .page { display: none; }
+    .page.main-section {
+      display: block;
+      scroll-margin-top: 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .page.main-section:last-of-type { border-bottom: none; }
+
+    /* Detail/artwork pages — hidden until opened as a full-screen overlay */
+    .page.detail-page { display: none; }
+    .page.detail-page.active {
+      display: block;
+      position: fixed;
+      top: 0; left: var(--nav-w); right: 0; bottom: 0;
+      overflow-y: auto;
+      z-index: 300;
+      background: var(--bg);
+      transition: left 0.28s ease;
+    }
+    body.nav-collapsed .page.detail-page.active { left: 0; }
+
+    /* Sticky back button inside detail overlays */
+    .detail-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 2rem;
+      background: var(--surface);
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      cursor: pointer;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      transition: background 0.2s, color 0.2s;
+    }
+    .detail-back-btn:hover { background: var(--bg); color: var(--accent-dark); }
+    .detail-back-btn svg { flex-shrink: 0; }
+
+    /* ── Shared headers ───────────────────────────────── */
+
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 4.5rem 5rem 3.5rem;
+    }
+
+    .page-kicker {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.8rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 3rem; font-weight: 300;
+      letter-spacing: 0.03em; line-height: 1.1;
+      color: var(--text);
+    }
+
+    .page-rule { width: 44px; height: 1px; background: var(--accent); margin-top: 1.8rem; }
+
+    .page-body { padding: 3.5rem 5rem; }
+
+    .page-body p {
+      font-size: 1.05rem; line-height: 1.9;
+      color: var(--text); margin-bottom: 1.7rem;
+    }
+
+    .page-body p:last-child { margin-bottom: 0; }
+
+    /* ── Lightbox ────────────────────────────────────────── */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.active { display: flex; }
+
+    .lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 12px 60px rgba(0,0,0,0.7);
+      cursor: default;
+      animation: lb-in 0.22s ease;
+    }
+    @keyframes lb-in {
+      from { opacity: 0; transform: scale(0.93); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 1.1rem; right: 1.6rem;
+      font-size: 2.4rem; line-height: 1;
+      color: #fff; opacity: 0.75;
+      cursor: pointer; z-index: 9001;
+      transition: opacity 0.15s;
+      user-select: none;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .statement-rotator { cursor: zoom-in; }
+
+    /* ── Statement painting rotators ────────────────────── */
+    .statement-rotator-wrap {
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .statement-rotator {
+      float: right;
+      width: 190px;
+      margin: 0.2rem 0 0.3rem 1.8rem;
+      position: relative;
+    }
+
+    .statement-rotator.left {
+      float: left;
+      margin: 0.2rem 1.8rem 0.3rem 0;
+    }
+
+    /* Fixed height + cover crop keeps all panels same size
+       regardless of portrait vs landscape orientation */
+    .statement-rotator .rotator-front {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.24);
+      display: block;
+      position: relative;
+      z-index: 1;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .statement-rotator .rotator-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 4px;
+      opacity: 0;
+      z-index: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .statement-rotator-cap {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.72rem; font-style: italic;
+      color: var(--text-light); text-align: center;
+      margin: 0.4rem 0 0.6rem; padding: 0;
+      clear: both;
+    }
+
+    .statement-rotator-wrap { overflow: hidden; }
+
+    /* Tighter paragraph spacing on statement page */
+    #page-statement .page-body p { margin-bottom: 0.95rem; }
+    #page-statement .page-body p:last-child { margin-bottom: 0; }
+
+    /* Two-column layout for text-heavy pages */
+    #page-introduction .page-body,
+    #page-biography    .page-body {
+      column-count: 2;
+      column-gap: 4rem;
+      column-rule: 1px solid var(--border);
+    }
+
+    /* Collection intro: standard padding, same as other pages */
+
+    /* ── Collection page showcase ─────────────────────── */
+    .collection-showcase {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      height: 420px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .showcase-panel {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #1a1410;
+    }
+
+    .showcase-panel + .showcase-panel {
+      border-left: 2px solid var(--bg);
+    }
+
+    .showcase-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      transition: opacity 0.9s ease-in-out, transform 0.6s ease;
+    }
+
+    .showcase-panel:hover .showcase-img { transform: scale(1.05); }
+
+    .showcase-label {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 1;
+      padding: 2rem 1.4rem 1.1rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 100%);
+      transition: background 0.3s;
+    }
+
+    .showcase-panel:hover .showcase-label {
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 100%);
+    }
+
+    .showcase-group-name {
+      font-size: 0.65rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.6);
+      margin-bottom: 0.3rem;
+    }
+
+    .showcase-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem; font-style: italic; font-weight: 400;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.3;
+    }
+
+    .showcase-hint {
+      font-size: 0.68rem; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.4); margin-top: 0.25rem;
+      opacity: 0; transition: opacity 0.2s;
+    }
+
+    .showcase-panel:hover .showcase-hint { opacity: 1; }
+
+    .page-footer {
+      padding: 2rem 5rem 3rem;
+      margin-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.75rem; font-style: italic;
+      color: var(--text-light); letter-spacing: 0.04em;
+    }
+
+    /* ── HOME ─────────────────────────────────────────── */
+
+    /* ── Home welcome section ─────────────────────────── */
+    .home-welcome {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 5rem 5rem;
+      text-align: center;
+    }
+
+    .home-welcome-lotus {
+      margin-bottom: 2.2rem;
+    }
+
+    .home-lotus-img {
+      width: 110px;
+      display: inline-block;
+    }
+
+    .home-welcome-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 3.8rem; font-weight: 300;
+      letter-spacing: 0.06em; color: var(--text);
+      margin-bottom: 0.7rem;
+    }
+
+    .home-welcome-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.2rem; font-style: italic; font-weight: 300;
+      letter-spacing: 0.06em; color: var(--text-muted);
+      margin-bottom: 2.2rem;
+    }
+
+    .home-welcome-rule {
+      width: 60px; height: 1px;
+      background: var(--accent);
+      margin: 0 auto 2.8rem;
+    }
+
+    .home-welcome-photos {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 1.8rem;
+      margin: 0 auto 3rem;
+      max-width: 860px;
+    }
+
+    .home-welcome-photo {
+      flex: 1;
+      max-width: 260px;
+      text-align: center;
+    }
+
+    .home-welcome-photo img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 4px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+      display: block;
+    }
+
+    .home-welcome-photo span {
+      display: block;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.75rem; font-style: italic;
+      color: var(--text-light); margin-top: 0.5rem;
+    }
+
+    .home-welcome-body {
+      max-width: none;
+      margin: 0;
+      text-align: left;
+    }
+
+    .home-welcome-body::after { content: ''; display: table; clear: both; }
+
+    .home-welcome-body p {
+      font-size: 1.05rem; line-height: 1.9;
+      color: var(--text); margin-bottom: 1.5rem;
+    }
+
+    .home-welcome-body p:last-child { margin-bottom: 0; }
+
+    .welcome-painting-break {
+      float: right;
+      width: 300px;
+      margin: 0.4rem 0 1.4rem 2.2rem;
+      text-align: center;
+    }
+
+    .welcome-painting-break.left {
+      float: left;
+      margin: 0.4rem 2.2rem 1.4rem 0;
+    }
+
+    .welcome-painting-break img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.22);
+      display: block;
+    }
+
+    .welcome-painting-break span {
+      display: block;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.75rem; font-style: italic;
+      color: var(--text-light); margin-top: 0.45rem;
+    }
+
+    .home-welcome-closing {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.25rem !important;
+      font-style: italic;
+      color: var(--accent) !important;
+      column-span: all;
+      text-align: center;
+      padding-top: 1rem;
+    }
+
+    .collections-label {
+      text-align: center; padding: 3rem 2rem 1.5rem;
+    }
+
+    .collections-label span {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    .collections-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border);
+      margin: 0 5rem 3rem;
+      border: 1px solid var(--border);
+    }
+
+    .collection-card {
+      position: relative; aspect-ratio: 4 / 3;
+      overflow: hidden; cursor: pointer; background: #2a1e14;
+    }
+
+    .card-fill {
+      position: absolute; inset: 0;
+      transition: transform 0.6s ease;
+    }
+
+    .collection-card:hover .card-fill { transform: scale(1.06); }
+    .collection-card:hover .card-thumb { transform: scale(1.06); }
+
+    .card-women .card-fill {
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(180,120,150,0.9) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 30%, rgba(220,170,190,0.6) 0%, transparent 50%),
+        linear-gradient(160deg, #3a1828 0%, #8a4060 50%, #c090a0 100%);
+    }
+
+    .card-iconography .card-fill {
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(220,190,100,0.8) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 80%, rgba(160,80,20,0.7) 0%, transparent 50%),
+        linear-gradient(160deg, #1a0c04 0%, #603010 50%, #c09040 100%);
+    }
+
+    .card-ladies .card-fill {
+      background:
+        radial-gradient(ellipse at 60% 50%, rgba(200,140,100,0.8) 0%, transparent 55%),
+        radial-gradient(ellipse at 25% 30%, rgba(160,60,40,0.6) 0%, transparent 45%),
+        linear-gradient(150deg, #1a0808 0%, #702020 50%, #c06840 100%);
+    }
+
+    .card-nature .card-fill {
+      background:
+        radial-gradient(ellipse at 40% 70%, rgba(220,80,30,0.85) 0%, transparent 45%),
+        radial-gradient(ellipse at 70% 30%, rgba(180,50,20,0.6) 0%, transparent 40%),
+        radial-gradient(ellipse at 20% 40%, rgba(60,90,50,0.8) 0%, transparent 50%),
+        linear-gradient(150deg, #0a1806 0%, #304820 50%, #903010 100%);
+    }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 55%);
+      display: flex; align-items: flex-end;
+      padding: 1.5rem 1.75rem;
+      transition: background 0.3s;
+    }
+
+    .collection-card:hover .card-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 70%);
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.25rem; font-weight: 400;
+      letter-spacing: 0.06em; color: #fff; line-height: 1.2;
+    }
+
+    .card-cta {
+      position: absolute; top: 1.1rem; right: 1.1rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 0.3rem 0.6rem;
+      opacity: 0; transition: opacity 0.3s;
+    }
+
+    .collection-card:hover .card-cta { opacity: 1; }
+
+    /* ── Women gallery ─────────────────────────────────── */
+
+    .women-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      margin: 0 5rem 0; border: 1px solid var(--border);
+    }
+
+    .woman-card {
+      position: relative; aspect-ratio: 3 / 4;
+      overflow: hidden; cursor: pointer; background: #2a1e14;
+    }
+
+    .woman-card .wc-fill {
+      position: absolute; inset: 0;
+      transition: transform 0.5s ease;
+    }
+
+    .woman-card:hover .wc-fill { transform: scale(1.07); }
+
+    /* Unique gradients for each woman */
+    .wc-murasaki .wc-fill { background: radial-gradient(ellipse at 40% 40%, rgba(160,100,140,0.9) 0%, transparent 60%), linear-gradient(160deg, #1e0c18 0%, #6a3050 60%, #3a1030 100%); }
+    .wc-okoi .wc-fill { background: radial-gradient(ellipse at 60% 50%, rgba(200,140,80,0.9) 0%, transparent 55%), linear-gradient(150deg, #180a04 0%, #7a4010 60%, #c87030 100%); }
+    .wc-niijo .wc-fill { background: radial-gradient(ellipse at 35% 45%, rgba(140,170,180,0.8) 0%, transparent 55%), linear-gradient(160deg, #04101a 0%, #205068 60%, #406880 100%); }
+    .wc-rengetsu .wc-fill { background: radial-gradient(ellipse at 50% 40%, rgba(180,210,200,0.7) 0%, transparent 55%), linear-gradient(160deg, #041410 0%, #1a5040 60%, #307060 100%); }
+    .wc-gotami .wc-fill { background: radial-gradient(ellipse at 45% 45%, rgba(220,190,120,0.8) 0%, transparent 55%), linear-gradient(160deg, #140c04 0%, #6a5010 60%, #c09030 100%); }
+    .wc-nukada .wc-fill { background: radial-gradient(ellipse at 55% 45%, rgba(180,140,180,0.8) 0%, transparent 55%), linear-gradient(160deg, #10081a 0%, #503070 60%, #806098 100%); }
+    .wc-tibetan .wc-fill { background: radial-gradient(ellipse at 40% 50%, rgba(220,80,60,0.8) 0%, transparent 50%), linear-gradient(155deg, #180404 0%, #802020 55%, #c04030 100%); }
+    .wc-siam .wc-fill { background: radial-gradient(ellipse at 55% 45%, rgba(200,170,60,0.8) 0%, transparent 55%), linear-gradient(160deg, #140c04 0%, #705010 60%, #b09020 100%); }
+
+    .woman-card .wc-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 50%);
+      display: flex; align-items: flex-end;
+      padding: 0.9rem 1rem;
+      transition: background 0.3s;
+    }
+
+    .woman-card:hover .wc-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 65%);
+    }
+
+    .wc-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.85rem; font-weight: 400;
+      letter-spacing: 0.04em; color: #fff; line-height: 1.25;
+    }
+
+    /* ── Artwork detail page ───────────────────────────── */
+
+    .artwork-intro {
+      display: flex; gap: 2.5rem; align-items: flex-start;
+      padding: 3rem 5rem 0;
+    }
+
+    .artwork-frame {
+      flex-shrink: 0; width: 260px;
+    }
+
+    /* Thumbnail images injected into gallery cards */
+    .card-thumb,
+    .card-thumb-b {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      transition: transform 0.5s ease, opacity 1.1s ease-in-out;
+    }
+    .card-thumb-b { opacity: 0; z-index: 0; }
+    .card-thumb   { opacity: 1; z-index: 1; }
+    [data-target]:hover .card-thumb,
+    [data-target]:hover .card-thumb-b { transform: scale(1.07); }
+
+    .artwork-img {
+      width: 100%; display: block;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    }
+
+    .artwork-placeholder {
+      width: 100%; aspect-ratio: 5 / 6;
+      background: linear-gradient(160deg, #1e0c12 0%, #5a2838 50%, #3a1820 100%);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .artwork-placeholder span {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.7rem; color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .artwork-caption {
+      padding-top: 0.5rem;
+    }
+
+    .artwork-caption p {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.85rem; line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .artwork-caption .caption-title {
+      font-size: 1rem; font-weight: 600; font-style: italic;
+      color: var(--text); margin-bottom: 0.4rem;
+    }
+
+    /* ── Poems ────────────────────────────────────────── */
+
+    .poem-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+      margin-top: 2rem; padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .poem .poem-speaker {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.8rem;
+    }
+
+    .poem .poem-lines {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.05rem; font-style: italic;
+      line-height: 2; color: var(--text-muted);
+    }
+
+    /* ── Biography ─────────────────────────────────────── */
+
+    .bio-block { margin-bottom: 3rem; }
+
+    .bio-block h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.2rem;
+      padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    }
+
+    .bio-list { list-style: none; }
+
+    .bio-list li {
+      display: flex; gap: 1rem;
+      padding: 0.55rem 0; font-size: 0.97rem;
+      line-height: 1.65; border-bottom: 1px solid rgba(0,0,0,0.06);
+      color: var(--text);
+    }
+
+    .bio-list li:last-child { border-bottom: none; }
+
+    .bio-year {
+      flex-shrink: 0;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.05em; color: var(--accent);
+      padding-top: 0.15em; min-width: 64px;
+    }
+
+    /* ── Biography Narrative ───────────────────────────── */
+
+    .bio-narrative {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2.4rem 2.8rem;
+      margin-bottom: 3rem;
+    }
+
+    .bio-narrative h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2rem; font-weight: 400;
+      color: var(--text); letter-spacing: 0;
+      text-transform: none; border-bottom: none;
+      margin-bottom: 0.3rem; padding-bottom: 0;
+    }
+
+    .bio-dates {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; font-style: italic;
+      color: var(--text-light); margin: 0 0 0.25rem;
+      letter-spacing: 0.04em;
+    }
+
+    .bio-byline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin: 0 0 2rem;
+    }
+
+    .bio-narrative p {
+      font-size: 0.97rem; line-height: 1.85;
+      color: var(--text); margin-bottom: 1.1rem;
+    }
+
+    .bio-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.35rem; font-weight: 600; font-style: italic;
+      color: var(--accent-dark); margin: 2rem 0 1rem;
+      padding-top: 1.5rem; border-top: 1px solid var(--border);
+      clear: both;
+    }
+
+    .bio-photo-wrap {
+      float: right;
+      margin: 0 0 1.2rem 1.8rem;
+      text-align: center;
+    }
+    .bio-photo-wrap.left {
+      float: left;
+      margin: 0 1.8rem 1.2rem 0;
+    }
+    .bio-photo-wrap.center {
+      float: none;
+      clear: both;
+      margin: 1.8rem auto;
+      text-align: center;
+    }
+    .bio-photo-wrap img {
+      display: block;
+      border-radius: 4px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.28);
+      max-width: 100%;
+    }
+    .bio-photo-cap {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.75rem; font-style: italic;
+      color: var(--text-light); margin-top: 0.45rem;
+    }
+    .bio-narrative::after { content: ''; display: table; clear: both; }
+
+    /* ── Forms ────────────────────────────────────────── */
+
+    .contact-form { display: grid; gap: 1.3rem; max-width: 540px; margin-top: 0.5rem; }
+
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .form-field label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .form-field input,
+    .form-field textarea {
+      font-family: Georgia, serif; font-size: 0.95rem;
+      color: var(--text); background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.7rem 0.9rem; outline: none;
+      border-radius: 0; transition: border-color 0.2s; width: 100%;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus { border-color: var(--accent); }
+
+    .form-field textarea { min-height: 150px; resize: vertical; }
+
+    .btn-submit {
+      display: inline-block; padding: 0.8rem 2.8rem;
+      background: var(--nav-bg); color: var(--nav-text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      border: none; cursor: pointer;
+      transition: background 0.2s, color 0.2s; align-self: flex-start;
+    }
+
+    .btn-submit:hover { background: var(--accent); color: #fff; }
+
+    .text-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+    .text-link:hover { color: var(--accent-dark); }
+
+    /* ── Iconography gallery (5-col) ─────────────────── */
+
+    .iconography-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1px; background: var(--border);
+      margin: 0 5rem 0; border: 1px solid var(--border);
+    }
+
+    .ico-card {
+      position: relative; aspect-ratio: 3 / 4;
+      overflow: hidden; cursor: pointer; background: #2a1e14;
+    }
+
+    .ico-card .ic-fill {
+      position: absolute; inset: 0;
+      transition: transform 0.5s ease;
+    }
+
+    .ico-card:hover .ic-fill { transform: scale(1.07); }
+
+    .ic-green  .ic-fill { background: radial-gradient(ellipse at 45% 45%, rgba(80,180,100,0.9) 0%, transparent 55%), linear-gradient(160deg, #041a08 0%, #1a6028 60%, #40a050 100%); }
+    .ic-black  .ic-fill { background: radial-gradient(ellipse at 50% 40%, rgba(200,160,40,0.8) 0%, transparent 50%), linear-gradient(160deg, #08080a 0%, #1a1220 55%, #a08820 100%); }
+    .ic-kuan   .ic-fill { background: radial-gradient(ellipse at 45% 45%, rgba(200,180,230,0.7) 0%, transparent 55%), linear-gradient(160deg, #0a0818 0%, #2a1848 60%, #a080c0 100%); }
+    .ic-kannon .ic-fill { background: radial-gradient(ellipse at 50% 45%, rgba(220,150,60,0.8) 0%, transparent 55%), linear-gradient(160deg, #180a04 0%, #804010 60%, #d08030 100%); }
+    .ic-amida  .ic-fill { background: radial-gradient(ellipse at 50% 40%, rgba(240,210,80,0.8) 0%, transparent 55%), linear-gradient(160deg, #14100a 0%, #806828 60%, #e0c060 100%); }
+
+    .ico-card .ic-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 50%);
+      display: flex; align-items: flex-end;
+      padding: 0.7rem 0.8rem;
+      transition: background 0.3s;
+    }
+
+    .ico-card:hover .ic-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 65%);
+    }
+
+    .ic-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem; font-weight: 400;
+      letter-spacing: 0.04em; color: #fff; line-height: 1.2;
+    }
+
+    @media (max-width: 900px) {
+      .iconography-grid { grid-template-columns: repeat(3, 1fr); margin: 0 2.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .iconography-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Collection intro text in body ───────────────── */
+
+    .section-intro {
+      padding: 2.5rem 5rem 0;
+    }
+
+    .section-intro h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.5rem;
+      padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    }
+
+    .section-intro p {
+      font-size: 1.05rem; line-height: 1.9;
+      color: var(--text); margin-bottom: 1.6rem;
+    }
+
+    /* ── Hamburger — always visible ──────────────────────── */
+
+    .hamburger {
+      display: flex; position: fixed;
+      top: 0.9rem; left: 0.9rem; z-index: 200;
+      background: transparent; border: none;
+      width: 42px; height: 42px; cursor: pointer;
+      flex-direction: column; align-items: center;
+      justify-content: center; gap: 5px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .hamburger:hover { background: rgba(255,255,255,0.07); }
+    .hamburger span { display: block; width: 20px; height: 1px; background: var(--nav-text); transition: background 0.2s; }
+
+    /* Nav collapsed state — works on all screen sizes */
+    body.nav-collapsed .sidebar { transform: translateX(-100%); }
+    body.nav-collapsed .main    { margin-left: 0; }
+
+    /* Hamburger bars: dark when floating over light content (collapsed state) */
+    body.nav-collapsed .hamburger span { background: var(--text); }
+    body.nav-collapsed .hamburger:hover { background: rgba(0,0,0,0.07); }
+
+    /* Bio narrative should span both columns so floated photos inside it don't break */
+    .bio-narrative { column-span: all; }
+
+    /* Mobile overlay (darkens content when nav is open on small screens) */
+    .nav-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.52); z-index: 90;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      body:not(.nav-collapsed) .nav-overlay { display: block; }
+    }
+
+    @media (max-width: 900px) {
+      :root { --nav-w: 220px; }
+      .collection-showcase { grid-template-columns: repeat(2, 1fr); height: 340px; }
+      .women-grid { grid-template-columns: repeat(2, 1fr); margin: 0 2.5rem; }
+      .collections-grid { margin: 0 2.5rem 3rem; }
+      .artwork-intro { flex-direction: column; padding: 2rem 1.5rem 0; }
+      .artwork-frame { width: 100%; max-width: 300px; }
+      .section-intro { padding: 2rem 2rem 0; }
+    }
+
+    @media (max-width: 768px) {
+      /* ── Layout ─────────────────── */
+      .page-header { padding: 5rem 1.4rem 2.5rem; }
+      .page-header h1 { font-size: 2.2rem; }
+      .page-body { padding: 2rem 1.4rem; }
+      .page-footer { padding: 1.5rem 1.4rem 2rem; }
+      .section-intro { padding: 2rem 1.4rem 0; }
+
+      /* ── Home welcome ─────────────── */
+      .home-welcome { padding: 3.5rem 1.4rem 3rem; }
+      .home-welcome-title { font-size: 2.4rem; }
+      .home-welcome-sub   { font-size: 1rem; }
+      .home-welcome-photos {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+      }
+      .home-welcome-photo { flex: 0 1 46%; max-width: 46%; }
+      .home-welcome-photo img { height: 170px; }
+      .welcome-painting-break,
+      .welcome-painting-break.left {
+        float: none;
+        width: 100%;
+        max-width: 320px;
+        margin: 0.8rem auto 1.4rem;
+      }
+
+      /* ── Collections & showcase ────── */
+      .collection-showcase {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .showcase-panel {
+        height: 180px;
+        border-left: none !important;
+        border-top: 2px solid var(--bg);
+      }
+      .showcase-panel:first-child { border-top: none; }
+      .collections-grid { grid-template-columns: 1fr; margin: 0 0 2rem; }
+
+      /* ── Column layouts → single col ─ */
+      #page-introduction .page-body,
+      #page-statement    .page-body,
+      #page-biography    .page-body { column-count: 1; }
+      .poem-grid { grid-template-columns: 1fr; }
+
+      /* ── Women & iconography grids ─── */
+      .women-grid { grid-template-columns: repeat(2, 1fr); margin: 0; }
+      .iconography-grid { margin: 0; }
+      .collections-grid { margin: 0 0 2rem; }
+
+      /* ── Statement rotators ─────────── */
+      .statement-rotator,
+      .statement-rotator.left {
+        float: none;
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto 0.6rem;
+        display: block;
+      }
+      .statement-rotator .rotator-front,
+      .statement-rotator .rotator-back { height: 210px; }
+      .statement-rotator-cap { text-align: center; }
+
+      /* ── Biography photo floats ─────── */
+      .bio-photo-wrap,
+      .bio-photo-wrap.left,
+      .bio-photo-wrap.center {
+        float: none !important;
+        width: auto !important;
+        max-width: 100% !important;
+        margin: 1rem auto !important;
+        display: block;
+      }
+      .bio-photo-wrap img {
+        max-width: min(100%, 280px);
+        width: auto !important;
+        height: auto !important;
+        margin: 0 auto;
+      }
+      .bio-narrative { padding: 1.6rem 1.2rem; }
+      .bio-sub { font-size: 1.15rem; }
+
+      /* ── Contact form ─────────────── */
+      .contact-form { max-width: 100%; }
+
+      /* ── Artwork detail ─────────────── */
+      .artwork-intro { padding: 1.5rem 1.4rem 0; }
+    }
+
+    @media (max-width: 480px) {
+      /* ── Home ──────────────────────── */
+      .home-welcome-title { font-size: 2rem; }
+      .home-welcome-photos { gap: 0.8rem; }
+      .home-welcome-photo { flex: 0 1 100%; max-width: 220px; }
+      .home-welcome-photo img { height: 180px; }
+
+      /* ── Page titles ─────────────── */
+      .page-header h1 { font-size: 1.9rem; }
+      .page-kicker { letter-spacing: 0.18em; }
+
+      /* ── Grids ───────────────────── */
+      .women-grid { grid-template-columns: 1fr; }
+      .iconography-grid { grid-template-columns: 1fr; }
+
+      /* ── Bio nav ─────────────────── */
+      .bio-list li { flex-direction: column; gap: 0.25rem; }
+      .bio-year { min-width: unset; }
+
+      /* ── Statement rotator: taller on small screens ── */
+      .statement-rotator { max-width: 220px; }
+      .statement-rotator .rotator-front,
+      .statement-rotator .rotator-back { height: 180px; }
+    }
+
+    /* ── Comment System ───────────────────────────────── */
+    .comment-section {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem 0;
+      margin-top: 2.5rem;
+    }
+    .comment-section-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+    .auth-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+      padding: 0.7rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.88rem;
+    }
+    .auth-bar .auth-username { font-weight: 600; color: var(--accent); }
+    .auth-bar-spacer { margin-left: auto; }
+
+    /* Auth overlay / modal */
+    .auth-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .auth-overlay.open { opacity: 1; pointer-events: all; }
+    .auth-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2rem;
+      width: min(400px, 92vw);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.4rem;
+    }
+    .auth-tab {
+      flex: 1; padding: 0.5rem 0;
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; color: var(--text-muted);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .auth-field { margin-bottom: 0.9rem; }
+    .auth-field label {
+      display: block; font-size: 0.78rem;
+      color: var(--text-muted); margin-bottom: 0.3rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .auth-field input {
+      width: 100%; padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: var(--bg); color: var(--text); font-size: 0.93rem;
+      font-family: Georgia, serif;
+    }
+    .auth-field input:focus { outline: none; border-color: var(--accent); }
+    .auth-error {
+      display: none; color: #a03030; font-size: 0.83rem;
+      margin: -0.4rem 0 0.7rem;
+    }
+    .auth-error.show { display: block; }
+    .auth-modal-actions {
+      display: flex; gap: 0.7rem; justify-content: flex-end; margin-top: 1.1rem;
+    }
+    .btn-auth-submit {
+      background: var(--accent); color: #fff;
+      border: none; padding: 0.55rem 1.3rem;
+      border-radius: 4px; cursor: pointer;
+      font-size: 0.88rem; font-family: inherit;
+    }
+    .btn-auth-submit:hover { background: var(--accent-dark); }
+    .btn-auth-cancel {
+      background: none; border: 1px solid var(--border);
+      padding: 0.55rem 1rem; border-radius: 4px;
+      cursor: pointer; font-size: 0.88rem; color: var(--text-muted);
+      font-family: inherit;
+    }
+
+    /* New comment form */
+    .comment-new-form { margin-bottom: 2rem; }
+    .comment-new-form textarea,
+    .reply-form textarea {
+      width: 100%; padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: var(--surface); color: var(--text);
+      font-family: Georgia, serif; font-size: 0.93rem;
+      resize: vertical; min-height: 72px;
+    }
+    .comment-new-form textarea:focus,
+    .reply-form textarea:focus { outline: none; border-color: var(--accent); }
+    .btn-post-comment {
+      margin-top: 0.5rem;
+      background: var(--accent); color: #fff;
+      border: none; padding: 0.48rem 1.1rem;
+      border-radius: 4px; cursor: pointer;
+      font-size: 0.85rem; font-family: inherit;
+    }
+    .btn-post-comment:hover { background: var(--accent-dark); }
+
+    /* Comment list */
+    .comments-list { display: flex; flex-direction: column; gap: 1rem; }
+    .comment-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.9rem 1.1rem;
+    }
+    .comment-item.is-reply {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      margin-left: 1.4rem;
+      border-radius: 0 5px 5px 0;
+    }
+    .comment-meta {
+      display: flex; align-items: baseline; gap: 0.6rem;
+      margin-bottom: 0.45rem; font-size: 0.8rem;
+    }
+    .comment-author { font-weight: 600; color: var(--accent); }
+    .comment-time { color: var(--text-light); }
+    .comment-text {
+      font-size: 0.93rem; line-height: 1.65;
+      color: var(--text); white-space: pre-wrap;
+    }
+    .comment-actions { display: flex; gap: 0.9rem; margin-top: 0.5rem; }
+    .btn-cmt {
+      background: none; border: none; cursor: pointer;
+      font-size: 0.78rem; color: var(--text-light);
+      padding: 0; font-family: inherit;
+      transition: color 0.15s;
+    }
+    .btn-cmt:hover { color: var(--accent); }
+    .reply-form { margin-top: 0.7rem; display: none; }
+    .reply-form.open { display: block; }
+    .reply-form-actions { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
+    .btn-reply-submit {
+      background: var(--accent); color: #fff;
+      border: none; padding: 0.32rem 0.85rem;
+      border-radius: 4px; cursor: pointer;
+      font-size: 0.8rem; font-family: inherit;
+    }
+    .btn-reply-cancel {
+      background: none; border: 1px solid var(--border);
+      padding: 0.32rem 0.7rem; border-radius: 4px;
+      cursor: pointer; font-size: 0.8rem;
+      color: var(--text-muted); font-family: inherit;
+    }
+    .replies-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; }
+    .no-comments {
+      text-align: center; color: var(--text-light);
+      font-style: italic; padding: 1.5rem 0; font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="nav-overlay" id="nav-overlay"></div>
+
+<!-- ── Sidebar ─────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-brand">
+    <img src="images/lotus.gif" class="brand-lotus" alt="Lotus">
+    <div class="brand-title">Bakasan</div>
+    <div class="brand-sub">A California Buddhist Artist</div>
+  </div>
+
+  <div class="sidebar-rule"></div>
+
+  <nav aria-label="Main navigation">
+    <ul>
+      <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+      <li><a href="#" class="nav-link" data-page="introduction">Introduction</a></li>
+      <li>
+        <a href="#" class="nav-link" data-page="collection">The Bakasan Collection</a>
+        <ul class="nav-sub" id="subnav-collection">
+          <li>
+            <a href="#" class="nav-link" data-page="women">Women of Buddhism</a>
+            <ul class="nav-sub2" id="subnav-women">
+              <li><a href="#" class="nav-link" data-page="murasaki">Lady Murasaki Shikibu</a></li>
+              <li><a href="#" class="nav-link" data-page="okoi">Okoi (The Geisha)</a></li>
+              <li><a href="#" class="nav-link" data-page="niijo">Lady Niijo</a></li>
+              <li><a href="#" class="nav-link" data-page="rengetsu">The Nun Rengetsu</a></li>
+              <li><a href="#" class="nav-link" data-page="gotami">Mahaprajapati Gotami</a></li>
+              <li><a href="#" class="nav-link" data-page="nukada">Princess Nukada</a></li>
+              <li><a href="#" class="nav-link" data-page="tibetan">Tibetan Celestial Dancer</a></li>
+              <li><a href="#" class="nav-link" data-page="siam">Siam Temple Dancer</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-page="iconography">Buddhist Iconography</a>
+            <ul class="nav-sub2" id="subnav-iconography">
+              <li><a href="#" class="nav-link" data-page="green-tara">Green Tara</a></li>
+              <li><a href="#" class="nav-link" data-page="black-tara">Black Tara</a></li>
+              <li><a href="#" class="nav-link" data-page="kuan-yin">Kuan Yin</a></li>
+              <li><a href="#" class="nav-link" data-page="kannon">Kannon</a></li>
+              <li><a href="#" class="nav-link" data-page="amida">Amida Buddha</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-page="asian-ladies">Asian Ladies</a>
+            <ul class="nav-sub2" id="subnav-asian-ladies">
+              <li><a href="#" class="nav-link" data-page="oiran">Oiran #3</a></li>
+              <li><a href="#" class="nav-link" data-page="brocade">Brocade #12</a></li>
+              <li><a href="#" class="nav-link" data-page="indonesian">Indonesian Sari &amp; Rug</a></li>
+              <li><a href="#" class="nav-link" data-page="burmese">Burmese (Myanmar)</a></li>
+              <li><a href="#" class="nav-link" data-page="kimono-rug">Kimono On Rug</a></li>
+              <li><a href="#" class="nav-link" data-page="peacock">Peacock Kimono</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="nav-link" data-page="nature">Fragments of Nature</a>
+            <ul class="nav-sub2" id="subnav-nature">
+              <li><a href="#" class="nav-link" data-page="topanga46">Topanga #46</a></li>
+              <li><a href="#" class="nav-link" data-page="forest">Forest for the Leaves</a></li>
+              <li><a href="#" class="nav-link" data-page="topanga103">Topanga #103</a></li>
+              <li><a href="#" class="nav-link" data-page="topanga147">Topanga #147</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#" class="nav-link" data-page="statement">Artist's Statement</a></li>
+      <li><a href="#" class="nav-link" data-page="biography">Selected Biography</a></li>
+      <li><a href="#" class="nav-link" data-page="contact">Contacts and Opportunities</a></li>
+      <li><a href="#" class="nav-link" data-page="thoughts">Conversation</a></li>
+    </ul>
+  </nav>
+
+</aside>
+
+<!-- ── Main ────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- ══ HOME ════════════════════════════════════════ -->
+  <section class="page" id="page-home">
+
+    <div class="home-welcome">
+      <div class="home-welcome-lotus">
+        <img src="images/lotus.gif" alt="Lotus" class="home-lotus-img">
+      </div>
+      <h1 class="home-welcome-title">Meet Bakasan</h1>
+      <p class="home-welcome-sub">A Life of Art, Buddhism, and Quiet Illumination</p>
+      <div class="home-welcome-rule"></div>
+
+      <div class="home-welcome-photos">
+        <div class="home-welcome-photo">
+          <img src="images/donald-peterman/IMG_4799.jpg" alt="Bakasan in Topanga Canyon">
+          <span>In the hills of Topanga Canyon</span>
+        </div>
+        <div class="home-welcome-photo">
+          <img src="images/donald-peterman/IMG_4801.jpg" alt="Bakasan at a gallery exhibition">
+          <span>At a gallery exhibition</span>
+        </div>
+        <div class="home-welcome-photo">
+          <img src="images/donald-peterman/IMG_4805.jpg" alt="Bakasan at an art fair">
+          <span>Sharing his work at an art fair</span>
+        </div>
+      </div>
+
+      <div class="home-welcome-body">
+        <p>For more than seventy years, Bakasan has painted not merely with brush and canvas, but with spirit, devotion, and wonder.</p>
+        <p>A California Buddhist artist whose journey began in the early 1950s, Bakasan found in Buddhism not simply a philosophy, but a way of seeing the world&mdash;where every leaf, every gesture, every life is connected in a greater whole. His unusual name, Bakasan&mdash;meaning &ldquo;the honorable foolish one&rdquo;&mdash;was lovingly inherited from his Zen teacher as a lesson in humility, awakening, and the paradoxes that lie at the heart of spiritual discovery.</p>
+
+        <div class="welcome-painting-break">
+          <img src="images/murasaki.png" alt="Lady Murasaki Shikibu by Bakasan">
+          <span>Lady Murasaki Shikibu</span>
+        </div>
+
+        <p>His work is luminous, deeply contemplative, and profoundly human.</p>
+        <p>From breathtaking meditations on nature to his celebrated Women of Buddhism collection, Bakasan&rsquo;s art honors the overlooked, the sacred, and the quietly extraordinary. His paintings give voice to Buddhist poets, nuns, mystics, artists, and heroines whose wisdom and compassion shaped centuries of spiritual life, yet whose stories are too often left untold.</p>
+
+        <div class="welcome-painting-break left">
+          <img src="images/treesandroots.jpg" alt="Topanga #46 by Bakasan">
+          <span>Topanga #46</span>
+        </div>
+
+        <p>Each work is both a visual offering and an invitation&mdash;to pause, reflect, and see the world with greater depth, tenderness, and clarity.</p>
+        <p>This collection is more than art.</p>
+        <p>It is the lifelong pilgrimage of a man who has devoted himself to beauty, meditation, and enlightenment.</p>
+        <p class="home-welcome-closing">Welcome to the world of Bakasan.</p>
+      </div>
+    </div>
+
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ INTRODUCTION ════════════════════════════════ -->
+  <section class="page" id="page-introduction">
+    <div class="page-header">
+      <div class="page-kicker">About the Artist</div>
+      <h1>Introduction</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="page-body">
+      <p>The Japanese name Bakasan roughly translates into English as "the honorable foolish one." One may ask why I would choose to take such a name. The answer, as with many things in Buddhism, cuts in opposite directions. During my initial exposure in the 1950's, I visited many temples seeking answers to Buddhism. As a Caucasian, I was immediately met with skepticism.</p>
+      <p>Upon my second visit to the Sen Shin Buddhist Temple in Los Angeles, I was introduced to Sensei Kuwasuke. With excitement I entered his meeting room. As I sat on the pillow, I asked simply, "What do I have to do to be a Buddhist?" He countered, "What has to be a Buddhist?" When you can answer that, I will answer the rest of your questions. For the remainder of the afternoon, I pondered his question while he read the newspaper. Once during this meeting, his hand reached around the newspaper in a fist. And slowly he opened his hand. Then he said, "Come back next week."</p>
+      <p>When I returned, I explained to him about all the components of the Universe being integral parts of a greater family. Upon hearing my answer, he muttered under his breath, "O-Baka, Baka, O-Baka, Baka" and nothing more. As anybody with even the smallest exposure to Japanese knows, "Baka" is an insulting term. Each time I visited with him, I left confused.</p>
+      <p>As my studies continued, Sensei Kuwasuke slowly began to open up his teachings to me. I progressed further along into my "awakened life." Yet after four years of guidance under Sensei Kuwasuke, he still muttered "Baka" under his breath in response to certain questions of mine. Soon thereafter he left to return to Japan. In his honor and feeling the name was appropriate, I decided to take the name of "Bakasan — the honorable foolish one."</p>
+      <p>Many years later, during a ceremony at the temple, I was introduced to visiting Buddhist scholars. Upon hearing my name, they immediately nodded their heads in approval. I asked my friend, Satoshi Miyata, what they were saying. He told me that they like your name. I asked why, knowing it meant "foolish one or, even worse, idiot." They told me that the word "O-Baka," means "foolish one," but in the tradition of the Dharma, also means, "enlightened one." I turned to Satoshi and said, "Sensei Kuwasuke has opened his hand to me once again."</p>
+      <p>This web page is dedicated to furthering the enlightenment of the readers to the joys and wonders of Buddhism and all its varied culture. It is the hope that the paintings and the brief stories of the women of Buddhism provide a starting point for the type of rich discovery that I experienced when painting these women. Furthermore, another goal of this web site is to reduce the misinterpretations and misunderstandings surrounding Buddhism. As even the novice knows, Buddhism is an empirical way of life. The path to enlightenment branches in many directions. The Buddha himself said, "Accept no one's word or authority for anything, including my own."</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ ARTIST'S STATEMENT ═══════════════════════════ -->
+  <section class="page" id="page-statement">
+    <div class="page-header">
+      <div class="page-kicker">The Work</div>
+      <h1>Artist's Statement</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="page-body">
+      <div class="statement-rotator-wrap">
+        <div class="statement-rotator left" id="statement-rotator-1">
+          <img class="rotator-front" src="images/paintings/IMG_4814.jpg" alt="Painting by Bakasan">
+          <img class="rotator-back"  src="images/paintings/IMG_4815.jpg" alt="Painting by Bakasan">
+        </div>
+        <p>I have painted to honor and celebrate Buddhism since 1951. My artwork is both a path of meditation and an act of celebration. My subjects have ranged from interpretations of nature's grandeur in leaves, trees and flowers to my most recent series of 265 paintings entitled <em><strong>Women of Buddhism: Flowers from the Garden of Buddha</strong></em>. This group of paintings seeks to artistically empower and give voice to women who played important roles throughout the 2,500 years of Buddhism.</p>
+        <p class="statement-rotator-cap">Paintings by Bakasan</p>
+      </div>
+      <div class="statement-rotator-wrap">
+        <div class="statement-rotator" id="statement-rotator-2">
+          <img class="rotator-front" src="images/paintings/IMG_4811.jpg" alt="Painting by Bakasan">
+          <img class="rotator-back"  src="images/paintings/IMG_4812.jpg" alt="Painting by Bakasan">
+        </div>
+        <p>When I began painting, I focused mainly on the process of painting (technique, mechanics, style, form, shadow, etc.). With such focus, it allowed me to meditate as I painted the universe as it appeared in leaves, trees and flowers. During that time, the entire <em><strong>process</strong></em> infused its meaning into the creation. Painting was not something I just did, it was something that I became a part of, and which became a part of me. Painting for me was as natural as leaves falling from a tree.</p>
+        <p class="statement-rotator-cap">Paintings by Bakasan</p>
+      </div>
+      <div class="statement-rotator-wrap">
+        <div class="statement-rotator left" id="statement-rotator-3">
+          <img class="rotator-front" src="images/paintings/IMG_4817.jpg" alt="Painting by Bakasan">
+          <img class="rotator-back"  src="images/paintings/IMG_4818.jpg" alt="Painting by Bakasan">
+        </div>
+        <p>In 1983, I began painting Asian women because of their magnificent robes and kimonos. At that time, the women had no names, no history or accomplishments to me. In 1989, I discovered a book entitled <em><strong>Women Under Primitive Buddhism: Laywomen and Almswomen</strong></em> by I.B. Horner (Published, 1930). Through this book, and many others, I later learned of the women who wore the robes and kimonos. Slowly, I began to unearth some of the richest treasures imaginable. I discovered marvelous poets, novelists, artists, political leaders, philanthropists, nuns, geishas, courtesans and dancers. Great names such as Mahaprajapati Gotami, Green Tara, C. Shan Miao (Zenmyo), Murasaki Shikibu, Nun Rengetsu (Lotus Moon), Princess Nukada and Lady Niijo. This rich discovery of subjects leads me on my final pilgrimage to honor and celebrate these <em>Women of Buddhism</em> both artistically and spiritually.</p>
+        <p class="statement-rotator-cap">Paintings by Bakasan</p>
+      </div>
+      <div class="statement-rotator-wrap">
+        <div class="statement-rotator" id="statement-rotator-4">
+          <img class="rotator-front" src="images/paintings/IMG_4821.jpg" alt="Painting by Bakasan">
+          <img class="rotator-back"  src="images/paintings/IMG_4822.jpg" alt="Painting by Bakasan">
+        </div>
+        <p>Since that time, the central focus of my artwork has evolved to include not just the process of painting, but also the subjects painted. With this subtle, yet important shift, I began the process of painting the <em>Women of Buddhism</em> while attempting to reveal their karmic essence on canvas. For most of these women, they have long since passed from this world and even a Buddhist artist quickly finds capture of such revelation to be an imperfect art.</p>
+        <p class="statement-rotator-cap">Paintings by Bakasan</p>
+      </div>
+      <p>Through the adventure and completion of each painting, my sense of wonder and awe for the inspirational lives of each of these women grows exponentially. Through their example, these women have imbued me with the priceless gift of karma shared.</p>
+      <p style="margin-top:2.2rem; color:var(--text-muted); font-style:italic; line-height:2.2;">
+        In Gassho,<br>Bakasan<br>
+        <span style="font-style:normal; font-size:0.88em; letter-spacing:0.1em; color:var(--text-light);">NAMU AMIDA BUTSU</span>
+      </p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ SELECTED BIOGRAPHY ═══════════════════════════ -->
+  <section class="page" id="page-biography">
+    <div class="page-header">
+      <div class="page-kicker">Credentials</div>
+      <h1>Selected Biography</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="page-body">
+
+      <div class="bio-block bio-narrative">
+        <h2>Donald R. Peterman &mdash; Bakasan</h2>
+        <p class="bio-dates">December 4, 1926 &ndash; August 19, 2003</p>
+        <p class="bio-byline">History by T. Robert Peterman</p>
+
+        <div class="bio-photo-wrap">
+          <img src="images/donald-peterman/IMG_4806.jpg" alt="Bakasan at an outdoor art fair" width="240">
+          <p class="bio-photo-cap">Bakasan at an outdoor art fair</p>
+        </div>
+
+        <p>Born in an emerging world of prosperity after World War I, Don was dropped into the chaos of the Great Depression in 1929. The Peterman family moved to a primitive Gold Mine camp in Arizona. Only the basic elements of survival existed. After coming back to California, Don&rsquo;s artistic talent revealed itself at an early age. Both Don and his mother joined the Riverside Art Association and studied with an excellent art teacher.</p>
+
+        <div class="bio-photo-wrap left">
+          <img src="images/donald-peterman/IMG_4798.jpg" alt="Don Peterman as a young man" width="155">
+          <p class="bio-photo-cap">Don as a young man</p>
+        </div>
+
+        <p>After completing high school in Riverside, California, Don joined the United States Marine Corps. Highly skilled with firearms, his service was as a Military Policeman and Naval prison guard. Shortly after his discharge, Don and his mother moved to West Hollywood. Working in Los Angeles at Austin&rsquo;s Photography Studios as a negative retoucher, he decided to move closer to his work.</p>
+
+        <div class="bio-photo-wrap">
+          <img src="images/donald-peterman/IMG_4803.jpg" alt="Bakasan with his paintings at an art fair" width="280">
+          <p class="bio-photo-cap">Bakasan with his paintings at an art fair</p>
+        </div>
+
+        <p>Here he began visiting the Senshin Buddhist Temple. With his earnings from Austin&rsquo;s studio, Don bought property in Topanga Canyon and began building a home. His life became his painting, music, extensive reading and religion. Walking Topanga paths of nature became his path to spiritual awakening. Early on, he embraced the &ldquo;mind of baka&rdquo; (fool), which perfectly captured the essence of shoshin&mdash;or &ldquo;beginner&rsquo;s mind&rdquo;&mdash;in Zen Buddhism. It was at this time he took the artist&rsquo;s name of Bakasan.</p>
+
+        <p>Bakasan&rsquo;s early paintings were the beauty of nature, but extensive reading and realization led him to the history and culture of early Japan and Zen. After the death of his lover, Don left California for several years where he shared a home with friends in Tennessee.</p>
+
+        <p>Finding the area sadly lacking in Buddhist activities, he returned to California and settled in Gardena where he found the quiet and peaceful life he was seeking. Don has had paintings hanging in libraries, banks, galleries, featured in art exhibits and also in unknown temples in Japan. He never mastered the spoken language of his beloved Zen, but to his death, his painting was his communication with the present and the past. Upon his death, the Neptune Society cremated him and then scattered his ashes amongst the waves of the Pacific Ocean. After his transformation, the Pacific has consumed Donald&rsquo;s ashes, but Bakasan lives on wherever his paintings may go and are seen.</p>
+
+        <div class="bio-photo-wrap center">
+          <img src="images/donald-peterman/IMG_4802.jpg" alt="Bakasan with one of his paintings" width="380">
+          <p class="bio-photo-cap">Bakasan with one of his paintings</p>
+        </div>
+
+        <h3 class="bio-sub">Random Thoughts About My Brother Don</h3>
+
+        <p>Don&rsquo;s mother&rsquo;s family were German immigrants. They were the court musicians for the Kaiser and noblemen, but there was too much oppression. His father&rsquo;s family were also German immigrants&mdash;probably farmers.</p>
+
+        <div class="bio-photo-wrap">
+          <img src="images/donald-peterman/IMG_4800.jpg" alt="Don Peterman with his brother T. Robert" width="240">
+          <p class="bio-photo-cap">Don with his brother T. Robert</p>
+        </div>
+
+        <p>On a camping trip up the coast, Don fell in love with the Big Sur country and wanted to live there but it was too expensive and exclusive. Thus, he built his house in Topanga Canyon, about 100 yards down Fernwood Pacific from where we had lived.</p>
+
+        <p>Don was kept in Marine Boot Camp an extra two weeks to learn to swim, but he never did learn. The rest of his platoon left camp on time. All eleven planes of marines disappeared in the Washington Mountains and were found about 50 years later.</p>
+
+        <p>Don used to sketch in the field, then come home and paint all night. He played classical music constantly while he painted. Sometimes he had three or four paintings in progress at the same time. For most of Don&rsquo;s life, he wouldn&rsquo;t sell his paintings&mdash;rather he gave them to someone he thought would appreciate them.</p>
+
+        <p>I never knew Don to participate in any sport except fencing. He claimed he did not believe in competition, but he played Chess in High School and was ranked #1 in the Marines as a sharpshooter and an Expert Rifleman. I never could convince him everything in life is competition. Maybe it had something to do with his religion.</p>
+
+        <p>I often felt that Don was living in 15th century Japan. He thought that everything from Japan was best and America was inferior. Don loved the movements of traditional classical Japanese dancers and actors. He loved Japanese art and architecture. He loved Japanese ceremonies in food and living. We never understood why he didn&rsquo;t move to Japan.</p>
+      </div>
+
+      <div class="bio-block">
+        <h2>Education</h2>
+        <ul class="bio-list">
+          <li><span class="bio-year">1950</span><span>Certificate of Fine Arts, Kahn Institute of Art, West Hollywood, California</span></li>
+        </ul>
+      </div>
+
+      <div class="bio-block">
+        <h2>Solo Exhibitions</h2>
+        <ul class="bio-list">
+          <li><span class="bio-year">1997</span><span><em>Paintings by Bakasan: A Fresh Perspective From A California Buddhist</em>, Gallery Room at Malaga Cove Plaza Gallery, Palos Verdes Estates, California, November 1&ndash;30</span></li>
+          <li><span class="bio-year">1990</span><span><em>Leaves &amp; Ladies</em>, Tennessee Arts Council Building, Nashville, Tennessee, August 9&ndash;30</span></li>
+          <li><span class="bio-year">1985</span><span><em>Bakasan &amp; The Art of Good Karma</em>, Topanga Art Gallery, Topanga, California, May 25&ndash;June 7</span></li>
+        </ul>
+      </div>
+
+      <div class="bio-block">
+        <h2>Ongoing Exhibitions</h2>
+        <ul class="bio-list">
+          <li><span class="bio-year">1975&ndash;</span><span><em>A Celebration of Buddhism</em>, Sen Shin Buddhist Temple, Los Angeles, California</span></li>
+          <li><span class="bio-year">1998&ndash;99</span><span>Golden Pacific Arts, San Diego, California</span></li>
+          <li><span class="bio-year">1998&ndash;99</span><span>The Tah Gallery, Pasadena, California</span></li>
+          <li><span class="bio-year">1998&ndash;99</span><span>CM Art Gallery, Los Angeles, California and Las Vegas, Nevada</span></li>
+          <li><span class="bio-year">1998&ndash;99</span><span>Kajul Gallery, Healdsburg, California</span></li>
+        </ul>
+      </div>
+
+      <div class="bio-block">
+        <h2>Exhibition Reviews &amp; Publications</h2>
+        <ul class="bio-list">
+          <li><span class="bio-year">1985</span><span>"Painting Topanga: '<em>Bakasan &amp; The Art of Good Karma</em>,'" <em>Messenger: The Santa Monica Mountains News &amp; Arts</em>, Vol.&nbsp;9, No.&nbsp;10, May&nbsp;23,&nbsp;1985, pp.&nbsp;8&ndash;9, illustrations.</span></li>
+          <li><span class="bio-year">1997</span><span>"Buddhist Offering On The Hill: '<em>A Fresh Perspective From A California Buddhist</em>,'" <em>Palos Verdes Peninsula News</em>, Vol.&nbsp;60, No.&nbsp;106, November&nbsp;1,&nbsp;1997, p.&nbsp;8.</span></li>
+        </ul>
+      </div>
+
+      <div class="bio-block">
+        <h2>Selected Private &amp; Public Collections</h2>
+        <ul class="bio-list">
+          <li><span class="bio-year">&mdash;</span><span>Michelle Denise Boyer, Esq., Venice, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Steven J. Polard, Esq., Topanga, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Jebb Dykstra, Esq., Los Angeles, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Dr. Ann Ludwig, Ph.D., Topanga, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Dr. David Hjerpe, M.D., Las Vegas, Nevada</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Thomas B. Hjerpe, Esq., Eureka, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Lynda Boyer, Santa Monica, California</span></li>
+          <li><span class="bio-year">&mdash;</span><span>Terry Evans, Santa Barbara, California</span></li>
+        </ul>
+      </div>
+
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ THE COLLECTION ══════════════════════════════ -->
+  <section class="page" id="page-collection">
+    <div class="page-header">
+      <div class="page-kicker">Works</div>
+      <h1>The Bakasan Collection</h1>
+      <div class="page-rule"></div>
+    </div>
+
+    <!-- Rotating 3-painting showcase — populated by JS -->
+    <div class="collection-showcase" id="collection-showcase"></div>
+
+    <div class="page-body">
+      <p>The Collection organizes my paintings into four major periods: (1) <span class="text-link nav-link" data-page="women">Women of Buddhism</span>, (2) <span class="text-link nav-link" data-page="iconography">Buddhist Iconography</span>, (3) <span class="text-link nav-link" data-page="asian-ladies">Asian Ladies</span> and (4) <span class="text-link nav-link" data-page="nature">Fragments of Nature</span>. Throughout my life as an artist, I have evolved and grown through many cycles. For better, I have been overwhelmed by images, which in time, turn themselves into paintings. For worse, I have been left fallow like an overworked field. Yet just like the cycle of the seasons, I have been transformed and regenerated by new images scattered in my mind like seeds in a field. At the end of the day, four themes represent my seasons as an artist.</p>
+      <p>My last artistic and spiritual pilgrimage centers on honoring the magnificent <em>Women of Buddhism</em>. Throughout the last 2,500 years, innumerable women have demonstrated with their lives, the twin pillars Buddhism: wisdom and compassion. Yet, in so many cases and in so many cultures, these women have been quietly dismissed. By painting figurative representations of these women, my goal is to finally draw attention and glory to these flowers from the garden of Buddha.</p>
+      <p>The next major theme of The Collection relates to my usage of <em>Buddhist Iconography</em> to illustrate the symbols of deeper meanings within Buddhism. As with all major religions, Buddhist iconography is an esoteric language of the highest art. In every Buddhist sculpture and painting, every position, gesture and form symbolically conveys deeper meanings.</p>
+      <p>The third period relates to the Textiles. During this period, I used the women in the paintings to hold up the magnificent robes, kimonos, drapes and rugs. When choreographing these paintings, my focus was entirely aimed at bringing out the beauty and splendor of these textiles. In creating these Textile paintings, this period allowed me to naturally evolve and grow into my Women of Buddhism period.</p>
+      <p>After my introduction to Buddhism, I viewed the world as a very different place. Instead of seeing nature as a unified one with all images flowing together, I saw the magnificence of each fragment by itself. I painted crystallized components of totality. I painted poems of nature. The subjects of my poems became a clearing in the woods, a single tree or just a solitary leaf. By reducing my focus, each fragment of nature revealed the totality of nature to me, as clearly as if a haiku told the history of the Universe.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ WOMEN OF BUDDHISM (gallery) ══════════════════ -->
+  <section class="page" id="page-women">
+    <div class="page-header">
+      <div class="page-kicker">The Collection</div>
+      <h1>Women of Buddhism</h1>
+      <div class="page-rule"></div>
+    </div>
+
+    <div class="women-grid">
+      <div class="woman-card wc-murasaki" data-target="murasaki" role="button" tabindex="0" aria-label="Lady Murasaki Shikibu">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Lady Murasaki Shikibu</span></div>
+      </div>
+      <div class="woman-card wc-okoi" data-target="okoi" role="button" tabindex="0" aria-label="Okoi (The Geisha)">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Okoi (The Geisha)</span></div>
+      </div>
+      <div class="woman-card wc-niijo" data-target="niijo" role="button" tabindex="0" aria-label="Lady Niijo">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Lady Niijo</span></div>
+      </div>
+      <div class="woman-card wc-rengetsu" data-target="rengetsu" role="button" tabindex="0" aria-label="The Nun Rengetsu">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">The Nun Rengetsu</span></div>
+      </div>
+      <div class="woman-card wc-gotami" data-target="gotami" role="button" tabindex="0" aria-label="Mahaprajapati Gotami">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Mahaprajapati Gotami</span></div>
+      </div>
+      <div class="woman-card wc-nukada" data-target="nukada" role="button" tabindex="0" aria-label="Princess Nukada">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Princess Nukada</span></div>
+      </div>
+      <div class="woman-card wc-tibetan" data-target="tibetan" role="button" tabindex="0" aria-label="Tibetan Celestial Dancer">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Tibetan Celestial Dancer</span></div>
+      </div>
+      <div class="woman-card wc-siam" data-target="siam" role="button" tabindex="0" aria-label="Siam Temple Dancer">
+        <div class="wc-fill"></div>
+        <div class="wc-overlay"><span class="wc-name">Siam Temple Dancer</span></div>
+      </div>
+    </div>
+
+    <div class="section-intro">
+      <p style="margin-top:0.5rem;">Shortly after The Buddha's enlightenment, he began to receive followers. The Buddha continually stated that he did not require disciples. Included in this group was his Aunt Mahaprajapati Gotami. Trying to defuse even her request, he recommended each follower become a forest dweller. From there, they could best serve their goal of enlightenment. As forest dwellers living on their own, many female followers of the Buddha were raped and pillaged by men. Even in Buddhism, women were met with a very difficult beginning. In response to the tragic events to his forest dwellers, The Buddha allowed Mahaprajapati Gotami to form the first order of Bikkhuni (Buddhist nuns) within walls of the city. By forming the Bikkhuni cloister within the city, these women opened their hearts to the less fortunate of the city dwellers.</p>
+      <p>As the doctrines of Buddhism took form, an unfortunate condition arose — that even the newest monk would be senior to the oldest Bikkhuni (nun). In spite of such a condition, the Bikkhuni always served The Buddha with great joy. Sadly, throughout the ages, the examples of misogyny in Buddhism have rivaled that of Judaism, Hinduism, Christianity and Islam. Nevertheless, the lives and stories of the Women of Buddhism are courageous and exciting ones. In China, Empress Wu, a devout Buddhist, was the only woman to sit on the Dragon Throne. While ruling China, she restored the Great White Horse Temple, turned over government lands to the people for hunting, and declared a three-year moratorium on taxes so that the people could catch up on their bills. The notorious Empress Wu created orphanages and hospitals. Most historians view her nineteen years on the throne as dark years in Chinese history, but viewed outside a patriarchal context, most agree that she served her time very well.</p>
+      <p>In Japan, when women were confronted with a social system and a government that would not teach them to read or write in Chinese, they created and developed their own canon of literature in Japanese hiragana. To this day, the greatest literature (novels, nikki bungaku (diaries), pillow books, haiku and tanka) of Japan remains mostly the work of Buddhist women. From Mahaprajapati Gotami of India to Empress Wu of China to Lady Murasaki Shikibu of Japan, the examples of rich and exciting lives from the Women of Buddhism continues to be an endless procession.</p>
+    </div>
+
+    <footer class="page-footer" style="margin-top:3rem;">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ LADY MURASAKI SHIKIBU ══════════════════════ -->
+  <section class="page" id="page-murasaki">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Lady Murasaki Shikibu</h1>
+      <div class="page-rule"></div>
+    </div>
+
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/murasaki.png" alt="Murasaki Shikibu By Candlelight — Bakasan, 1992" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Murasaki Shikibu By Candlelight</p>
+        <p>10th Century</p>
+        <p>Bakasan, 1992</p>
+        <p>Acrylic on Canvas</p>
+        <p>20&Prime; &times; 24&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <p>Sprung from royalty, Murasaki Shikibu is Japan's greatest writer. She authored one of the world's greatest novels entitled <em>The Tale of Genji</em>. Her use of the novel as a form of literature precedes its use in the West or even China by hundreds of years. The power of the <em>Tale of Genji</em> remains true even in its present English translation. To this day, the book is overwhelmingly considered one of the great novels of the world in any language. The greatness of Lady Murasaki's <em>Tale of Genji</em> generally overshadows her poetry, however, the novel uniquely intersplices prose and poetry throughout. Two poems by the main characters as shown below form the pivot upon which the story turns.</p>
+
+      <div class="poem-grid">
+        <div class="poem">
+          <p class="poem-speaker">Lady Murasaki says:</p>
+          <p class="poem-lines">
+            The troubled waters<br>
+            are frozen fast.<br>
+            Under clear heaven<br>
+            moonlight and shadow<br>
+            ebb and flow.
+          </p>
+        </div>
+        <div class="poem">
+          <p class="poem-speaker">Prince Genji responds:</p>
+          <p class="poem-lines">
+            The memories of long love<br>
+            Gather like drifting snow.<br>
+            Poignant as the mandarin ducks<br>
+            who float side by side in sleep.
+          </p>
+        </div>
+      </div>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ OKOI (THE GEISHA) ══════════════════════════ -->
+  <section class="page" id="page-okoi">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Okoi (The Geisha)</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/okoi.jpg" alt="Okoi (The Geisha) — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Okoi (The Geisha)</p>
+        <p>20th Century</p>
+        <p>Bakasan, 1994</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Born into poverty, Okoi's family could not afford to keep her. Hoping for a better life, her mother gave her to a wealthy family. They suffered a misfortune and also couldn't keep her, so they gave her to a Geisha. The Geisha found this young child to be bright and beautiful, so she taught her the nuances of poetry, the steps of dance, the joy of music and the sophistication of conversation. After training her, the Geisha gave her the name of Okoi. Okoi began working professionally as a Geisha. Due to the costliness of the elaborate robes and kimonos, each Geisha required a sponsor. She won the Prime Minister's sponsorship.</p>
+      <p>During the Sino-Russian war, the Prime Minister was accused of being a traitor. Okoi found her home surrounded by troops and was told she must leave. Even so, Okoi's reputation grew. She met a popular actor of the day. They married, but it was not a happy one. He abandoned her, so she left and built the most important teahouse in Japan. During this time, Go-go clubs became popular. So she built the most popular Go-go club in the country. Then a devastating earthquake destroyed it. After this catastrophe, she entered the Buddhist nunnery. She passed in 1946. At her temple, patrons erected a statue entitled Okoi Kannon in honor of her.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ LADY NIIJO ════════════════════════════════ -->
+  <section class="page" id="page-niijo">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Lady Niijo</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Niijo.jpg" alt="Lady Niijo — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Lady Niijo</p>
+        <p>13th Century</p>
+        <p>Bakasan, 1995</p>
+        <p>Acrylic on Canvas</p>
+        <p>18&Prime; &times; 24&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Lady Niijo stands out in Japanese history as one of the most intriguing and compelling women of all time. As a child of twelve, the Emperor adopted her as his child. Their complete relationship remains a mystery, but it is believed he made her his lover as well. As with many other women of her era, life in the royal court enabled her to become an expert calligrapher, painter and poet. At a young age, she took vows as an Ama (a Buddhist nun). From that time, she wandered the country from royal palaces to holy temples. As an Ama, she was privileged to pass through any area and upon arriving at a temple, she would receive food and lodging.</p>
+      <p>During one trip, she happened upon a palace run by a powerful warlord. While staying in his quarters, she painted a mural on one of his main walls. The magnificence of it left him stunned and enamored. He was so taken by her that he offered her his hand in marriage. She declined. That night she left the palace under stealth of night. Upon discovering her absence, he declared her a thief and sent out his best troops to find her and bring her back. She, of course, escaped.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ THE NUN RENGETSU ══════════════════════════ -->
+  <section class="page" id="page-rengetsu">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>The Nun Rengetsu</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/NunRengetsu.jpg" alt="Nun Rengetsu (Lotus Moon) — Bakasan, 1996" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Nun Rengetsu (Lotus Moon)</p>
+        <p>19th Century</p>
+        <p>Bakasan, 1996</p>
+        <p>Acrylic on Canvas</p>
+        <p>18&Prime; &times; 24&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Beneath the echoes of the temple bell, among the shadows, warm laughter and incense, an unknown samurai entered a lady of the stream. From their dance of joy, issued a wondrous flower to become known as Rengetsu. A Pure Land Buddhist priest adopted her and made her a child of the temple. She learned two forms of martial arts, read the great works of literature, studied the great painters, learned calligraphy and became an expert at the game of <em>Go</em> (a Japanese form of chess). By the time Rengetsu reached sixteen years old, she was just as adept at disarming intruders with her looks as she was with her martial arts. She had already established herself as one of Kyoto's better tanka poets as well as calligraphy masters. Although she was a <em>Go</em> master, she could not teach it because she was a woman.</p>
+      <p>Rengetsu chose to make pottery inscribed with her poetry in her masterful calligraphy. It was said that all of Kyoto had a few pieces of Rengetsu's <em>yaki-style</em> pottery at one time. She was such a celebrity that she once had to move thirteen times in one year to avoid art patrons. Lotus Moon is legendary for giving all her extra earnings to equally impoverished poets and writers so that they could continue their works of art. Another legend has an intruder breaking into Rengetsu's hut. The sleeping Rengetsu awakened and said, "You won't find anything of value here, but you are welcome to whatever you need. You must be starving to be so desperate. Let me fix you a bowl of tea-rice."</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ MAHAPRAJAPATI GOTAMI ══════════════════════ -->
+  <section class="page" id="page-gotami">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Mahaprajapati Gotami</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Mahapajapati.jpg" alt="Mahaprajapati Gotami — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Mahaprajapati Gotami, The Buddha's Aunt</p>
+        <p>Circa 500 BCE</p>
+        <p>Bakasan, 1989</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Mahaprajapati Gotami was the sister of Queen Maya, the Mother of the Buddha. Both women were members of the King's harem. After the Buddha's enlightenment, Mahaprajapati Gotami pleaded with her nephew, the Buddha to allow her form the first order of nuns. Originally, the Buddha's was hesitant to allow her to do so, but with the help of Ananda, the Buddha allowed her to do so. Thereafter Mahaprajapati Gotami achieved enlightenment.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ PRINCESS NUKADA ══════════════════════════ -->
+  <section class="page" id="page-nukada">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Princess Nukada</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Princess_Nukada.jpg" alt="Princess Nukada — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Princess Nukada</p>
+        <p>7th Century</p>
+        <p>Bakasan, 1993</p>
+        <p>Acrylic on Canvas</p>
+        <p>20&Prime; &times; 24&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Princess Nukada lived in the latter half of the 7th Century. As a child of royalty, she was a sought after woman. Nevertheless it was her poetry which won her the heart of the Emperor Temmu. Historically, Princess Nukada is regarded as the greatest poet of the Omi period. During the seventh century, Buddhism was just making its way into Japanese culture. In her poetry, she speaks most highly of Autumn. This is significant because in Japan, Spring is the most revered season, yet Nukada was the child of Fall.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ TIBETAN CELESTIAL DANCER ══════════════════ -->
+  <section class="page" id="page-tibetan">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Tibetan Celestial Dancer</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Tibetan_Celestial_Dancer.jpg" alt="Tibetan Celestial Dancer — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Tibetan Celestial Dancer</p>
+        <p>(Anonymous Woman)</p>
+        <p>20th Century</p>
+        <p>Bakasan, 1994</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body" style="padding-top:1.5rem;"></div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ SIAM TEMPLE DANCER ════════════════════════ -->
+  <section class="page" id="page-siam">
+    <div class="page-header">
+      <div class="page-kicker">Women of Buddhism</div>
+      <h1>Siam Temple Dancer</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Siam_Temple_Dancer.jpg" alt="Siam Temple Dancer — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Siam (Thailand) Temple Dancer</p>
+        <p>20th Century</p>
+        <p>Bakasan, 1992</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body" style="padding-top:1.5rem;"></div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ BUDDHIST ICONOGRAPHY ═══════════════════════ -->
+  <section class="page" id="page-iconography">
+    <div class="page-header">
+      <div class="page-kicker">The Collection</div>
+      <h1>Buddhist Iconography</h1>
+      <p style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.1rem; font-style:italic; font-weight:300; color:var(--text-muted); margin-top:0.6rem; letter-spacing:0.04em;">Symbols of Deeper Meanings</p>
+      <div class="page-rule"></div>
+    </div>
+
+    <div class="iconography-grid">
+      <div class="ico-card ic-green"  data-target="green-tara"  role="button" tabindex="0" aria-label="Green Tara">
+        <div class="ic-fill"></div>
+        <div class="ic-overlay"><span class="ic-name">Green Tara</span></div>
+      </div>
+      <div class="ico-card ic-black"  data-target="black-tara"  role="button" tabindex="0" aria-label="Black Tara">
+        <div class="ic-fill"></div>
+        <div class="ic-overlay"><span class="ic-name">Black Tara</span></div>
+      </div>
+      <div class="ico-card ic-kuan"   data-target="kuan-yin"    role="button" tabindex="0" aria-label="Kuan Yin">
+        <div class="ic-fill"></div>
+        <div class="ic-overlay"><span class="ic-name">Kuan Yin</span></div>
+      </div>
+      <div class="ico-card ic-kannon" data-target="kannon"      role="button" tabindex="0" aria-label="Kannon">
+        <div class="ic-fill"></div>
+        <div class="ic-overlay"><span class="ic-name">Kannon</span></div>
+      </div>
+      <div class="ico-card ic-amida"  data-target="amida"       role="button" tabindex="0" aria-label="Amida Buddha">
+        <div class="ic-fill"></div>
+        <div class="ic-overlay"><span class="ic-name">Amida Buddha</span></div>
+      </div>
+    </div>
+
+    <div class="section-intro">
+      <p>Iconography within any religion uses symbols, forms, gestures, positions, deities and many other subtleties to convey deeper meanings and reminders to their followers. When such an esoteric method of communication such as iconography is used, proper interpretations and meanings sometimes become lost or missed. In Buddhist iconography, this problem is also common. In fact, since most Westerners, including myself, were raised in a secular or Christian environment, fluent understandings of Buddhist iconography can take years, even decades, to fully appreciate.</p>
+      <p>When viewing Buddhist art, one quickly notices certain trends. Many different Buddhas are represented. However, the historical Buddha, Sakyamuni is the most popular. The Buddha, known before his awakening as Prince Siddhartha of the Sakya tribe, lived from around 566 to 486 BCE. His clan name was Gautama. In Buddhist iconography, he is most often depicted seated in the lotus position either at the moment of enlightenment or in the gesture of teaching. When viewing a painting of The Buddha, every aspect of the painting will convey a deeper meaning. For example, the lotus, upon which The Buddha is seated, grows in muddy pools and swamps, but when the lotus flowers, its beautiful petals crest high above the surface unstained and immaculate. In the fourth painting in my series, <span class="text-link nav-link" data-page="kannon">Kannon</span> is shown standing on top of the lotus flower. In the fifth painting, <span class="text-link nav-link" data-page="amida">Amida Buddha</span> is depicted in a vertically seated pose above the seed word and the lotus flower at the time of enlightenment.</p>
+      <p>Besides Sakyamuni, other represented Buddha's include, <span class="text-link nav-link" data-page="amida">Amida — the Buddha of Infinite Light</span>, Bhaisajyaguru — the Medicine Buddha, the thirty-five Buddha's of Confession, and other Buddha's which represent different aspects of Buddhahood. In many paintings or sculptures, two Boddhisattvas flank the Buddha. A Boddhisattva is a person who is soon to be awakened or one who has foregone nirvana so as to deliver others from their suffering by aiding in their attainment of Awakening. The first four paintings of this series all portray Boddhisattvas. The first two paintings portray <span class="text-link nav-link" data-page="green-tara">Green Tara</span> and <span class="text-link nav-link" data-page="black-tara">Black Tara</span>. The Savioress, as she is known, is the female manifestation of the protective aspect of Buddhahood. The third painting portrays <span class="text-link nav-link" data-page="kuan-yin">Kuan&#8209;Yin</span>, a Chinese version of Avalokitashvara, the Boddhisattva of Compassion. The fourth painting portrays Kannon, a Japanese version of the same Boddhisattva.</p>
+      <p>In some paintings, two Dharmapalas also flank each Boddhisattva. <strong>Dharmapalas</strong> are protectors of the Buddhist doctrine and their practitioners. They are often portrayed as ferocious and intense. An example of Dharmapalas in my work is the "Two Kings of Bright Wisdom" who watch over <span class="text-link nav-link" data-page="kannon">Kannon</span> in the fourth painting in my series. In this small exhibit featuring Buddhist iconography, I hope to convey messages of deeper meaning in every aspect of my paintings.</p>
+    </div>
+
+    <footer class="page-footer" style="margin-top:3rem;">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ GREEN TARA ════════════════════════════════ -->
+  <section class="page" id="page-green-tara">
+    <div class="page-header">
+      <div class="page-kicker">Buddhist Iconography</div>
+      <h1>Green Tara</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/GreenTara.jpg" alt="Green Tara — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Green Tara</p>
+        <p>Bakasan, 1989</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Arya Tara is one of many deities present in Buddhist iconography. Some worshippers still believe that if a practitioner chants her mantra of "Om Ta Re Tu Ta Re Tu Re Svaha" that their wishes will be granted. Some believe that the Boddhisattva, Green Tara, is based on an Indian Rani (Queen). Buddhist lore says that this "Mother of All Buddha's" was born from a single tear of compassion shed by Avalokitashvara upon seeing the suffering of all humanity. Innumerable versions of Tara have been portrayed in Buddhist iconography from Green Tara to Black Tara to White Tara to Wrathful Tara. Tara, as seen in this painting, helps her believers overcome obstacles in their lives and saves them when in distress.</p>
+      <p>In this painting, the peacock protects Green Tara. The peacock represents purity as it can absorb the bite of venomous reptiles. Also seen in this painting is a moon with peacock feathers on its fringe. In Buddhist iconography, the moon represents enlightenment. As a Boddhisattva, Tara has attained enlightenment, yet has foregone nirvana so that she may guide others down the path to Pure Light.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ BLACK TARA ════════════════════════════════ -->
+  <section class="page" id="page-black-tara">
+    <div class="page-header">
+      <div class="page-kicker">Buddhist Iconography</div>
+      <h1>Black Tara</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/BlackTara.png" alt="Black Tara — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Black Tara</p>
+        <p>Bakasan, 1988</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Tara and her one hundred and eight manifestations have both benevolent and wrathful qualities. Through all her different forms, she always represents compassion and liberation. Black Tara, as seen in this painting, represents a particularly malevolent manifestation. Her wrathful nature is not that of a demon or a vindictive goddess, but that of a fierce and intense deity that dispels the fear of death and fosters the evolution of compassion in those following her path.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ KUAN YIN ══════════════════════════════════ -->
+  <section class="page" id="page-kuan-yin">
+    <div class="page-header">
+      <div class="page-kicker">Buddhist Iconography</div>
+      <h1>Kuan Yin</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Kuan-Yin.jpg" alt="Kuan Yin — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Kuan Yin (Chinese)</p>
+        <p>Bakasan, 1987</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Buddhism is built on the twin pillars of wisdom and compassion. In typical Buddhist iconography, the female form of Prajna usually symbolizes wisdom, whereas the male form of Avalokitashvara personifies compassion. In this painting, Kuan-Yin reveals himself as a Chinese version of Avalokitashvara, the Boddhisattva of compassion and love. As shown here, Boddhisattvas are usually adorned in Indian regalia. As time progressed, Avlokitashvara, as represented in China, gradually evolved into a graceful feminine form. In this painting, Kuan-Yin is shown becoming more human and fleshy.</p>
+      <p>Here Kuan-Yin is seated in the royal "ease" of India. Typically the "royal ease" allowed one to find a position of comfort. Such a position is very representative of India, which never embraced the strict positions of the Far East.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ KANNON ════════════════════════════════════ -->
+  <section class="page" id="page-kannon">
+    <div class="page-header">
+      <div class="page-kicker">Buddhist Iconography</div>
+      <h1>Kannon</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Kannon.jpg" alt="Kannon — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Kannon (Japanese)</p>
+        <p>Bakasan, 1987</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>In this painting, Kannon reveals himself as the Japanese version Avalokitashvara, the Boddhisattva of compassion and love. Here he is also shown dressed as Indian royalty. The two Kings of bright wisdom guard over him. Typical Buddhist iconography has many fierce creatures and demons, yet their role usually is that of a guardian or protector, not as tempter or conqueror. Traditional-style Chinese clouds surround Kannon. Kannon's hands are positioned in one of the hundreds of Buddhist mudras. The iconographic symbol of Kannon is the lotus flower. Here Kannon appears to be either growing out of the lotus or supported by the flower.</p>
+      <p>In most representations, the Japanese version of Avalokitashvara typically is not as graceful and human as the Chinese version. In Japan, Kannon is represented as male or female, whereas in China, Kuan-Yin is usually female. One interpretation is that in Japanese Buddhism, the evolution of the Avalokitashvara was not as evolved as in Chinese Buddhism.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ AMIDA BUDDHA ══════════════════════════════ -->
+  <section class="page" id="page-amida">
+    <div class="page-header">
+      <div class="page-kicker">Buddhist Iconography</div>
+      <h1>Amida Buddha</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/AmidaBuddah.jpg" alt="Amida Buddha — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Amida Buddha (Japanese)</p>
+        <p>Bakasan, 1985</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>In Japan, one of the most compassionate sects of Buddhism remains Jodo Shinshu. In this style, the object of worship is Amida, the Buddha of Infinite Light and Life. Amida Buddha promises Universal Enlightenment for all beings. However, the Primal Vow of Amida is not concerned with those strong and powerful individuals that worship and meditate daily. Amida Buddha's primary concern rests with those beings whose abilities are so weak and tenuous that they can not hope to attain enlightenment on their own. Amida, realizing the sad plight of these humans, offered forty-eight vows, including the eighteenth Primal Vow.</p>
+      <p>Knowing such an offering would be futile if never reaching the hearts of the poor and disenfranchised, Amida Buddha put his entire labor of Love in the sacred name — "Namu Amida Butsu." This Nembutsu is the embodiment of purity, truth, goodness, beauty, wisdom, and peace. This is referred to as the seed word. Amida is the Japanese version of the seed word. In Sanskrit the word is Amitabha. In this painting, Amida Buddha is seen here in a Buddhist mudra with points of fire and light emanating from his mandala, as well as with the seed word and the lotus flower.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ ASIAN LADIES ══════════════════════════════ -->
+  <section class="page" id="page-asian-ladies">
+    <div class="page-header">
+      <div class="page-kicker">The Collection</div>
+      <h1>Asian Ladies</h1>
+      <div class="page-rule"></div>
+    </div>
+
+    <!-- 6-card gallery reusing women-grid at 3-col -->
+    <div class="women-grid" style="grid-template-columns: repeat(3,1fr); margin: 0 5rem 0;">
+      <div class="woman-card" data-target="oiran" role="button" tabindex="0" aria-label="Oiran #3" style="background:linear-gradient(155deg,#0a0408 0%,#3a1040 55%,#c070a0 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 40% 50%,rgba(200,100,160,0.8) 0%,transparent 55%),linear-gradient(155deg,#0a0408 0%,#3a1040 55%,#c070a0 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Oiran #3</span></div>
+      </div>
+      <div class="woman-card" data-target="brocade" role="button" tabindex="0" aria-label="Brocade #12" style="background:linear-gradient(155deg,#120804 0%,#6a3808 55%,#c89040 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 55% 45%,rgba(200,150,60,0.8) 0%,transparent 55%),linear-gradient(155deg,#120804 0%,#6a3808 55%,#c89040 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Brocade #12</span></div>
+      </div>
+      <div class="woman-card" data-target="indonesian" role="button" tabindex="0" aria-label="Indonesian Sari &amp; Rug" style="background:linear-gradient(155deg,#040c12 0%,#104858 55%,#3090a0 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 45% 50%,rgba(60,160,180,0.7) 0%,transparent 55%),linear-gradient(155deg,#040c12 0%,#104858 55%,#3090a0 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Indonesian Sari &amp; Rug</span></div>
+      </div>
+      <div class="woman-card" data-target="burmese" role="button" tabindex="0" aria-label="Burmese (Myanmar)" style="background:linear-gradient(155deg,#100408 0%,#602040 55%,#d08090 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 50% 45%,rgba(210,130,150,0.8) 0%,transparent 55%),linear-gradient(155deg,#100408 0%,#602040 55%,#d08090 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Burmese (Myanmar)</span></div>
+      </div>
+      <div class="woman-card" data-target="kimono-rug" role="button" tabindex="0" aria-label="Kimono On Rug" style="background:linear-gradient(155deg,#100408 0%,#601020 55%,#c03040 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 45% 50%,rgba(200,60,80,0.8) 0%,transparent 55%),linear-gradient(155deg,#100408 0%,#601020 55%,#c03040 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Kimono On Rug</span></div>
+      </div>
+      <div class="woman-card" data-target="peacock" role="button" tabindex="0" aria-label="Peacock Kimono" style="background:linear-gradient(155deg,#040c10 0%,#1a5040 55%,#308060 100%);">
+        <div class="wc-fill" style="background:radial-gradient(ellipse at 55% 45%,rgba(60,180,130,0.7) 0%,transparent 55%),linear-gradient(155deg,#040c10 0%,#1a5040 55%,#308060 100%);"></div>
+        <div class="wc-overlay"><span class="wc-name">Peacock Kimono</span></div>
+      </div>
+    </div>
+
+    <div class="section-intro">
+      <p>In 1979 I moved from Topanga Canyon to Woodland Hills, California. Upon my departure from Topanga Canyon, I lost touch with nature as I had known it for years. While living in Woodland Hills, I found myself drawn more towards painting nature as I experienced it indoors. The by-products of this period in my life were the Asian Ladies. From 1982 until 1991 I painted approximately one hundred sixty paintings of various robes, kimonos, drapes, rugs and other textiles. This period served as the precursor to my Women of Buddhism series. At the time, the Asian Ladies were a backdrop for the magnificent robes and kimonos I painted. Of course, in my latest series, the Women of Buddhism, the great ladies hold up the robes and kimonos instead of the other way around.</p>
+      <p>Soon into this period of Asian Ladies, I discovered that my love for designing and painting the robes and kimonos incorporated all of the same elements as those found in my love of painting nature. Instead of just painting trees, leaves, flowers, plants, rocks, bugs and other faces of nature, I painted them within the context of robes, kimonos, rugs and drapes. In the first painting, I adorned the obi of this <span class="text-link nav-link" data-page="oiran">Oiran</span> with ferns and leaves. The second painting reveals partridges, chrysanthemums and butterflies. The third painting shows an intricate <span class="text-link nav-link" data-page="indonesian">Indonesian</span> design of flowers and patterns. The fourth painting, featuring the <span class="text-link nav-link" data-page="burmese">Burmese Lady</span>, reveals flowers spread out in geometric designs. The fifth painting features a <span class="text-link nav-link" data-page="kimono-rug">kimono</span> adorned with flowers on top of a traditionally designed Chinese rug. The sixth painting features a <span class="text-link nav-link" data-page="peacock">Japanese Geisha</span> with peacocks, swallows, flowers, leaves and more flowers within peacock feathers. During my transition from the raw beauty of the outdoors to that of nature as I experienced it indoors, I discovered a new vehicle using my same beloved subjects.</p>
+    </div>
+
+    <footer class="page-footer" style="margin-top:3rem;">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ OIRAN #3 ══════════════════════════════════ -->
+  <section class="page" id="page-oiran">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Oiran #3</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Oiran.jpg" alt="Oiran #3 — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Oiran #3 &ndash; Obi In Front</p>
+        <p>Bakasan, 1986</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>This painting is of a Japanese Oiran. An Oiran is a very high priced "call-girl." In Japan, Courtesans wear the obi in front, as opposed to Geisha's (art girls) who wear their obi in back. To this day, Courtesans maintain a competitive, yet jealous relationship with Geishas who carry greater power and respect. This goal of this painting was to highlight the beauty of the obi. Most of this painting is monochromatic and flat, except the obi, which is meant to convey the illusion of three dimensions.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ BROCADE #12 ═══════════════════════════════ -->
+  <section class="page" id="page-brocade">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Brocade #12</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Brocade.jpg" alt="Brocade #12 — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Brocade #12</p>
+        <p>Bakasan, 1989</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>This painting also uses a monochromatic form to complement a fully three-dimensional brocade robe. The brocade design on the robe of this Japanese woman reveals partridges, chrysanthemums and butterflies. During a recent exhibition, many people walked up to this painting and touched it with the expectation of feeling a heavy brocaded textile.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ INDONESIAN SARI & RUG ══════════════════════ -->
+  <section class="page" id="page-indonesian">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Indonesian Sari &amp; Rug</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/IndonesianSari.jpg" alt="Indonesian Sari & Rug — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Indonesian Sari &amp; Rug</p>
+        <p>Bakasan, 1990</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>This painting illustrates an Indonesian Girl wearing an Indonesian sari (skirt) wrapped in a rug/futon. The designs demonstrate authentic Indonesian patterns and shapes. In the Philippine and Indonesian archipelago, textiles and their intricate weaves and designs still leave viewers stunned.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ BURMESE (MYANMAR) ══════════════════════════ -->
+  <section class="page" id="page-burmese">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Burmese (Myanmar)</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Burmese.jpg" alt="Burmese Lady — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Burmese Lady</p>
+        <p>Bakasan, 1984</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>The women of Burma (Myanmar) are renowned for their exquisite traditional dress, rich in geometric floral designs that reflect the country's long history of textile artistry. The longyi — the wrapped skirt worn by both men and women — is woven with intricate patterns of flowers, paisleys, and geometric motifs in vibrant jewel tones.</p>
+      <p>In this painting, Bakasan explores the formal beauty of Burmese dress through its elaborate surface patterning. The geometric floral designs that cover the woman's garments are rendered with the same careful attention to pattern and color that distinguishes Burmese weaving traditions, where each design carries cultural and regional significance.</p>
+      <p>The geometric vocabulary of Burmese textile design — diamonds, chevrons, and stylized blossoms repeated in rhythmic bands — creates a visual language that is both decorative and deeply meaningful, encoding identity, status, and regional origin into cloth.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ KIMONO ON RUG ══════════════════════════════ -->
+  <section class="page" id="page-kimono-rug">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Kimono On Rug</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/kimono.jpg" alt="Kimono on Rug — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Kimono on Rug &mdash; Chinese Woman</p>
+        <p>Bakasan, 1989</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>In this painting, a young Chinese woman sits on her flowered kimono, which rests on top of a rug. In many Asian countries, thick heavy textiles like this rug also serve as blankets to wrap around oneself on a cold night.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ PEACOCK KIMONO ════════════════════════════ -->
+  <section class="page" id="page-peacock">
+    <div class="page-header">
+      <div class="page-kicker">Asian Ladies</div>
+      <h1>Peacock Kimono</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Peacock.jpg" alt="Peacock Kimono — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Peacock Kimono &mdash; Japanese Geisha</p>
+        <p>Bakasan</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>Literally translated, Geisha means &ldquo;art girl.&rdquo; A common misconception about Geishas is that they are used solely for sexual gratification. Actually, Geishas are far more than just sexual beings; they are usually highly intelligent, sophisticated women and one of the focal points of Japanese high culture.</p>
+      <p>This painting illustrates the Japanese Geisha, who wears her obi in the back of her kimono, as opposed to the Courtesan, who wears it in the front of her kimono. On the Geisha&rsquo;s obi, flowers spring forth in celebrated sophistication. She holds a fan over her face, feigning shyness. On her kimono, the peacock is symbolically portrayed for its splendor and purity.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ FRAGMENTS OF NATURE ═══════════════════════ -->
+  <section class="page" id="page-nature">
+    <div class="page-header">
+      <div class="page-kicker">The Collection</div>
+      <h1>Fragments of Nature</h1>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif; font-weight:400; font-style:italic; font-size:1.3rem; color:var(--text-muted); margin-top:0.3rem;">From Topanga Canyon</h2>
+      <div class="page-rule"></div>
+    </div>
+    <div class="iconography-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:2.5rem;">
+      <div class="woman-card" data-target="topanga46" role="button" tabindex="0" aria-label="Topanga #46" style="background:linear-gradient(155deg,#0a0f08 0%,#2a4018 55%,#4a6828 100%);">
+        <div class="card-overlay"><span class="card-title">Topanga #46</span></div>
+      </div>
+      <div class="woman-card" data-target="forest" role="button" tabindex="0" aria-label="Forest for the Leaves" style="background:linear-gradient(155deg,#050c08 0%,#183020 55%,#305840 100%);">
+        <div class="card-overlay"><span class="card-title">Forest for the Leaves</span></div>
+      </div>
+      <div class="woman-card" data-target="topanga103" role="button" tabindex="0" aria-label="Topanga #103" style="background:linear-gradient(155deg,#100808 0%,#502010 55%,#904030 100%);">
+        <div class="card-overlay"><span class="card-title">Topanga #103</span></div>
+      </div>
+      <div class="woman-card" data-target="topanga147" role="button" tabindex="0" aria-label="Topanga #147" style="background:linear-gradient(155deg,#080a10 0%,#202848 55%,#405088 100%);">
+        <div class="card-overlay"><span class="card-title">Topanga #147</span></div>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>When I moved to Topanga Canyon in 1960, I re-discovered nature. During this time, the totality and unity of nature within itself appeared to me in the simplest of ways. Each day as I stepped into the Canyon, I saw a new face in each <em>fragment of nature</em>. I saw singularity in each object. Instead of seeing a hillside of trees or thousands of leaves or bunches of wildflowers, I saw just a Walnut tree or a Sycamore leaf or a Humboldt Lily (Leopard Lily).</p>
+      <p>Instead of representing many faces of nature in each painting, I focused intimately on small fragments. In these paintings, I rarely used a light source. In fact, ideally, the fragment itself acts as the foci. Furthermore, I rarely integrated the sky into the painting. I attempted to create paintings where relativity or frames of reference would be impossible. In the end, the theme of these paintings was to listen to the <em>fragments of nature</em> as if listening for the echo of the forest in the falling leaf. Through each fragment, I was able to see the totality of the Universe in a drop of dew or a withered leaf.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ TOPANGA #46 ════════════════════════════════ -->
+  <section class="page" id="page-topanga46">
+    <div class="page-header">
+      <div class="page-kicker">Fragments of Nature</div>
+      <h1>Topanga #46</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/treesandroots.jpg" alt="Topanga #46: Trees & Roots — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Topanga #46 &mdash; Trees &amp; Roots</p>
+        <p>Bakasan, 1982</p>
+        <p>Acrylic on Masonite</p>
+        <p>30&Prime; &times; 40&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>This painting demonstrates the results of the floods of 1982 in Southern California. This powerful tree was easily unearthed by the torrents of water that came tumbling down the hillsides of Topanga Canyon that winter. Such power brings to mind a favorite Buddhist saying of mine, &ldquo;Foregoing the self, the Universe grows I.&rdquo;</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ FOREST FOR THE LEAVES ══════════════════════ -->
+  <section class="page" id="page-forest">
+    <div class="page-header">
+      <div class="page-kicker">Fragments of Nature</div>
+      <h1>Forest for the Leaves</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/forest.jpg" alt="Forest for the Leaves — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Forest for the Leaves</p>
+        <p>Bakasan, 1992</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>The theme of this painting (and a series of fifteen other paintings) relates to the following short poem: &ldquo;Some have seen a Universe in a drop of dew, but old Baka sees a forest in a withered leaf.&rdquo; In this series of paintings, I painted entire forests within the leaves of my paintings.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ TOPANGA #103 ═══════════════════════════════ -->
+  <section class="page" id="page-topanga103">
+    <div class="page-header">
+      <div class="page-kicker">Fragments of Nature</div>
+      <h1>Topanga #103</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/lumbini.jpg" alt="Topanga #103: Lumbini in Topanga — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Topanga #103 &mdash; Lumbini in Topanga</p>
+        <p>Bakasan, 1984</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 36&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <p>This surrealistic-colored fragment of nature is meant to evoke the moment of enlightenment as it appears in Topanga Canyon. I created this painting from the theme, &ldquo;I am the forest seeing itself.&rdquo; The painting frames a spot in the Canyon where I was able to sit and meditate for years.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ TOPANGA #147 ═══════════════════════════════ -->
+  <section class="page" id="page-topanga147">
+    <div class="page-header">
+      <div class="page-kicker">Fragments of Nature</div>
+      <h1>Topanga #147</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="artwork-intro">
+      <div class="artwork-frame">
+        <img src="images/Debussy.jpg" alt="Topanga #147: Debussy — Bakasan" class="artwork-img">
+      </div>
+      <div class="artwork-caption">
+        <p class="caption-title">Topanga #147 &mdash; Debussy</p>
+        <p>Bakasan, 1983</p>
+        <p>Acrylic on Canvas</p>
+        <p>24&Prime; &times; 30&Prime;</p>
+        <p style="margin-top:0.6rem; font-size:0.78rem; color:var(--text-light);">All Copyrights Reserved</p>
+      </div>
+    </div>
+    <div class="page-body">
+      <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-weight:400; font-style:italic; font-size:1.1rem; color:var(--text-muted); margin-bottom:1rem;">Topanga Canyon &mdash; Debussy: an Interpretation</h3>
+      <p>This painting is the centerpiece of a series of ten paintings brought to life by the music of Claude Debussy. From my first exposure to his music, I have enjoyed the impressionistic sounds of his work. In 1983, I set to work on translating his music as it would appear if it were a visual medium. First, I created the mood with blushes of color as if they were a series of notes played by a symphony. Visually, this was meant to evoke the light temporal resonance heard in his music. Then I used leafless branches of scrub trees as an interpretation of the airy staccato bursts also easily identified in Debussy&rsquo;s pieces. Last, I heavily relied on the use of negative space and shadow to provide the three-dimensional fullness heard in his unique tone poems.</p>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ CONTACTS & PURCHASING ═════════════════════ -->
+  <section class="page" id="page-contact">
+    <div class="page-header">
+      <div class="page-kicker">Get in Touch</div>
+      <h1>Contacts and Opportunities</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="page-body">
+      <p>Bakasan welcomes inquiries from galleries, Buddhist temples, academic institutions, and cultural organizations interested in exhibitions, artist talks, or collaborative projects centered on Buddhist art and the <em>Women of Buddhism</em> series.</p>
+      <ol style="padding-left:1.4rem; display:flex; flex-direction:column; gap:2rem; margin-top:2rem;">
+        <li>
+          <p style="font-weight:600; margin-bottom:0.9rem;">To Purchase a Painting or Limited Edition Print, Please Contact:</p>
+          <address style="font-style:normal; line-height:1.9;">
+            Jebb Dykstra<br>
+            3019 Ocean Park Boulevard, #193<br>
+            Santa Monica, California 90405<br>
+            <a href="tel:6505395005" style="color:var(--accent); text-decoration:none;">650-539-5005</a><br>
+            <a href="mailto:jebb@techsectorlaw.com" style="color:var(--accent); text-decoration:none;">jebb@techsectorlaw.com</a>
+          </address>
+        </li>
+      </ol>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+  <!-- ══ YOUR THOUGHTS ════════════════════════════ -->
+  <section class="page" id="page-thoughts">
+    <div class="page-header">
+      <div class="page-kicker">Connect</div>
+      <h1>Your Thoughts and Comments</h1>
+      <div class="page-rule"></div>
+    </div>
+    <div class="page-body">
+      <ol style="padding-left:1.4rem; display:flex; flex-direction:column; gap:1.2rem;">
+        <li>
+          <strong>Thoughts/Comments:</strong> If you have general thoughts or comments about the paintings, the Buddhist women, the Buddhist icons, the textiles or me (the artist), please feel free to register below and share them in the discussion.
+        </li>
+        <li>
+          <strong>Research Department:</strong> If you seek additional information or stories on the <em>Women of Buddhism</em>, the <em>Buddhist Iconographic</em> series or Buddhism in general, please contact me at <a href="mailto:jebb@techsectorlaw.com" style="color:var(--accent);">jebb@techsectorlaw.com</a>.
+        </li>
+        <li>
+          If you have additional questions about the paintings, the stories or me, please send me an email at <a href="mailto:jebb@techsectorlaw.com" style="color:var(--accent);">jebb@techsectorlaw.com</a>.
+        </li>
+      </ol>
+    </div>
+    <footer class="page-footer">All contents copyright &copy; 1997&ndash;99 Bakasan. All rights reserved.</footer>
+  </section>
+
+</main>
+
+<script>
+  const sidebar  = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger');
+  const subnavCollection  = document.getElementById('subnav-collection');
+  const subnavWomen       = document.getElementById('subnav-women');
+  const subnavIconography = document.getElementById('subnav-iconography');
+  const subnavAsian       = document.getElementById('subnav-asian-ladies');
+  const subnavNature      = document.getElementById('subnav-nature');
+
+  const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147']);
+  const inWomen       = new Set(['women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam']);
+  const inIconography = new Set(['iconography','green-tara','black-tara','kuan-yin','kannon','amida']);
+  const inAsian       = new Set(['asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock']);
+  const inNature      = new Set(['nature','topanga46','forest','topanga103','topanga147']);
+
+  // ── Section classification ────────────────────────────
+  const MAIN_SECTIONS   = ['home','introduction','collection','women','iconography',
+                           'asian-ladies','nature','statement','biography','contact','thoughts'];
+  const DETAIL_SECTIONS = ['murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam',
+                           'green-tara','black-tara','kuan-yin','kannon','amida',
+                           'oiran','brocade','indonesian','burmese','kimono-rug','peacock',
+                           'topanga46','forest','topanga103','topanga147'];
+
+  // Find which gallery section a detail page belongs to
+  function detailParent(id) {
+    if (inWomen.has(id))       return 'women';
+    if (inIconography.has(id)) return 'iconography';
+    if (inAsian.has(id))       return 'asian-ladies';
+    if (inNature.has(id))      return 'nature';
+    return 'collection';
+  }
+
+  // ── Nav highlight helper ──────────────────────────────
+  function highlightNav(id) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('[data-page="' + id + '"]').forEach(l => l.classList.add('active'));
+    subnavCollection.classList.toggle('open',  inCollection.has(id));
+    subnavWomen.classList.toggle('open',       inWomen.has(id));
+    subnavIconography.classList.toggle('open', inIconography.has(id));
+    subnavAsian.classList.toggle('open',       inAsian.has(id));
+    subnavNature.classList.toggle('open',      inNature.has(id));
+  }
+
+  // ── showPage: scroll for main sections, overlay for detail pages ──
+  function showPage(id) {
+    if (MAIN_SECTIONS.includes(id)) {
+      // Close any open detail overlay first
+      document.querySelectorAll('.page.detail-page.active')
+              .forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      highlightNav(id);
+    } else {
+      // Detail overlay
+      document.querySelectorAll('.page.detail-page.active')
+              .forEach(p => p.classList.remove('active'));
+      const page = document.getElementById('page-' + id);
+      if (page) {
+        page.classList.add('active');
+        page.scrollTop = 0;
+        highlightNav(id);
+      }
+    }
+    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+  }
+
+  document.addEventListener('click', e => {
+    // Nav links and inline text-links
+    const link = e.target.closest('[data-page]');
+    if (link && link.dataset.page) {
+      e.preventDefault();
+      showPage(link.dataset.page);
+      return;
+    }
+    // Any card with data-target (home, women gallery, iconography gallery)
+    const card = e.target.closest('[data-target]');
+    if (card && card.dataset.target) { showPage(card.dataset.target); return; }
+    // Close nav on mobile overlay / outside click
+    if (window.innerWidth <= 768 && !document.body.classList.contains('nav-collapsed')
+        && !sidebar.contains(e.target) && e.target !== hamburger) {
+      document.body.classList.add('nav-collapsed');
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const card = e.target.closest('[data-target]');
+      if (card) showPage(card.dataset.target);
+    }
+  });
+
+  // Toggle sidebar on all screen sizes
+  hamburger.addEventListener('click', () => document.body.classList.toggle('nav-collapsed'));
+
+  // Start with nav collapsed on mobile
+  if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+
+  // ── Scrolling layout setup ────────────────────────────
+  (function() {
+    const mainEl = document.querySelector('.main');
+
+    // 1. Classify sections
+    MAIN_SECTIONS.forEach(id => {
+      const el = document.getElementById('page-' + id);
+      if (el) el.classList.add('main-section');
+    });
+    DETAIL_SECTIONS.forEach(id => {
+      const el = document.getElementById('page-' + id);
+      if (el) el.classList.add('detail-page');
+    });
+
+    // 2. Reorder main sections in DOM to match nav order
+    MAIN_SECTIONS.forEach(id => {
+      const el = document.getElementById('page-' + id);
+      if (el) mainEl.appendChild(el);
+    });
+
+    // 3. Add sticky back button to every detail page
+    DETAIL_SECTIONS.forEach(id => {
+      const el = document.getElementById('page-' + id);
+      if (!el) return;
+      const btn = document.createElement('button');
+      btn.className = 'detail-back-btn';
+      btn.innerHTML =
+        '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+        + '</svg> Back to Collection';
+      btn.addEventListener('click', () => {
+        el.classList.remove('active');
+        const parent = detailParent(id);
+        const parentEl = document.getElementById('page-' + parent);
+        if (parentEl) parentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        highlightNav(parent);
+      });
+      el.insertBefore(btn, el.firstChild);
+    });
+
+    // 4. Scroll-spy: highlight nav as user scrolls through main sections
+    const spyObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Don't update nav while a detail overlay is open
+          if (document.querySelector('.page.detail-page.active')) return;
+          const id = entry.target.id.replace('page-', '');
+          highlightNav(id);
+        }
+      });
+    }, {
+      rootMargin: '-5% 0px -85% 0px',  // fires when section top enters top 15% of viewport
+      threshold: 0
+    });
+
+    MAIN_SECTIONS.forEach(id => {
+      const el = document.getElementById('page-' + id);
+      if (el) spyObserver.observe(el);
+    });
+
+    // 5. Highlight "Home" on initial load
+    highlightNav('home');
+  })();
+
+  // ── Home collection card rotation ────────────────────
+  // All 23 paintings in one pool. Guarantees no image appears
+  // in more than one of the 4 panels simultaneously.
+  (function() {
+    const ALL = [
+      'murasaki.png','okoi.jpg','Niijo.jpg','NunRengetsu.jpg',
+      'Mahapajapati.jpg','Princess_Nukada.jpg','Tibetan_Celestial_Dancer.jpg','Siam_Temple_Dancer.jpg',
+      'GreenTara.jpg','BlackTara.png','Kuan-Yin.jpg','Kannon.jpg','AmidaBuddah.jpg',
+      'Oiran.jpg','Brocade.jpg','IndonesianSari.jpg','Burmese.jpg','kimono.jpg','Peacock.jpg',
+      'treesandroots.jpg','forest.jpg','lumbini.jpg','Debussy.jpg',
+    ];
+
+    const CARD_IDS = ['asian-ladies','iconography'];
+    const INTERVAL = 7000;   // ms between swaps
+    const FADE_MS  = 1100;   // crossfade duration
+
+    // Which file each panel is currently displaying (index → filename)
+    const showing = {};
+
+    function shownFiles() { return new Set(Object.values(showing)); }
+
+    function pickNext(panelIdx) {
+      const exclude = shownFiles();
+      exclude.delete(showing[panelIdx]); // allow replacing own current image
+      const pool = ALL.filter(f => !exclude.has(f));
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function rotatePanelCard(card, panelIdx) {
+      let imgFront = card.querySelector('.card-thumb');
+      let imgBack  = card.querySelector('.card-thumb-b');
+      if (!imgFront) return;
+
+      const next = pickNext(panelIdx);
+      showing[panelIdx] = next;
+
+      // Create back layer on first rotation
+      if (!imgBack) {
+        imgBack = document.createElement('img');
+        imgBack.className = 'card-thumb-b';
+        imgBack.alt = '';
+        imgBack.style.cssText = imgFront.style.cssText;
+        card.insertBefore(imgBack, imgFront);
+      }
+
+      // Load next image into back layer, then crossfade
+      imgBack.onload = () => {
+        imgFront.style.opacity = '0';
+        imgBack.style.opacity  = '1';
+        // After fade: sync front to match back, reset layers
+        setTimeout(() => {
+          imgFront.src     = imgBack.src;
+          imgFront.style.opacity = '1';
+          imgBack.style.opacity  = '0';
+        }, FADE_MS + 50);
+      };
+      imgBack.onerror = () => {};  // skip broken images silently
+      imgBack.src = 'images/' + next;
+    }
+
+    // Wire up each card with staggered start times
+    CARD_IDS.forEach((id, idx) => {
+      const card = document.querySelector(`[data-target="${id}"]`);
+      if (!card) return;
+
+      // Seed showing[] from whatever the thumbnail injector already placed
+      const existing = card.querySelector('.card-thumb');
+      if (existing) {
+        // img.src is a full URL; grab just the filename
+        existing.addEventListener('load', () => {
+          showing[idx] = existing.src.split('/').pop();
+        }, { once: true });
+        if (existing.complete && existing.src) {
+          showing[idx] = existing.src.split('/').pop();
+        }
+        // Add transition to front layer
+        existing.style.transition = `opacity ${FADE_MS}ms ease-in-out`;
+      }
+
+      // Stagger: panels swap at offset intervals so they never all change at once
+      setTimeout(() => {
+        rotatePanelCard(card, idx);
+        setInterval(() => rotatePanelCard(card, idx), INTERVAL);
+      }, idx * (INTERVAL / CARD_IDS.length));  // 0s, 3.5s
+    });
+  })();
+
+  // ── Collection page rotating showcase ────────────────
+  (function() {
+    const GROUPS = [
+      { name: 'Women of Buddhism', pageId: 'women', paintings: [
+        { id: 'murasaki',   file: 'murasaki.png',                 title: 'Lady Murasaki Shikibu' },
+        { id: 'okoi',       file: 'okoi.jpg',                     title: 'Okoi (The Geisha)' },
+        { id: 'niijo',      file: 'Niijo.jpg',                    title: 'Lady Niijo' },
+        { id: 'rengetsu',   file: 'NunRengetsu.jpg',              title: 'Nun Rengetsu' },
+        { id: 'gotami',     file: 'Mahapajapati.jpg',             title: 'Mahaprajapati Gotami' },
+        { id: 'nukada',     file: 'Princess_Nukada.jpg',          title: 'Princess Nukada' },
+        { id: 'tibetan',    file: 'Tibetan_Celestial_Dancer.jpg', title: 'Tibetan Celestial Dancer' },
+        { id: 'siam',       file: 'Siam_Temple_Dancer.jpg',       title: 'Siam Temple Dancer' },
+      ]},
+      { name: 'Buddhist Iconography', pageId: 'iconography', paintings: [
+        { id: 'green-tara', file: 'GreenTara.jpg',    title: 'Green Tara' },
+        { id: 'black-tara', file: 'BlackTara.png',    title: 'Black Tara' },
+        { id: 'kuan-yin',   file: 'Kuan-Yin.jpg',    title: 'Kuan Yin' },
+        { id: 'kannon',     file: 'Kannon.jpg',       title: 'Kannon' },
+        { id: 'amida',      file: 'AmidaBuddah.jpg',  title: 'Amida Buddha' },
+      ]},
+      { name: 'Asian Ladies', pageId: 'asian-ladies', paintings: [
+        { id: 'oiran',      file: 'Oiran.jpg',         title: 'Oiran #3' },
+        { id: 'brocade',    file: 'Brocade.jpg',       title: 'Brocade #12' },
+        { id: 'indonesian', file: 'IndonesianSari.jpg',title: 'Indonesian Sari & Rug' },
+        { id: 'burmese',    file: 'Burmese.jpg',       title: 'Burmese Lady' },
+        { id: 'kimono-rug', file: 'kimono.jpg',        title: 'Kimono on Rug' },
+        { id: 'peacock',    file: 'Peacock.jpg',       title: 'Peacock Kimono' },
+      ]},
+      { name: 'Fragments of Nature', pageId: 'nature', paintings: [
+        { id: 'topanga46',  file: 'treesandroots.jpg', title: 'Topanga #46 — Trees & Roots' },
+        { id: 'forest',     file: 'forest.jpg',        title: 'Forest for the Leaves' },
+        { id: 'topanga103', file: 'lumbini.jpg',        title: 'Topanga #103 — Lumbini' },
+        { id: 'topanga147', file: 'Debussy.jpg',        title: 'Topanga #147 — Debussy' },
+      ]},
+    ];
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    const container = document.getElementById('collection-showcase');
+    if (!container) return;
+
+    // Shuffle groups, assign one random painting from each of the first 3 groups
+    const groupOrder = [...GROUPS].sort(() => Math.random() - 0.5);
+    const state = [];  // { panel, group, painting }
+
+    for (let i = 0; i < 3; i++) {
+      const group   = groupOrder[i];
+      const painting = pick(group.paintings);
+
+      const panel = document.createElement('div');
+      panel.className = 'showcase-panel';
+      panel.innerHTML = `
+        <img class="showcase-img" src="images/${painting.file}" alt="${painting.title}">
+        <div class="showcase-label">
+          <div class="showcase-group-name">${group.name}</div>
+          <div class="showcase-title">${painting.title}</div>
+          <div class="showcase-hint">View painting ›</div>
+        </div>`;
+      container.appendChild(panel);
+
+      const entry = { panel, group, painting };
+      state.push(entry);
+      panel.addEventListener('click', () => showPage(entry.painting.id));
+    }
+
+    // Every 4 s: rotate one random panel to a new painting from a DIFFERENT group
+    setInterval(() => {
+      const idx      = Math.floor(Math.random() * state.length);
+      const entry    = state[idx];
+      const img      = entry.panel.querySelector('.showcase-img');
+      const gLabel   = entry.panel.querySelector('.showcase-group-name');
+      const tLabel   = entry.panel.querySelector('.showcase-title');
+
+      // Pick a group not currently shown in this panel
+      const usedGroups = state.map(s => s.group.name);
+      const candidates = GROUPS.filter(g => g.name !== usedGroups[idx]);
+      const newGroup   = pick(candidates);
+      const newPainting = pick(newGroup.paintings);
+
+      // Crossfade
+      img.style.opacity = '0';
+      setTimeout(() => {
+        img.src             = `images/${newPainting.file}`;
+        img.alt             = newPainting.title;
+        gLabel.textContent  = newGroup.name;
+        tLabel.textContent  = newPainting.title;
+        entry.group         = newGroup;
+        entry.painting      = newPainting;
+        img.style.opacity   = '1';
+      }, 900);
+    }, 7000);
+  })();
+
+  // ── Gallery thumbnail injector ────────────────────────
+  // Non-standard filenames for individual paintings
+  const thumbFileMap = {
+    'murasaki':   'murasaki.png',
+    'rengetsu':   'NunRengetsu.jpg',
+    'niijo':      'Niijo.jpg',
+    'gotami':     'Mahapajapati.jpg',
+    'nukada':     'Princess_Nukada.jpg',
+    'tibetan':    'Tibetan_Celestial_Dancer.jpg',
+    'siam':       'Siam_Temple_Dancer.jpg',
+    'green-tara': 'GreenTara.jpg',
+    'black-tara': 'BlackTara.png',
+    'kuan-yin':   'Kuan-Yin.jpg',
+    'kannon':     'Kannon.jpg',
+    'amida':      'AmidaBuddah.jpg',
+    'oiran':      'Oiran.jpg',
+    'brocade':    'Brocade.jpg',
+    'indonesian': 'IndonesianSari.jpg',
+    'burmese':    'Burmese.jpg',
+    'kimono-rug': 'kimono.jpg',
+    'peacock':    'Peacock.jpg',
+    'topanga46':  'treesandroots.jpg',
+    'topanga103': 'lumbini.jpg',
+    'topanga147': 'Debussy.jpg',
+  };
+  // Collection landing cards → use a representative painting as the thumbnail
+  const collectionRepMap = {
+    'women':       'murasaki.png',
+    'iconography': 'GreenTara.jpg',
+    'asian-ladies':'Peacock.jpg',
+    'nature':      'lumbini.jpg',
+  };
+  // Skip only the top-level collection index card
+  const skipIds = new Set(['collection']);
+
+  document.querySelectorAll('[data-target]').forEach(card => {
+    const id = card.dataset.target;
+    if (skipIds.has(id)) return;
+
+    // Resolve the image src
+    const src = 'images/' + (
+      collectionRepMap[id] ||   // collection landing card
+      thumbFileMap[id]      ||  // non-standard individual filename
+      id + '.jpg'               // standard: page-id.jpg
+    );
+
+    const overlay = card.querySelector('.wc-overlay, .ic-overlay, .card-overlay');
+
+    const img = document.createElement('img');
+    img.className = 'card-thumb';
+    img.alt = '';
+    img.onerror = () => img.remove();   // fall back to gradient if image missing
+    img.src = src;
+
+    if (overlay) card.insertBefore(img, overlay);
+    else card.appendChild(img);
+  });
+
+  // ── Comment System ────────────────────────────────────
+  const CS = {
+    getUsers()         { return JSON.parse(localStorage.getItem('baka_users')        || '[]');   },
+    saveUsers(u)       { localStorage.setItem('baka_users', JSON.stringify(u));                  },
+    getCurrentUser()   { return JSON.parse(localStorage.getItem('baka_current_user') || 'null'); },
+    saveCurrentUser(u) { localStorage.setItem('baka_current_user', JSON.stringify(u));           },
+    getComments(pid)   { return JSON.parse(localStorage.getItem('baka_cmt_' + pid)   || '[]');   },
+    saveComments(pid,c){ localStorage.setItem('baka_cmt_' + pid, JSON.stringify(c));             },
+
+    register(username, email, password) {
+      username = username.trim(); email = email.trim().toLowerCase();
+      if (!username || !email || !password) return { error: 'All fields are required.' };
+      const users = this.getUsers();
+      if (users.find(u => u.email === email))    return { error: 'Email already registered.' };
+      if (users.find(u => u.username === username)) return { error: 'Username already taken.' };
+      const user = { id: Date.now() + Math.random().toString(36).slice(2), username, email, password };
+      users.push(user);
+      this.saveUsers(users);
+      const session = { id: user.id, username, email };
+      this.saveCurrentUser(session);
+      return { user: session };
+    },
+
+    login(email, password) {
+      email = email.trim().toLowerCase();
+      const user = this.getUsers().find(u => u.email === email && u.password === password);
+      if (!user) return { error: 'Invalid email or password.' };
+      const session = { id: user.id, username: user.username, email: user.email };
+      this.saveCurrentUser(session);
+      return { user: session };
+    },
+
+    logout() { this.saveCurrentUser(null); },
+
+    addComment(pageId, text, parentId) {
+      const user = this.getCurrentUser();
+      if (!user || !text.trim()) return null;
+      const c = {
+        id: Date.now() + Math.random().toString(36).slice(2),
+        userId: user.id, username: user.username,
+        text: text.trim(), timestamp: Date.now(),
+        parentId: parentId || null
+      };
+      const all = this.getComments(pageId);
+      all.push(c);
+      this.saveComments(pageId, all);
+      return c;
+    },
+
+    deleteComment(pageId, commentId) {
+      const user = this.getCurrentUser();
+      if (!user) return;
+      const all = this.getComments(pageId).map(c =>
+        (c.id === commentId && c.userId === user.id)
+          ? { ...c, deleted: true, text: '[comment deleted]' } : c
+      );
+      this.saveComments(pageId, all);
+    },
+
+    fmtTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+        + ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+    },
+
+    renderComment(c, pageId, depth) {
+      const user = this.getCurrentUser();
+      const canDel = user && user.id === c.userId && !c.deleted;
+      const replies = depth === 0
+        ? this.getComments(pageId).filter(r => r.parentId === c.id)
+            .map(r => this.renderComment(r, pageId, 1)).join('') : '';
+      return `
+        <div class="comment-item${depth ? ' is-reply' : ''}" data-cid="${c.id}">
+          <div class="comment-meta">
+            <span class="comment-author">${c.username}</span>
+            <span class="comment-time">${this.fmtTime(c.timestamp)}</span>
+          </div>
+          <div class="comment-text">${c.text.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
+          <div class="comment-actions">
+            ${!depth && user && !c.deleted ? `<button class="btn-cmt btn-reply-toggle" data-cid="${c.id}">Reply</button>` : ''}
+            ${canDel ? `<button class="btn-cmt btn-del" data-pid="${pageId}" data-cid="${c.id}">Delete</button>` : ''}
+          </div>
+          ${!depth ? `<div class="reply-form" id="rf-${c.id}">
+            <textarea placeholder="Write a reply…" rows="2"></textarea>
+            <div class="reply-form-actions">
+              <button class="btn-reply-submit" data-pid="${pageId}" data-parent="${c.id}">Post Reply</button>
+              <button class="btn-reply-cancel" data-cid="${c.id}">Cancel</button>
+            </div>
+          </div>` : ''}
+          ${replies ? `<div class="replies-list">${replies}</div>` : ''}
+        </div>`;
+    },
+
+    renderSection(pageId) {
+      const user = this.getCurrentUser();
+      const top  = this.getComments(pageId).filter(c => !c.parentId);
+      const list = top.length
+        ? top.map(c => this.renderComment(c, pageId, 0)).join('')
+        : '<div class="no-comments">No comments yet — be the first to share your thoughts.</div>';
+      return `<div class="comment-section" data-pid="${pageId}">
+        <h3 class="comment-section-title">Discussion</h3>
+        <div class="auth-bar">
+          ${user
+            ? `<span>Signed in as <span class="auth-username">${user.username}</span></span>
+               <span class="auth-bar-spacer"></span>
+               <button class="btn-cmt btn-logout">Sign Out</button>`
+            : `<span style="color:var(--text-muted)">Register or sign in to join the discussion.</span>
+               <span class="auth-bar-spacer"></span>
+               <button class="btn-cmt btn-open-auth" style="color:var(--accent);font-size:0.85rem;" data-mode="register">Register</button>
+               <button class="btn-cmt btn-open-auth" style="color:var(--accent);font-size:0.85rem;" data-mode="login">Sign In</button>`}
+        </div>
+        ${user ? `<div class="comment-new-form">
+          <textarea placeholder="Share your thoughts…" rows="3"></textarea>
+          <button class="btn-post-comment" data-pid="${pageId}">Post Comment</button>
+        </div>` : ''}
+        <div class="comments-list">${list}</div>
+      </div>`;
+    },
+
+    refresh(pageId) {
+      const old = document.querySelector(`.comment-section[data-pid="${pageId}"]`);
+      if (!old) return;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = this.renderSection(pageId);
+      old.replaceWith(tmp.firstElementChild);
+    },
+
+    refreshAll() {
+      document.querySelectorAll('.comment-section[data-pid]').forEach(s => this.refresh(s.dataset.pid));
+    },
+
+    openAuth(mode) {
+      const ov = document.getElementById('cs-auth-overlay');
+      ov.classList.add('open');
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === mode));
+      document.getElementById('cs-panel-login').style.display    = mode === 'login'    ? '' : 'none';
+      document.getElementById('cs-panel-register').style.display = mode === 'register' ? '' : 'none';
+      document.getElementById('cs-login-err').classList.remove('show');
+      document.getElementById('cs-reg-err').classList.remove('show');
+    },
+    closeAuth() { document.getElementById('cs-auth-overlay').classList.remove('open'); },
+
+    init() {
+      // Auth modal
+      const ov = document.createElement('div');
+      ov.className = 'auth-overlay'; ov.id = 'cs-auth-overlay';
+      ov.innerHTML = `<div class="auth-modal">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="register">Register</button>
+          <button class="auth-tab" data-tab="login">Sign In</button>
+        </div>
+        <div id="cs-panel-register">
+          <div class="auth-field"><label>Username</label><input id="cs-reg-user" autocomplete="username"></div>
+          <div class="auth-field"><label>Email</label><input type="email" id="cs-reg-email" autocomplete="email"></div>
+          <div class="auth-field"><label>Password</label><input type="password" id="cs-reg-pass" autocomplete="new-password"></div>
+          <div class="auth-error" id="cs-reg-err"></div>
+          <div class="auth-modal-actions">
+            <button class="btn-auth-cancel" id="cs-cancel">Cancel</button>
+            <button class="btn-auth-submit" id="cs-reg-submit">Create Account</button>
+          </div>
+        </div>
+        <div id="cs-panel-login" style="display:none">
+          <div class="auth-field"><label>Email</label><input type="email" id="cs-login-email" autocomplete="email"></div>
+          <div class="auth-field"><label>Password</label><input type="password" id="cs-login-pass" autocomplete="current-password"></div>
+          <div class="auth-error" id="cs-login-err"></div>
+          <div class="auth-modal-actions">
+            <button class="btn-auth-cancel" id="cs-cancel2">Cancel</button>
+            <button class="btn-auth-submit" id="cs-login-submit">Sign In</button>
+          </div>
+        </div>
+      </div>`;
+      document.body.appendChild(ov);
+
+      // Inject the comment/discussion section only on the Conversation page
+      const thoughtsPage = document.getElementById('page-thoughts');
+      if (thoughtsPage) {
+        const footer = thoughtsPage.querySelector('.page-footer');
+        const tmp    = document.createElement('div');
+        tmp.innerHTML = this.renderSection('thoughts');
+        footer ? thoughtsPage.insertBefore(tmp.firstElementChild, footer) : thoughtsPage.appendChild(tmp.firstElementChild);
+      }
+
+      // Delegation
+      document.addEventListener('click', e => {
+        // Auth tabs
+        const tab = e.target.closest('.auth-tab');
+        if (tab) {
+          document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t === tab));
+          document.getElementById('cs-panel-register').style.display = tab.dataset.tab === 'register' ? '' : 'none';
+          document.getElementById('cs-panel-login').style.display    = tab.dataset.tab === 'login'    ? '' : 'none';
+          return;
+        }
+        if (e.target.id === 'cs-cancel' || e.target.id === 'cs-cancel2') { this.closeAuth(); return; }
+        if (e.target === ov) { this.closeAuth(); return; }
+
+        // Open auth
+        const openBtn = e.target.closest('.btn-open-auth');
+        if (openBtn) { this.openAuth(openBtn.dataset.mode || 'register'); return; }
+
+        // Register
+        if (e.target.id === 'cs-reg-submit') {
+          const r = this.register(
+            document.getElementById('cs-reg-user').value,
+            document.getElementById('cs-reg-email').value,
+            document.getElementById('cs-reg-pass').value
+          );
+          if (r.error) { const el=document.getElementById('cs-reg-err'); el.textContent=r.error; el.classList.add('show'); }
+          else { this.closeAuth(); this.refreshAll(); }
+          return;
+        }
+        // Login
+        if (e.target.id === 'cs-login-submit') {
+          const r = this.login(
+            document.getElementById('cs-login-email').value,
+            document.getElementById('cs-login-pass').value
+          );
+          if (r.error) { const el=document.getElementById('cs-login-err'); el.textContent=r.error; el.classList.add('show'); }
+          else { this.closeAuth(); this.refreshAll(); }
+          return;
+        }
+        // Logout
+        if (e.target.closest('.btn-logout')) { this.logout(); this.refreshAll(); return; }
+
+        // Post comment
+        const postBtn = e.target.closest('.btn-post-comment');
+        if (postBtn) {
+          const pid = postBtn.dataset.pid;
+          const sec = document.querySelector(`.comment-section[data-pid="${pid}"]`);
+          const ta  = sec && sec.querySelector('.comment-new-form textarea');
+          if (ta && ta.value.trim()) { this.addComment(pid, ta.value); this.refresh(pid); }
+          return;
+        }
+        // Reply toggle
+        const rToggle = e.target.closest('.btn-reply-toggle');
+        if (rToggle) {
+          const rf = document.getElementById('rf-' + rToggle.dataset.cid);
+          if (rf) rf.classList.toggle('open');
+          return;
+        }
+        // Reply cancel
+        const rCancel = e.target.closest('.btn-reply-cancel');
+        if (rCancel) {
+          const rf = document.getElementById('rf-' + rCancel.dataset.cid);
+          if (rf) rf.classList.remove('open');
+          return;
+        }
+        // Reply submit
+        const rSubmit = e.target.closest('.btn-reply-submit');
+        if (rSubmit) {
+          const pid = rSubmit.dataset.pid; const parent = rSubmit.dataset.parent;
+          const rf  = document.getElementById('rf-' + parent);
+          const ta  = rf && rf.querySelector('textarea');
+          if (ta && ta.value.trim()) { this.addComment(pid, ta.value, parent); this.refresh(pid); }
+          return;
+        }
+        // Delete
+        const delBtn = e.target.closest('.btn-del');
+        if (delBtn && confirm('Delete this comment?')) {
+          this.deleteComment(delBtn.dataset.pid, delBtn.dataset.cid);
+          this.refresh(delBtn.dataset.pid);
+        }
+      });
+    }
+  };
+
+  CS.init();
+
+  // ── Artist's Statement painting rotators (15 s each) ──────────
+  function makeStatementRotator(id, paintings) {
+    const INTERVAL = 15000;
+    const FADE_MS  = 1200;
+    let current = 0;
+    const wrap  = document.getElementById(id);
+    if (!wrap) return;
+    const front = wrap.querySelector('.rotator-front');
+    const back  = wrap.querySelector('.rotator-back');
+    setInterval(function() {
+      current = (current + 1) % paintings.length;
+      back.onload = function() {
+        front.style.opacity = '0';
+        back.style.opacity  = '1';
+        setTimeout(function() {
+          front.src           = back.src;
+          front.style.opacity = '1';
+          back.style.opacity  = '0';
+        }, FADE_MS + 50);
+      };
+      back.src = paintings[current];
+    }, INTERVAL);
+  }
+
+  makeStatementRotator('statement-rotator-1', [
+    'images/paintings/IMG_4814.jpg',
+    'images/paintings/IMG_4815.jpg',
+    'images/paintings/IMG_4816.jpg',
+  ]);
+
+  makeStatementRotator('statement-rotator-2', [
+    'images/paintings/IMG_4811.jpg',
+    'images/paintings/IMG_4812.jpg',
+    'images/paintings/IMG_4813.jpg',
+  ]);
+
+  makeStatementRotator('statement-rotator-3', [
+    'images/paintings/IMG_4817.jpg',
+    'images/paintings/IMG_4818.jpg',
+    'images/paintings/IMG_4819.jpg',
+    'images/paintings/IMG_4820.jpg',
+  ]);
+
+  makeStatementRotator('statement-rotator-4', [
+    'images/paintings/IMG_4821.jpg',
+    'images/paintings/IMG_4822.jpg',
+    'images/paintings/IMG_4823.jpg',
+    'images/paintings/IMG_4824.jpg',
+  ]);
+
+  // ── Lightbox ──────────────────────────────────────────────────
+  (function() {
+    const overlay  = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('lightbox-close');
+    if (!overlay) return;
+
+    function openLightbox(src) {
+      lbImg.src = src;
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(function() { lbImg.src = ''; }, 300);
+    }
+
+    // Click any statement rotator to enlarge current front image
+    document.querySelectorAll('.statement-rotator').forEach(function(rotator) {
+      rotator.addEventListener('click', function() {
+        var front = rotator.querySelector('.rotator-front');
+        if (front && front.src) openLightbox(front.src);
+      });
+    });
+
+    // Close on X button, backdrop click, or Escape key
+    closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) closeLightbox();
+    });
+  })();
+
+</script>
+
+
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Painting enlarged view">
+  <span class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</span>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="Painting by Bakasan">
+</div>
+
+</body>
+</html>
