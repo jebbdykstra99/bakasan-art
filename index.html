@@ -3520,26 +3520,32 @@
 
     if (cvUnsub[pageId]) cvUnsub[pageId]();
 
+    // No orderBy — sort in JS to avoid needing Firestore composite indexes
     const q = fbDb.collection('posts')
-      .where('pageId','==',pageId).where('parentId','==',null)
-      .orderBy('createdAt','asc');
+      .where('pageId','==',pageId)
+      .where('parentId','==',null);
+
+    const tsMs = ts => ts?.toMillis?.() || ts?.seconds * 1000 || 0;
 
     cvUnsub[pageId] = q.onSnapshot(async snap => {
-      const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const postsEl = sec.querySelector('.conv-posts'); if (!postsEl) return;
+      const posts = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => tsMs(a.createdAt) - tsMs(b.createdAt));
 
       if (!posts.length) {
         postsEl.innerHTML = '<div class="conv-empty">Be the first to share your thoughts.</div>'; return;
       }
 
-      // Fetch replies in chunks of 30
+      // Fetch replies in chunks of 30 (no orderBy — sort in JS)
       const ids = posts.map(p => p.id);
       let replies = [];
       for (let i = 0; i < ids.length; i += 30) {
-        const rs = await fbDb.collection('posts').where('parentId','in',ids.slice(i,i+30))
-          .orderBy('createdAt','asc').get();
+        const rs = await fbDb.collection('posts')
+          .where('parentId','in',ids.slice(i,i+30)).get();
         replies = replies.concat(rs.docs.map(d => ({ id: d.id, ...d.data() })));
       }
+      replies.sort((a, b) => tsMs(a.createdAt) - tsMs(b.createdAt));
 
       // Fetch interactions for current user
       const interMap = {};
@@ -3557,6 +3563,10 @@
       postsEl.innerHTML = posts.map(p =>
         cvRenderPost(p, interMap[p.id], byParent[p.id]||[], interMap)
       ).join('');
+    }, err => {
+      console.error('Firestore error:', err.message);
+      const postsEl = sec.querySelector('.conv-posts');
+      if (postsEl) postsEl.innerHTML = '<div class="conv-empty">Could not load posts — please refresh the page.</div>';
     });
   }
 
