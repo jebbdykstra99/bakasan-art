@@ -2822,6 +2822,12 @@
         page.classList.add('active');
         page.scrollTop = 0;
         highlightNav(id);
+        // Init Firebase conversation section for this painting
+        if (typeof cvInjectSection === 'function') {
+          cvInjectSection(page, id);
+          const convSec = page.querySelector('.conv-section');
+          if (convSec) cvInitSection(convSec);
+        }
       }
     }
     if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
@@ -3570,20 +3576,7 @@
     cvInitSection(thoughtsPage.querySelector('.conv-section'));
   }
 
-  // ── Init conv for detail pages when opened ──────────
-  // Hook into showPage so we only subscribe when page is opened
-  const _origShowPage = showPage;
-  function showPage(id) {
-    _origShowPage(id);
-    if (DETAIL_SECTIONS.includes(id)) {
-      const pageEl = document.getElementById('page-' + id);
-      if (pageEl) {
-        cvInjectSection(pageEl, id);
-        const sec = pageEl.querySelector('.conv-section');
-        if (sec) cvInitSection(sec);
-      }
-    }
-  }
+  // (detail page conversation init is handled inside showPage above)
 
 
   // ── Artist's Statement painting rotators (15 s each) ──────────
