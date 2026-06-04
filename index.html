@@ -2756,6 +2756,9 @@
 
 </main>
 
+<!-- Paintings data — add new paintings in data/paintings.js -->
+<script src="data/paintings.js"></script>
+
 <!-- Firebase compat SDK (loaded before main script) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -2779,10 +2782,13 @@
   // ── Section classification ────────────────────────────
   const MAIN_SECTIONS   = ['home','collection','women','iconography',
                            'asian-ladies','nature','introduction','statement','biography','contact','thoughts'];
-  const DETAIL_SECTIONS = ['murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam',
-                           'green-tara','black-tara','kuan-yin','kannon','amida',
-                           'oiran','brocade','indonesian','burmese','kimono-rug','peacock',
-                           'topanga46','forest','topanga103','topanga147'];
+  // DETAIL_SECTIONS derived from paintings data file — auto-includes all paintings
+  const DETAIL_SECTIONS = (typeof PAINTINGS_DATA !== 'undefined')
+    ? PAINTINGS_DATA.map(p => p.id)
+    : ['murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam',
+       'green-tara','black-tara','kuan-yin','kannon','amida',
+       'oiran','brocade','indonesian','burmese','kimono-rug','peacock',
+       'topanga46','forest','topanga103','topanga147'];
 
   // Find which gallery section a detail page belongs to
   function detailParent(id) {
@@ -2863,6 +2869,56 @@
 
   // Start with nav collapsed on mobile
   if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+
+  // ── Dynamic painting page generator ─────────────────
+  // Builds detail overlay pages from PAINTINGS_DATA.
+  // Hardcoded pages in HTML are kept as fallback for existing paintings.
+  (function() {
+    if (typeof PAINTINGS_DATA === 'undefined') return;
+    const kickers = {
+      'women':        'Women of Buddhism',
+      'iconography':  'Buddhist Iconography',
+      'asian-ladies': 'Asian Ladies',
+      'nature':       'Fragments of Nature'
+    };
+    const main = document.querySelector('.main');
+    PAINTINGS_DATA.forEach(p => {
+      // Skip if a hardcoded page already exists
+      if (document.getElementById('page-' + p.id)) return;
+      const sec = document.createElement('section');
+      sec.className = 'page';
+      sec.id = 'page-' + p.id;
+      const imgSrc = 'images/' + p.file;
+      const subtitleHtml = p.subtitle
+        ? `<p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:0.9rem;color:var(--text-muted);margin-top:0.2rem;">${p.subtitle}</p>` : '';
+      const bodyContent = p.bodyHtml && p.bodyHtml.trim()
+        ? p.bodyHtml
+        : `<p style="color:var(--text-muted);font-style:italic;">Story coming soon.</p>`;
+      sec.innerHTML = `
+        <div class="page-header">
+          <div class="page-kicker">${kickers[p.category] || ''}</div>
+          <h1>${p.title}</h1>
+          <div class="page-rule"></div>
+        </div>
+        <div class="artwork-intro">
+          <div class="artwork-frame">
+            <img src="${imgSrc}" alt="${p.title} — Bakasan" class="artwork-img">
+          </div>
+          <div class="artwork-caption">
+            <p class="caption-title">${p.captionTitle}</p>
+            ${p.era ? `<p>${p.era}</p>` : ''}
+            ${subtitleHtml}
+            ${p.year ? `<p>${p.year}</p>` : ''}
+            ${p.medium ? `<p>${p.medium}</p>` : ''}
+            ${p.size ? `<p>${p.size}</p>` : ''}
+            <p style="margin-top:0.6rem;font-size:0.78rem;color:var(--text-light);">All Copyrights Reserved</p>
+          </div>
+        </div>
+        <div class="page-body">${bodyContent}</div>
+        <footer class="page-footer">All contents copyright &copy; 1997&ndash;${new Date().getFullYear()} Bakasan. All rights reserved.</footer>`;
+      main.appendChild(sec);
+    });
+  })();
 
   // ── Scrolling layout setup ────────────────────────────
   (function() {
@@ -3108,39 +3164,18 @@
     }, 7000);
   })();
 
-  // ── Gallery thumbnail injector ────────────────────────
-  // Non-standard filenames for individual paintings
-  const thumbFileMap = {
-    'murasaki':   'murasaki.png',
-    'rengetsu':   'NunRengetsu.jpg',
-    'niijo':      'Niijo.jpg',
-    'gotami':     'Mahapajapati.jpg',
-    'nukada':     'Princess_Nukada.jpg',
-    'tibetan':    'Tibetan_Celestial_Dancer.jpg',
-    'siam':       'Siam_Temple_Dancer.jpg',
-    'green-tara': 'GreenTara.jpg',
-    'black-tara': 'BlackTara.png',
-    'kuan-yin':   'Kuan-Yin.jpg',
-    'kannon':     'Kannon.jpg',
-    'amida':      'AmidaBuddah.jpg',
-    'oiran':      'Oiran.jpg',
-    'brocade':    'Brocade.jpg',
-    'indonesian': 'IndonesianSari.jpg',
-    'burmese':    'Burmese.jpg',
-    'kimono-rug': 'kimono.jpg',
-    'peacock':    'Peacock.jpg',
-    'topanga46':  'treesandroots.jpg',
-    'topanga103': 'lumbini.jpg',
-    'topanga147': 'Debussy.jpg',
-  };
-  // Collection landing cards → use a representative painting as the thumbnail
-  const collectionRepMap = {
-    'women':       'murasaki.png',
-    'iconography': 'GreenTara.jpg',
-    'asian-ladies':'Peacock.jpg',
-    'nature':      'lumbini.jpg',
-  };
-  // Skip only the top-level collection index card
+  // ── Gallery thumbnail injector (data-driven) ─────────
+  // Build maps from PAINTINGS_DATA
+  const thumbFileMap = {};
+  const collectionRepMap = { 'women': '', 'iconography': '', 'asian-ladies': '', 'nature': '' };
+  if (typeof PAINTINGS_DATA !== 'undefined') {
+    PAINTINGS_DATA.forEach(p => { thumbFileMap[p.id] = p.file; });
+    // Use first painting of each category as the collection card representative
+    ['women','iconography','asian-ladies','nature'].forEach(cat => {
+      const first = PAINTINGS_DATA.find(p => p.category === cat);
+      if (first) collectionRepMap[cat] = first.file;
+    });
+  }
   const skipIds = new Set(['collection']);
 
   document.querySelectorAll('[data-target]').forEach(card => {
