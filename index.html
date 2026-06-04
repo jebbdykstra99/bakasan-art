@@ -1198,12 +1198,225 @@
       }
     }
 
-    /* ── Comment System ───────────────────────────────── */
-    .comment-section {
+    /* ══ CONVERSATION SYSTEM (Firebase) ══════════════════ */
+    .conv-section {
       border-top: 1px solid var(--border);
-      padding: 2.5rem 2rem 0;
-      margin-top: 2.5rem;
+      padding: 2.5rem 5rem 3rem;
     }
+    @media (min-width: 769px) and (max-width: 1024px) { .conv-section { padding: 2rem 4rem; } }
+    @media (max-width: 768px) { .conv-section { padding: 1.8rem 1.4rem; } }
+    .conv-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.4rem; font-weight: 500;
+      color: var(--text); margin-bottom: 1.2rem; letter-spacing: 0.02em;
+    }
+    /* auth bar */
+    .conv-auth-bar {
+      display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+      margin-bottom: 1.2rem; padding: 0.7rem 1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; font-size: 0.88rem;
+    }
+    .conv-username { font-weight: 600; color: var(--accent); }
+    .conv-spacer { margin-left: auto; }
+    .conv-avatar-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 600; color: #fff; flex-shrink: 0;
+    }
+    .conv-auth-btn {
+      background: none; border: 1px solid var(--border); cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 50px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .conv-auth-btn:hover { background: var(--accent); color: #fff; }
+    .conv-auth-btn.primary { background: var(--nav-bg); color: var(--nav-text); border-color: transparent; }
+    .conv-auth-btn.primary:hover { background: var(--accent); }
+    /* compose */
+    .conv-compose { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; align-items: flex-start; }
+    .conv-compose-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 600; color: #fff; flex-shrink: 0; margin-top: 2px;
+    }
+    .conv-compose-right { flex: 1; }
+    .conv-compose-input {
+      width: 100%; min-height: 78px; resize: vertical;
+      font-family: Georgia, serif; font-size: 0.97rem;
+      color: var(--text); background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.7rem 0.9rem; outline: none; transition: border-color 0.2s;
+    }
+    .conv-compose-input:focus { border-color: var(--accent); }
+    .conv-compose-footer { display: flex; justify-content: flex-end; margin-top: 0.5rem; }
+    .conv-post-btn {
+      background: var(--nav-bg); color: var(--nav-text); border: none;
+      cursor: pointer; padding: 0.5rem 1.5rem; border-radius: 50px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .conv-post-btn:hover { background: var(--accent); }
+    .conv-post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* posts */
+    .conv-posts { display: flex; flex-direction: column; }
+    .conv-post {
+      display: flex; gap: 0.8rem; padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .conv-post:last-child { border-bottom: none; }
+    .conv-post-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 600; color: #fff; flex-shrink: 0; margin-top: 1px;
+    }
+    .conv-post-main { flex: 1; min-width: 0; }
+    .conv-post-header {
+      display: flex; align-items: baseline; gap: 0.5rem;
+      margin-bottom: 0.3rem; flex-wrap: wrap;
+    }
+    .conv-post-name { font-weight: 600; font-size: 0.93rem; color: var(--text); }
+    .conv-post-time { font-size: 0.77rem; color: var(--text-light); }
+    .conv-post-text {
+      font-size: 0.97rem; line-height: 1.65; color: var(--text);
+      word-break: break-word; margin-bottom: 0.55rem;
+    }
+    /* actions row */
+    .conv-actions { display: flex; gap: 0.1rem; align-items: center; flex-wrap: wrap; }
+    .conv-action {
+      display: flex; align-items: center; justify-content: center; gap: 0.28rem;
+      background: none; border: none; cursor: pointer;
+      font-size: 0.78rem; color: var(--text-muted);
+      padding: 0.28rem 0.5rem; border-radius: 50px;
+      min-width: 44px; min-height: 34px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .conv-action:hover { background: rgba(139,109,63,0.08); color: var(--accent); }
+    .conv-action.active { color: var(--accent); }
+    .conv-action.like.active { color: #e0245e; }
+    .conv-action.repost.active { color: #17bf63; }
+    .conv-action svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .conv-action-count { font-size: 0.77rem; }
+    /* reply compose inline */
+    .conv-reply-compose {
+      margin-top: 0.6rem; padding: 0.7rem;
+      background: var(--surface); border-radius: 6px; border: 1px solid var(--border);
+    }
+    .conv-reply-input {
+      width: 100%; min-height: 58px; resize: none;
+      font-family: Georgia, serif; font-size: 0.92rem;
+      color: var(--text); background: transparent; border: none; outline: none; margin-bottom: 0.4rem;
+    }
+    .conv-reply-actions { display: flex; justify-content: flex-end; }
+    /* replies indent */
+    .conv-replies {
+      margin-top: 0.4rem; margin-left: 1rem;
+      padding-left: 0.9rem; border-left: 2px solid var(--border);
+    }
+    .conv-reply-post { display: flex; gap: 0.6rem; padding: 0.65rem 0; border-bottom: 1px solid rgba(0,0,0,0.04); }
+    .conv-reply-post:last-child { border-bottom: none; }
+    .conv-reply-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 600; color: #fff; flex-shrink: 0;
+    }
+    .conv-reply-main { flex: 1; min-width: 0; }
+    .conv-reply-header { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.18rem; flex-wrap: wrap; }
+    .conv-reply-text { font-size: 0.92rem; line-height: 1.58; color: var(--text); word-break: break-word; }
+    /* delete btn */
+    .conv-delete-btn {
+      background: none; border: none; cursor: pointer; margin-left: auto;
+      color: var(--text-light); padding: 0.15rem 0.35rem; border-radius: 3px;
+      transition: color 0.15s, background 0.15s; display: flex; align-items: center;
+    }
+    .conv-delete-btn:hover { color: #c0392b; background: rgba(192,57,43,0.08); }
+    /* auth modal */
+    .conv-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9500; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .conv-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .conv-modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 2.2rem 2.5rem; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25); position: relative;
+    }
+    @media (max-width: 480px) { .conv-modal { padding: 1.6rem 1.4rem; margin: 0 1rem; } }
+    .conv-modal h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.7rem; font-weight: 400; color: var(--text); margin-bottom: 1.2rem;
+    }
+    .conv-modal-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      background: none; border: none; font-size: 1.5rem;
+      cursor: pointer; color: var(--text-muted); line-height: 1;
+    }
+    .conv-modal-tabs {
+      display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.4rem;
+    }
+    .conv-modal-tab {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.55rem 1rem; color: var(--text-light);
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .conv-modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .conv-modal-field { display: flex; flex-direction: column; gap: 0.32rem; margin-bottom: 0.95rem; }
+    .conv-modal-field label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent);
+    }
+    .conv-modal-field input {
+      font-family: Georgia, serif; font-size: 0.95rem;
+      color: var(--text); background: var(--bg);
+      border: 1px solid var(--border); padding: 0.58rem 0.8rem;
+      outline: none; border-radius: 4px; transition: border-color 0.2s;
+    }
+    .conv-modal-field input:focus { border-color: var(--accent); }
+    .conv-modal-submit {
+      width: 100%; padding: 0.75rem; border: none; cursor: pointer; border-radius: 50px;
+      background: var(--nav-bg); color: var(--nav-text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      transition: background 0.2s; margin-bottom: 0.75rem;
+    }
+    .conv-modal-submit:hover { background: var(--accent); }
+    .conv-modal-divider {
+      text-align: center; font-size: 0.74rem; color: var(--text-light);
+      margin: 0.7rem 0; position: relative;
+    }
+    .conv-modal-divider::before, .conv-modal-divider::after {
+      content: ''; position: absolute; top: 50%;
+      width: calc(50% - 1.5rem); height: 1px; background: var(--border);
+    }
+    .conv-modal-divider::before { left: 0; }
+    .conv-modal-divider::after { right: 0; }
+    .conv-google-btn {
+      width: 100%; padding: 0.65rem; background: #fff;
+      border: 1px solid var(--border); cursor: pointer; border-radius: 50px;
+      font-size: 0.88rem; font-weight: 500; color: #333;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      transition: background 0.2s;
+    }
+    .conv-google-btn:hover { background: #f5f5f5; }
+    .conv-modal-err {
+      font-size: 0.82rem; color: #c0392b; margin-bottom: 0.7rem; display: none;
+    }
+    .conv-modal-err.show { display: block; }
+    /* empty / loading */
+    .conv-empty {
+      text-align: center; padding: 2rem 1rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-style: italic; color: var(--text-light);
+    }
+    .conv-loading { text-align: center; padding: 1.5rem; color: var(--text-light); font-size: 0.85rem; }
+    /* old placeholder — keep selector for any stale injected sections */
     .comment-section-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.35rem;
@@ -2543,6 +2756,11 @@
 
 </main>
 
+<!-- Firebase compat SDK (loaded before main script) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <script>
   const sidebar  = document.getElementById('sidebar');
   const hamburger = document.getElementById('hamburger');
@@ -2942,272 +3160,431 @@
     else card.appendChild(img);
   });
 
-  // ── Comment System ────────────────────────────────────
-  const CS = {
-    getUsers()         { return JSON.parse(localStorage.getItem('baka_users')        || '[]');   },
-    saveUsers(u)       { localStorage.setItem('baka_users', JSON.stringify(u));                  },
-    getCurrentUser()   { return JSON.parse(localStorage.getItem('baka_current_user') || 'null'); },
-    saveCurrentUser(u) { localStorage.setItem('baka_current_user', JSON.stringify(u));           },
-    getComments(pid)   { return JSON.parse(localStorage.getItem('baka_cmt_' + pid)   || '[]');   },
-    saveComments(pid,c){ localStorage.setItem('baka_cmt_' + pid, JSON.stringify(c));             },
+  // ════════════════════════════════════════════════════════
+  // FIREBASE CONVERSATION SYSTEM
+  // ════════════════════════════════════════════════════════
 
-    register(username, email, password) {
-      username = username.trim(); email = email.trim().toLowerCase();
-      if (!username || !email || !password) return { error: 'All fields are required.' };
-      const users = this.getUsers();
-      if (users.find(u => u.email === email))    return { error: 'Email already registered.' };
-      if (users.find(u => u.username === username)) return { error: 'Username already taken.' };
-      const user = { id: Date.now() + Math.random().toString(36).slice(2), username, email, password };
-      users.push(user);
-      this.saveUsers(users);
-      const session = { id: user.id, username, email };
-      this.saveCurrentUser(session);
-      return { user: session };
-    },
+  // Initialize Firebase (compat SDK)
+  const firebaseConfig = {
+    apiKey: "AIzaSyA0AGKwIt3jWCdivlb573i19XEDm12zxIE",
+    authDomain: "bakasan-art.firebaseapp.com",
+    projectId: "bakasan-art",
+    storageBucket: "bakasan-art.firebasestorage.app",
+    messagingSenderId: "839964323046",
+    appId: "1:839964323046:web:ef9ddbbef5f64acfc2df27",
+    measurementId: "G-31WPTPSZQW"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const fbAuth = firebase.auth();
+  const fbDb   = firebase.firestore();
 
-    login(email, password) {
-      email = email.trim().toLowerCase();
-      const user = this.getUsers().find(u => u.email === email && u.password === password);
-      if (!user) return { error: 'Invalid email or password.' };
-      const session = { id: user.id, username: user.username, email: user.email };
-      this.saveCurrentUser(session);
-      return { user: session };
-    },
+  // ── Helpers ──────────────────────────────────────────
+  function cvGetInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  }
+  function cvAvatarColor(name) {
+    const cols = ['#8b6d3f','#5e4825','#7a5232','#6b4c2a','#9a7a50','#4a3520'];
+    let h = 0; for (const c of (name || '')) h = c.charCodeAt(0) + ((h << 5) - h);
+    return cols[Math.abs(h) % cols.length];
+  }
+  function cvRelTime(ts) {
+    if (!ts) return '';
+    const ms = ts.toMillis ? ts.toMillis() : (ts.seconds ? ts.seconds * 1000 : ts);
+    const d = Math.floor((Date.now() - ms) / 1000);
+    if (d < 60) return 'just now';
+    if (d < 3600) return Math.floor(d/60) + 'm';
+    if (d < 86400) return Math.floor(d/3600) + 'h';
+    if (d < 604800) return Math.floor(d/86400) + 'd';
+    return new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  function cvEsc(s) {
+    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+  }
 
-    logout() { this.saveCurrentUser(null); },
-
-    addComment(pageId, text, parentId) {
-      const user = this.getCurrentUser();
-      if (!user || !text.trim()) return null;
-      const c = {
-        id: Date.now() + Math.random().toString(36).slice(2),
-        userId: user.id, username: user.username,
-        text: text.trim(), timestamp: Date.now(),
-        parentId: parentId || null
-      };
-      const all = this.getComments(pageId);
-      all.push(c);
-      this.saveComments(pageId, all);
-      return c;
-    },
-
-    deleteComment(pageId, commentId) {
-      const user = this.getCurrentUser();
-      if (!user) return;
-      const all = this.getComments(pageId).map(c =>
-        (c.id === commentId && c.userId === user.id)
-          ? { ...c, deleted: true, text: '[comment deleted]' } : c
-      );
-      this.saveComments(pageId, all);
-    },
-
-    fmtTime(ts) {
-      const d = new Date(ts);
-      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-        + ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
-    },
-
-    renderComment(c, pageId, depth) {
-      const user = this.getCurrentUser();
-      const canDel = user && user.id === c.userId && !c.deleted;
-      const replies = depth === 0
-        ? this.getComments(pageId).filter(r => r.parentId === c.id)
-            .map(r => this.renderComment(r, pageId, 1)).join('') : '';
-      return `
-        <div class="comment-item${depth ? ' is-reply' : ''}" data-cid="${c.id}">
-          <div class="comment-meta">
-            <span class="comment-author">${c.username}</span>
-            <span class="comment-time">${this.fmtTime(c.timestamp)}</span>
-          </div>
-          <div class="comment-text">${c.text.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
-          <div class="comment-actions">
-            ${!depth && user && !c.deleted ? `<button class="btn-cmt btn-reply-toggle" data-cid="${c.id}">Reply</button>` : ''}
-            ${canDel ? `<button class="btn-cmt btn-del" data-pid="${pageId}" data-cid="${c.id}">Delete</button>` : ''}
-          </div>
-          ${!depth ? `<div class="reply-form" id="rf-${c.id}">
-            <textarea placeholder="Write a reply…" rows="2"></textarea>
-            <div class="reply-form-actions">
-              <button class="btn-reply-submit" data-pid="${pageId}" data-parent="${c.id}">Post Reply</button>
-              <button class="btn-reply-cancel" data-cid="${c.id}">Cancel</button>
-            </div>
-          </div>` : ''}
-          ${replies ? `<div class="replies-list">${replies}</div>` : ''}
-        </div>`;
-    },
-
-    renderSection(pageId) {
-      const user = this.getCurrentUser();
-      const top  = this.getComments(pageId).filter(c => !c.parentId);
-      const list = top.length
-        ? top.map(c => this.renderComment(c, pageId, 0)).join('')
-        : '<div class="no-comments">No comments yet — be the first to share your thoughts.</div>';
-      return `<div class="comment-section" data-pid="${pageId}">
-        <h3 class="comment-section-title">Discussion</h3>
-        <div class="auth-bar">
-          ${user
-            ? `<span>Signed in as <span class="auth-username">${user.username}</span></span>
-               <span class="auth-bar-spacer"></span>
-               <button class="btn-cmt btn-logout">Sign Out</button>`
-            : `<span style="color:var(--text-muted)">Register or sign in to join the discussion.</span>
-               <span class="auth-bar-spacer"></span>
-               <button class="btn-cmt btn-open-auth" style="color:var(--accent);font-size:0.85rem;" data-mode="register">Register</button>
-               <button class="btn-cmt btn-open-auth" style="color:var(--accent);font-size:0.85rem;" data-mode="login">Sign In</button>`}
-        </div>
-        ${user ? `<div class="comment-new-form">
-          <textarea placeholder="Share your thoughts…" rows="3"></textarea>
-          <button class="btn-post-comment" data-pid="${pageId}">Post Comment</button>
-        </div>` : ''}
-        <div class="comments-list">${list}</div>
-      </div>`;
-    },
-
-    refresh(pageId) {
-      const old = document.querySelector(`.comment-section[data-pid="${pageId}"]`);
-      if (!old) return;
-      const tmp = document.createElement('div');
-      tmp.innerHTML = this.renderSection(pageId);
-      old.replaceWith(tmp.firstElementChild);
-    },
-
-    refreshAll() {
-      document.querySelectorAll('.comment-section[data-pid]').forEach(s => this.refresh(s.dataset.pid));
-    },
-
-    openAuth(mode) {
-      const ov = document.getElementById('cs-auth-overlay');
-      ov.classList.add('open');
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === mode));
-      document.getElementById('cs-panel-login').style.display    = mode === 'login'    ? '' : 'none';
-      document.getElementById('cs-panel-register').style.display = mode === 'register' ? '' : 'none';
-      document.getElementById('cs-login-err').classList.remove('show');
-      document.getElementById('cs-reg-err').classList.remove('show');
-    },
-    closeAuth() { document.getElementById('cs-auth-overlay').classList.remove('open'); },
-
-    init() {
-      // Auth modal
-      const ov = document.createElement('div');
-      ov.className = 'auth-overlay'; ov.id = 'cs-auth-overlay';
-      ov.innerHTML = `<div class="auth-modal">
-        <div class="auth-tabs">
-          <button class="auth-tab active" data-tab="register">Register</button>
-          <button class="auth-tab" data-tab="login">Sign In</button>
-        </div>
-        <div id="cs-panel-register">
-          <div class="auth-field"><label>Username</label><input id="cs-reg-user" autocomplete="username"></div>
-          <div class="auth-field"><label>Email</label><input type="email" id="cs-reg-email" autocomplete="email"></div>
-          <div class="auth-field"><label>Password</label><input type="password" id="cs-reg-pass" autocomplete="new-password"></div>
-          <div class="auth-error" id="cs-reg-err"></div>
-          <div class="auth-modal-actions">
-            <button class="btn-auth-cancel" id="cs-cancel">Cancel</button>
-            <button class="btn-auth-submit" id="cs-reg-submit">Create Account</button>
-          </div>
-        </div>
-        <div id="cs-panel-login" style="display:none">
-          <div class="auth-field"><label>Email</label><input type="email" id="cs-login-email" autocomplete="email"></div>
-          <div class="auth-field"><label>Password</label><input type="password" id="cs-login-pass" autocomplete="current-password"></div>
-          <div class="auth-error" id="cs-login-err"></div>
-          <div class="auth-modal-actions">
-            <button class="btn-auth-cancel" id="cs-cancel2">Cancel</button>
-            <button class="btn-auth-submit" id="cs-login-submit">Sign In</button>
-          </div>
-        </div>
-      </div>`;
-      document.body.appendChild(ov);
-
-      // Inject the comment/discussion section only on the Conversation page
-      const thoughtsPage = document.getElementById('page-thoughts');
-      if (thoughtsPage) {
-        const footer = thoughtsPage.querySelector('.page-footer');
-        const tmp    = document.createElement('div');
-        tmp.innerHTML = this.renderSection('thoughts');
-        footer ? thoughtsPage.insertBefore(tmp.firstElementChild, footer) : thoughtsPage.appendChild(tmp.firstElementChild);
-      }
-
-      // Delegation
-      document.addEventListener('click', e => {
-        // Auth tabs
-        const tab = e.target.closest('.auth-tab');
-        if (tab) {
-          document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t === tab));
-          document.getElementById('cs-panel-register').style.display = tab.dataset.tab === 'register' ? '' : 'none';
-          document.getElementById('cs-panel-login').style.display    = tab.dataset.tab === 'login'    ? '' : 'none';
-          return;
-        }
-        if (e.target.id === 'cs-cancel' || e.target.id === 'cs-cancel2') { this.closeAuth(); return; }
-        if (e.target === ov) { this.closeAuth(); return; }
-
-        // Open auth
-        const openBtn = e.target.closest('.btn-open-auth');
-        if (openBtn) { this.openAuth(openBtn.dataset.mode || 'register'); return; }
-
-        // Register
-        if (e.target.id === 'cs-reg-submit') {
-          const r = this.register(
-            document.getElementById('cs-reg-user').value,
-            document.getElementById('cs-reg-email').value,
-            document.getElementById('cs-reg-pass').value
-          );
-          if (r.error) { const el=document.getElementById('cs-reg-err'); el.textContent=r.error; el.classList.add('show'); }
-          else { this.closeAuth(); this.refreshAll(); }
-          return;
-        }
-        // Login
-        if (e.target.id === 'cs-login-submit') {
-          const r = this.login(
-            document.getElementById('cs-login-email').value,
-            document.getElementById('cs-login-pass').value
-          );
-          if (r.error) { const el=document.getElementById('cs-login-err'); el.textContent=r.error; el.classList.add('show'); }
-          else { this.closeAuth(); this.refreshAll(); }
-          return;
-        }
-        // Logout
-        if (e.target.closest('.btn-logout')) { this.logout(); this.refreshAll(); return; }
-
-        // Post comment
-        const postBtn = e.target.closest('.btn-post-comment');
-        if (postBtn) {
-          const pid = postBtn.dataset.pid;
-          const sec = document.querySelector(`.comment-section[data-pid="${pid}"]`);
-          const ta  = sec && sec.querySelector('.comment-new-form textarea');
-          if (ta && ta.value.trim()) { this.addComment(pid, ta.value); this.refresh(pid); }
-          return;
-        }
-        // Reply toggle
-        const rToggle = e.target.closest('.btn-reply-toggle');
-        if (rToggle) {
-          const rf = document.getElementById('rf-' + rToggle.dataset.cid);
-          if (rf) rf.classList.toggle('open');
-          return;
-        }
-        // Reply cancel
-        const rCancel = e.target.closest('.btn-reply-cancel');
-        if (rCancel) {
-          const rf = document.getElementById('rf-' + rCancel.dataset.cid);
-          if (rf) rf.classList.remove('open');
-          return;
-        }
-        // Reply submit
-        const rSubmit = e.target.closest('.btn-reply-submit');
-        if (rSubmit) {
-          const pid = rSubmit.dataset.pid; const parent = rSubmit.dataset.parent;
-          const rf  = document.getElementById('rf-' + parent);
-          const ta  = rf && rf.querySelector('textarea');
-          if (ta && ta.value.trim()) { this.addComment(pid, ta.value, parent); this.refresh(pid); }
-          return;
-        }
-        // Delete
-        const delBtn = e.target.closest('.btn-del');
-        if (delBtn && confirm('Delete this comment?')) {
-          this.deleteComment(delBtn.dataset.pid, delBtn.dataset.cid);
-          this.refresh(delBtn.dataset.pid);
-        }
-      });
-    }
+  // ── SVG icons ─────────────────────────────────────────
+  const CV_ICONS = {
+    heart:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    heartOn:  `<svg viewBox="0 0 24 24" fill="#e0245e" stroke="#e0245e" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    repost:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+    reply:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    bookmark: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
+    bookOn:   `<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
+    share:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
+    trash:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`,
+    google:   `<svg width="17" height="17" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>`
   };
 
-  CS.init();
+  // ── Current user ──────────────────────────────────────
+  let cvUser = null;
+  fbAuth.onAuthStateChanged(user => {
+    cvUser = user;
+    document.querySelectorAll('.conv-section').forEach(s => {
+      cvRenderAuthBar(s);
+      cvRenderCompose(s);
+    });
+  });
+
+  // ── Auth Modal ────────────────────────────────────────
+  function cvBuildModal() {
+    if (document.getElementById('cv-auth-overlay')) return;
+    const ov = document.createElement('div');
+    ov.className = 'conv-modal-overlay'; ov.id = 'cv-auth-overlay';
+    ov.innerHTML = `
+      <div class="conv-modal">
+        <button class="conv-modal-close" id="cv-modal-close">&times;</button>
+        <h2>Join the Conversation</h2>
+        <div class="conv-modal-tabs">
+          <button class="conv-modal-tab active" data-tab="login">Sign In</button>
+          <button class="conv-modal-tab" data-tab="register">Register</button>
+        </div>
+        <div id="cv-panel-login">
+          <div class="conv-modal-err" id="cv-login-err"></div>
+          <div class="conv-modal-field"><label>Email</label><input type="email" id="cv-login-email" autocomplete="email" placeholder="you@email.com"></div>
+          <div class="conv-modal-field"><label>Password</label><input type="password" id="cv-login-pw" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+          <button class="conv-modal-submit" id="cv-login-btn">Sign In</button>
+          <div class="conv-modal-divider">or</div>
+          <button class="conv-google-btn" id="cv-google-login">${CV_ICONS.google} Continue with Google</button>
+        </div>
+        <div id="cv-panel-register" style="display:none">
+          <div class="conv-modal-err" id="cv-reg-err"></div>
+          <div class="conv-modal-field"><label>Display Name</label><input type="text" id="cv-reg-name" autocomplete="name" placeholder="Your Name"></div>
+          <div class="conv-modal-field"><label>Email</label><input type="email" id="cv-reg-email" autocomplete="email" placeholder="you@email.com"></div>
+          <div class="conv-modal-field"><label>Password</label><input type="password" id="cv-reg-pw" autocomplete="new-password" placeholder="At least 6 characters"></div>
+          <button class="conv-modal-submit" id="cv-reg-btn">Create Account</button>
+          <div class="conv-modal-divider">or</div>
+          <button class="conv-google-btn" id="cv-google-reg">${CV_ICONS.google} Continue with Google</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+
+    ov.querySelectorAll('.conv-modal-tab').forEach(t => t.addEventListener('click', () => {
+      ov.querySelectorAll('.conv-modal-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('cv-panel-login').style.display    = t.dataset.tab === 'login' ? '' : 'none';
+      document.getElementById('cv-panel-register').style.display = t.dataset.tab === 'register' ? '' : 'none';
+    }));
+    document.getElementById('cv-modal-close').addEventListener('click', cvCloseModal);
+    ov.addEventListener('click', e => { if (e.target === ov) cvCloseModal(); });
+
+    document.getElementById('cv-login-btn').addEventListener('click', async () => {
+      const err = document.getElementById('cv-login-err');
+      err.classList.remove('show');
+      try {
+        await fbAuth.signInWithEmailAndPassword(
+          document.getElementById('cv-login-email').value.trim(),
+          document.getElementById('cv-login-pw').value
+        );
+        cvCloseModal();
+      } catch(e) { err.textContent = e.message.replace('Firebase: ',''); err.classList.add('show'); }
+    });
+
+    document.getElementById('cv-reg-btn').addEventListener('click', async () => {
+      const name = document.getElementById('cv-reg-name').value.trim();
+      const err  = document.getElementById('cv-reg-err');
+      err.classList.remove('show');
+      if (!name) { err.textContent = 'Please enter your display name.'; err.classList.add('show'); return; }
+      try {
+        const cred = await fbAuth.createUserWithEmailAndPassword(
+          document.getElementById('cv-reg-email').value.trim(),
+          document.getElementById('cv-reg-pw').value
+        );
+        await cred.user.updateProfile({ displayName: name });
+        cvUser = fbAuth.currentUser;
+        cvCloseModal();
+      } catch(e) { err.textContent = e.message.replace('Firebase: ',''); err.classList.add('show'); }
+    });
+
+    const gProvider = new firebase.auth.GoogleAuthProvider();
+    async function doGoogle() {
+      try { await fbAuth.signInWithPopup(gProvider); cvCloseModal(); }
+      catch(e) { console.warn('Google sign-in:', e.message); }
+    }
+    document.getElementById('cv-google-login').addEventListener('click', doGoogle);
+    document.getElementById('cv-google-reg').addEventListener('click', doGoogle);
+  }
+
+  function cvOpenModal(tab) {
+    cvBuildModal();
+    const ov = document.getElementById('cv-auth-overlay');
+    ov.classList.add('open');
+    ov.querySelectorAll('.conv-modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.getElementById('cv-panel-login').style.display    = tab === 'login' ? '' : 'none';
+    document.getElementById('cv-panel-register').style.display = tab === 'register' ? '' : 'none';
+  }
+  function cvCloseModal() {
+    const ov = document.getElementById('cv-auth-overlay');
+    if (ov) ov.classList.remove('open');
+  }
+
+  // ── Auth bar ──────────────────────────────────────────
+  function cvRenderAuthBar(sec) {
+    let bar = sec.querySelector('.conv-auth-bar');
+    if (!bar) {
+      bar = document.createElement('div'); bar.className = 'conv-auth-bar';
+      const title = sec.querySelector('.conv-title');
+      title ? title.after(bar) : sec.prepend(bar);
+    }
+    if (cvUser) {
+      const name = cvUser.displayName || cvUser.email;
+      bar.innerHTML = `
+        <div class="conv-avatar-sm" style="background:${cvAvatarColor(name)}">${cvGetInitials(name)}</div>
+        <span>Signed in as <span class="conv-username">${name}</span></span>
+        <span class="conv-spacer"></span>
+        <button class="conv-auth-btn cv-signout">Sign Out</button>`;
+      bar.querySelector('.cv-signout').addEventListener('click', () => fbAuth.signOut());
+    } else {
+      bar.innerHTML = `
+        <span style="color:var(--text-muted)">Sign in to join the conversation</span>
+        <span class="conv-spacer"></span>
+        <button class="conv-auth-btn cv-open-reg">Register</button>
+        <button class="conv-auth-btn primary cv-open-login">Sign In</button>`;
+      bar.querySelector('.cv-open-login').addEventListener('click', () => cvOpenModal('login'));
+      bar.querySelector('.cv-open-reg').addEventListener('click', () => cvOpenModal('register'));
+    }
+  }
+
+  // ── Compose box ───────────────────────────────────────
+  function cvRenderCompose(sec) {
+    sec.querySelectorAll('.conv-compose').forEach(el => el.remove());
+    if (!cvUser) return;
+    const name = cvUser.displayName || cvUser.email;
+    const pageId = sec.dataset.pageId;
+    const compose = document.createElement('div');
+    compose.className = 'conv-compose';
+    compose.innerHTML = `
+      <div class="conv-compose-avatar" style="background:${cvAvatarColor(name)}">${cvGetInitials(name)}</div>
+      <div class="conv-compose-right">
+        <textarea class="conv-compose-input" placeholder="Share your thoughts…" rows="3"></textarea>
+        <div class="conv-compose-footer"><button class="conv-post-btn">Post</button></div>
+      </div>`;
+    const posts = sec.querySelector('.conv-posts');
+    posts ? posts.before(compose) : sec.appendChild(compose);
+    compose.querySelector('.conv-post-btn').addEventListener('click', async () => {
+      const ta = compose.querySelector('.conv-compose-input');
+      const text = ta.value.trim(); if (!text) return;
+      const btn = compose.querySelector('.conv-post-btn'); btn.disabled = true;
+      try {
+        await fbDb.collection('posts').add({
+          pageId, authorUid: cvUser.uid,
+          authorName: cvUser.displayName || cvUser.email,
+          text, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likeCount:0, repostCount:0, bookmarkCount:0, replyCount:0, parentId: null
+        });
+        ta.value = '';
+      } catch(e) { console.error('Post error:', e); }
+      btn.disabled = false;
+    });
+  }
+
+  // ── Render a post ─────────────────────────────────────
+  function cvRenderPost(post, inter, replies, rInters) {
+    const nm = post.authorName || 'Anonymous';
+    const isOwn = cvUser && cvUser.uid === post.authorUid;
+    const lk = inter && inter.liked, rp = inter && inter.reposted, bk = inter && inter.bookmarked;
+    const repliesHtml = (replies||[]).map(r => {
+      const ri = (rInters||{})[r.id]||{};
+      const rn = r.authorName || 'Anonymous';
+      return `<div class="conv-reply-post" data-post-id="${r.id}">
+        <div class="conv-reply-avatar" style="background:${cvAvatarColor(rn)}">${cvGetInitials(rn)}</div>
+        <div class="conv-reply-main">
+          <div class="conv-reply-header">
+            <span class="conv-post-name">${rn}</span>
+            <span class="conv-post-time">${cvRelTime(r.createdAt)}</span>
+            ${cvUser && cvUser.uid === r.authorUid ? `<button class="conv-delete-btn" data-del-id="${r.id}">${CV_ICONS.trash}</button>` : ''}
+          </div>
+          <div class="conv-reply-text">${cvEsc(r.text)}</div>
+          <div class="conv-actions">
+            <button class="conv-action like${ri.liked?' active':''}" data-action="like" data-post-id="${r.id}">
+              ${ri.liked?CV_ICONS.heartOn:CV_ICONS.heart}
+              ${r.likeCount>0?`<span class="conv-action-count">${r.likeCount}</span>`:''}
+            </button>
+          </div>
+        </div></div>`;
+    }).join('');
+    return `<div class="conv-post" data-post-id="${post.id}">
+      <div class="conv-post-avatar" style="background:${cvAvatarColor(nm)}">${cvGetInitials(nm)}</div>
+      <div class="conv-post-main">
+        <div class="conv-post-header">
+          <span class="conv-post-name">${nm}</span>
+          <span class="conv-post-time">${cvRelTime(post.createdAt)}</span>
+          ${isOwn?`<button class="conv-delete-btn" data-del-id="${post.id}">${CV_ICONS.trash}</button>`:''}
+        </div>
+        <div class="conv-post-text">${cvEsc(post.text)}</div>
+        <div class="conv-actions">
+          <button class="conv-action like${lk?' active':''}" data-action="like" data-post-id="${post.id}" title="Like">
+            ${lk?CV_ICONS.heartOn:CV_ICONS.heart}
+            ${post.likeCount>0?`<span class="conv-action-count">${post.likeCount}</span>`:''}
+          </button>
+          <button class="conv-action repost${rp?' active':''}" data-action="repost" data-post-id="${post.id}" title="Repost">
+            ${CV_ICONS.repost}${post.repostCount>0?`<span class="conv-action-count">${post.repostCount}</span>`:''}
+          </button>
+          <button class="conv-action reply-btn" data-action="reply" data-post-id="${post.id}" title="Reply">
+            ${CV_ICONS.reply}${post.replyCount>0?`<span class="conv-action-count">${post.replyCount}</span>`:''}
+          </button>
+          <button class="conv-action bookmark${bk?' active':''}" data-action="bookmark" data-post-id="${post.id}" title="Bookmark">
+            ${bk?CV_ICONS.bookOn:CV_ICONS.bookmark}
+          </button>
+          <button class="conv-action share" data-action="share" data-post-id="${post.id}" title="Copy link">
+            ${CV_ICONS.share}
+          </button>
+        </div>
+        ${replies&&replies.length?`<div class="conv-replies">${repliesHtml}</div>`:''}
+      </div></div>`;
+  }
+
+  // ── Actions (like, repost, bookmark, share, reply, delete) ──
+  async function cvHandleAction(action, postId, pageId, sec) {
+    if (!cvUser && action !== 'share') { cvOpenModal('login'); return; }
+    const postRef  = fbDb.collection('posts').doc(postId);
+    const interRef = cvUser ? fbDb.collection('interactions').doc(cvUser.uid + '_' + postId) : null;
+    const FV = firebase.firestore.FieldValue;
+
+    if (action === 'like' || action === 'repost' || action === 'bookmark') {
+      const snap = await interRef.get();
+      const cur  = snap.exists ? (snap.data()[action+'d'] || false) : false;
+      const field = action === 'like' ? 'likeCount' : action === 'repost' ? 'repostCount' : 'bookmarkCount';
+      await fbDb.batch()
+        .update(postRef, { [field]: FV.increment(cur ? -1 : 1) })
+        .set(interRef, { [action+'d']: !cur }, { merge: true })
+        .commit();
+    }
+    else if (action === 'share') {
+      const url = window.location.origin + window.location.pathname + '#post-' + postId;
+      try {
+        await navigator.clipboard.writeText(url);
+        const btn = sec.querySelector('[data-action="share"][data-post-id="' + postId + '"]');
+        if (btn) { const o=btn.innerHTML; btn.innerHTML='<span style="font-size:0.7rem">Copied!</span>'; setTimeout(()=>btn.innerHTML=o,1500); }
+      } catch(e) {}
+    }
+    else if (action === 'reply') {
+      const postEl = sec.querySelector('[data-post-id="' + postId + '"]');
+      if (!postEl) return;
+      const existing = postEl.querySelector('.conv-reply-compose');
+      if (existing) { existing.remove(); return; }
+      const rc = document.createElement('div'); rc.className = 'conv-reply-compose';
+      rc.innerHTML = `<textarea class="conv-reply-input" placeholder="Write a reply…" rows="2"></textarea>
+        <div class="conv-reply-actions"><button class="conv-post-btn" style="font-size:0.65rem;padding:0.38rem 1.1rem">Reply</button></div>`;
+      const acts = postEl.querySelector('.conv-actions');
+      if (acts) acts.after(rc);
+      rc.querySelector('.conv-post-btn').addEventListener('click', async () => {
+        const text = rc.querySelector('.conv-reply-input').value.trim(); if (!text) return;
+        const batch = fbDb.batch();
+        const rRef  = fbDb.collection('posts').doc();
+        batch.set(rRef, { pageId, authorUid: cvUser.uid, authorName: cvUser.displayName||cvUser.email,
+          text, createdAt: FV.serverTimestamp(), likeCount:0, repostCount:0, bookmarkCount:0, replyCount:0, parentId: postId });
+        batch.update(postRef, { replyCount: FV.increment(1) });
+        await batch.commit();
+        rc.remove();
+      });
+      rc.querySelector('.conv-reply-input').focus();
+    }
+  }
+
+  // ── Wire event delegation for a section ──────────────
+  function cvWireSection(sec) {
+    sec.addEventListener('click', async e => {
+      const ab = e.target.closest('[data-action]');
+      if (ab) { await cvHandleAction(ab.dataset.action, ab.dataset.postId, sec.dataset.pageId, sec); return; }
+      const db = e.target.closest('[data-del-id]');
+      if (db && confirm('Delete this post?')) await fbDb.collection('posts').doc(db.dataset.delId).delete();
+    });
+  }
+
+  // ── Initialize & subscribe a conv section ─────────────
+  const cvUnsub = {};
+  function cvInitSection(sec) {
+    const pageId = sec.dataset.pageId; if (!pageId) return;
+    if (sec.dataset.cvInit) return; sec.dataset.cvInit = '1';
+
+    if (!sec.querySelector('.conv-title')) {
+      const h = document.createElement('h3'); h.className = 'conv-title';
+      h.textContent = pageId === 'thoughts' ? 'Conversation' : 'Discuss This Painting';
+      sec.prepend(h);
+    }
+    if (!sec.querySelector('.conv-posts')) {
+      const p = document.createElement('div'); p.className = 'conv-posts';
+      p.innerHTML = '<div class="conv-loading">Loading…</div>';
+      sec.appendChild(p);
+    }
+    cvRenderAuthBar(sec);
+    cvRenderCompose(sec);
+    cvWireSection(sec);
+
+    if (cvUnsub[pageId]) cvUnsub[pageId]();
+
+    const q = fbDb.collection('posts')
+      .where('pageId','==',pageId).where('parentId','==',null)
+      .orderBy('createdAt','asc');
+
+    cvUnsub[pageId] = q.onSnapshot(async snap => {
+      const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const postsEl = sec.querySelector('.conv-posts'); if (!postsEl) return;
+
+      if (!posts.length) {
+        postsEl.innerHTML = '<div class="conv-empty">Be the first to share your thoughts.</div>'; return;
+      }
+
+      // Fetch replies in chunks of 30
+      const ids = posts.map(p => p.id);
+      let replies = [];
+      for (let i = 0; i < ids.length; i += 30) {
+        const rs = await fbDb.collection('posts').where('parentId','in',ids.slice(i,i+30))
+          .orderBy('createdAt','asc').get();
+        replies = replies.concat(rs.docs.map(d => ({ id: d.id, ...d.data() })));
+      }
+
+      // Fetch interactions for current user
+      const interMap = {};
+      if (cvUser) {
+        const allIds = [...ids, ...replies.map(r => r.id)];
+        for (const pid of allIds) {
+          const s = await fbDb.collection('interactions').doc(cvUser.uid + '_' + pid).get();
+          if (s.exists) interMap[pid] = s.data();
+        }
+      }
+
+      const byParent = {};
+      replies.forEach(r => { (byParent[r.parentId] = byParent[r.parentId]||[]).push(r); });
+
+      postsEl.innerHTML = posts.map(p =>
+        cvRenderPost(p, interMap[p.id], byParent[p.id]||[], interMap)
+      ).join('');
+    });
+  }
+
+  // ── Inject conv section into a page element ───────────
+  function cvInjectSection(pageEl, pageId) {
+    if (!pageEl || pageEl.querySelector('.conv-section')) return;
+    const sec = document.createElement('div');
+    sec.className = 'conv-section'; sec.dataset.pageId = pageId;
+    const footer = pageEl.querySelector('.page-footer');
+    footer ? pageEl.insertBefore(sec, footer) : pageEl.appendChild(sec);
+  }
+
+  // ── Set up Conversation tab on load ──────────────────
+  const thoughtsPage = document.getElementById('page-thoughts');
+  if (thoughtsPage) {
+    cvInjectSection(thoughtsPage, 'thoughts');
+    cvInitSection(thoughtsPage.querySelector('.conv-section'));
+  }
+
+  // ── Init conv for detail pages when opened ──────────
+  // Hook into showPage so we only subscribe when page is opened
+  const _origShowPage = showPage;
+  function showPage(id) {
+    _origShowPage(id);
+    if (DETAIL_SECTIONS.includes(id)) {
+      const pageEl = document.getElementById('page-' + id);
+      if (pageEl) {
+        cvInjectSection(pageEl, id);
+        const sec = pageEl.querySelector('.conv-section');
+        if (sec) cvInitSection(sec);
+      }
+    }
+  }
+
 
   // ── Artist's Statement painting rotators (15 s each) ──────────
   function makeStatementRotator(id, paintings) {
