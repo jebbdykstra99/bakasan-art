@@ -42,8 +42,11 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.authorUid == request.auth.uid
         && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 2000;
+        && request.resource.data.text.size() <= 2000
+        // Must have text, an image, or a poll
+        && (request.resource.data.text.size() > 0
+            || 'imageUrl' in request.resource.data
+            || 'poll' in request.resource.data);
 
       allow update: if request.auth != null && (
         // Author edits their own post (text, etc.)
