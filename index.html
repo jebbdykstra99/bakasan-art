@@ -4895,19 +4895,8 @@
       }).join('') + '</div>';
   }
 
-  // Refresh cache + For You feed on auth change
-  const _origAuthHandler = fbAuth.onAuthStateChanged.bind(fbAuth);
-  // We extend the existing auth handler via a second listener
-  fbAuth.onAuthStateChanged(async user => {
-    if (user) {
-      await followRefreshCache();
-      if (exploreOverlay.classList.contains('active')) exploreLoadForYou();
-    } else {
-      followingCache = new Set();
-    }
-  });
-
-  // Also refresh For You when Explore opens
+  // openExplore wrapper — refreshes For You feed when Explore opens
+  // (openExplore function declaration is hoisted so this reassignment is safe)
   const _origOpenExplore = openExplore;
   openExplore = function() {
     _origOpenExplore();
@@ -6137,6 +6126,10 @@
     // Notifications subscription
     if (user) notifSubscribe(user.uid);
     else       notifUnsubscribe();
+
+    // Follow cache refresh
+    if (user) followRefreshCache();
+    else followingCache = new Set();
 
     // Write/update user profile so they appear in chat search
     if (user) {
