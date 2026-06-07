@@ -7364,6 +7364,39 @@
     });
   })();
 
+  // ── Deep-link handler: #post-{postId} → open Conversation and scroll to post ──
+  (function() {
+    function handlePostHash() {
+      const hash = window.location.hash;
+      if (!hash.startsWith('#post-')) return;
+      const postId = hash.slice(6);
+      if (!postId) return;
+
+      // Navigate to Conversation page
+      showPage('thoughts');
+
+      // Poll until the post element appears in the DOM (feed loads async)
+      let attempts = 0;
+      const interval = setInterval(() => {
+        const el = document.querySelector('[data-post-id="' + postId + '"]');
+        if (el) {
+          clearInterval(interval);
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Briefly highlight the post
+          el.style.transition = 'background 0.3s';
+          el.style.background = 'rgba(139,109,63,0.12)';
+          setTimeout(() => { el.style.background = ''; }, 2000);
+        }
+        if (++attempts > 40) clearInterval(interval); // give up after 4s
+      }, 100);
+    }
+
+    // Run on initial load
+    handlePostHash();
+    // Also handle if hash changes while page is open
+    window.addEventListener('hashchange', handlePostHash);
+  })();
+
 </script>
 
 
