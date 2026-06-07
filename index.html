@@ -448,13 +448,25 @@
     }
     .thoughts-toolbar-btn {
       background: none; border: none; cursor: pointer;
-      color: var(--accent); opacity: 0.75;
-      padding: 0.45rem;
+      color: var(--accent); opacity: 1;
+      padding: 0.5rem;
       border-radius: 50%;
-      transition: opacity 0.15s, background 0.15s;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
       display: flex; align-items: center; justify-content: center;
+      stroke-width: 2;
     }
-    .thoughts-toolbar-btn:hover { opacity: 1; background: rgba(139,109,63,0.1); }
+    .thoughts-toolbar-btn:hover {
+      background: rgba(139,109,63,0.12);
+      color: var(--accent-dark);
+      transform: scale(1.12);
+    }
+    .thoughts-toolbar-btn:active { transform: scale(0.95); }
+
+    /* Hide redundant conv-section header/compose inside the thoughts feed */
+    .thoughts-feed .conv-title,
+    .thoughts-feed .conv-section > .auth-bar,
+    .thoughts-feed .cv-auth-bar,
+    .thoughts-feed .conv-compose { display: none !important; }
 
     .thoughts-post-btn {
       background: rgba(139,109,63,0.3); color: rgba(255,255,255,0.5);
