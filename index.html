@@ -32,6 +32,7 @@
       --accent-dark: #5e4825;
       --border:      #ddd0bc;
       --nav-w:       240px;
+      --right-w:     280px;
     }
 
     html { scroll-behavior: smooth; }
@@ -161,9 +162,69 @@
     .nav-sub2 > li > a:hover { color: var(--nav-hover); }
     .nav-sub2 > li > a.active { color: var(--nav-active); border-left-color: var(--accent); font-style: normal; }
 
+    /* ── Social nav divider ───────────────────────────── */
+
+    .nav-divider {
+      width: calc(100% - 3.6rem);
+      margin: 0.8rem 1.8rem 0.6rem;
+      height: 1px;
+      background: rgba(139,109,63,0.28);
+    }
+
+    /* Social nav items (icon + label) */
+    .nav-social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      min-height: 46px;
+      padding: 0.5rem 1.8rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem; font-weight: 400;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--nav-text); text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .nav-social-link:hover { color: var(--nav-hover); background: rgba(255,255,255,0.03); }
+    .nav-social-link.active { color: var(--nav-active); border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+    .nav-social-link svg {
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .nav-social-link:hover svg,
+    .nav-social-link.active svg { opacity: 1; }
+
+    /* Badge for notifications count */
+    .nav-badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      display: none; /* shown when there are unread notifications */
+    }
+    .nav-badge.visible { display: flex; }
+
     /* ── Main ─────────────────────────────────────────── */
 
-    .main { margin-left: var(--nav-w); flex: 1; min-height: 100vh; transition: margin-left 0.28s ease; }
+    .main {
+      margin-left: var(--nav-w);
+      margin-right: var(--right-w);
+      flex: 1;
+      min-height: 100vh;
+      transition: margin-left 0.28s ease, margin-right 0.28s ease;
+    }
 
     /* Main sections scroll continuously — always visible */
     .page { display: none; }
@@ -179,13 +240,1254 @@
     .page.detail-page.active {
       display: block;
       position: fixed;
-      top: 0; left: var(--nav-w); right: 0; bottom: 0;
+      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
       overflow-y: auto;
       z-index: 300;
       background: var(--bg);
-      transition: left 0.28s ease;
+      transition: left 0.28s ease, right 0.28s ease;
     }
     body.nav-collapsed .page.detail-page.active { left: 0; }
+
+    /* ── Right Panel ───────────────────────────────────── */
+
+    .right-panel {
+      position: fixed;
+      inset: 0 0 0 auto;
+      width: var(--right-w);
+      background: var(--nav-bg);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      overflow-y: auto;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.18);
+      transition: transform 0.28s ease;
+    }
+
+    .right-panel-header {
+      padding: 2.2rem 1.4rem 1rem;
+      border-bottom: 1px solid rgba(139,109,63,0.35);
+      flex-shrink: 0;
+    }
+
+    .right-panel-kicker {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.58rem; font-weight: 500;
+      letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.5rem;
+    }
+
+    .right-panel-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--nav-active);
+      line-height: 1.25;
+    }
+
+    .right-panel-body {
+      flex: 1;
+      padding: 1rem 0;
+      overflow-y: auto;
+    }
+
+    .news-item {
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: default;
+      transition: background 0.18s;
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item:hover { background: rgba(255,255,255,0.04); }
+
+    .news-item-tag {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.55rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.35rem;
+    }
+
+    .news-item-headline {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.88rem; font-weight: 400;
+      line-height: 1.45;
+      color: var(--nav-hover);
+      margin-bottom: 0.4rem;
+    }
+    .news-item-headline a {
+      color: inherit; text-decoration: none;
+      transition: color 0.15s;
+    }
+    .news-item-headline a:hover { color: var(--nav-active); }
+
+    .news-item-snippet {
+      font-size: 0.75rem; line-height: 1.6;
+      color: rgba(184,168,136,0.65);
+      margin-bottom: 0.35rem;
+    }
+
+    .news-item-meta {
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: rgba(184,168,136,0.4);
+    }
+
+    .right-panel-footer {
+      padding: 0.9rem 1.4rem;
+      border-top: 1px solid rgba(139,109,63,0.25);
+      flex-shrink: 0;
+    }
+
+    .right-panel-footer p {
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: rgba(184,168,136,0.35);
+      line-height: 1.6;
+    }
+
+    /* Right panel hidden state (for future toggle) */
+    body.right-collapsed .right-panel { transform: translateX(100%); }
+    body.right-collapsed .main { margin-right: 0; }
+    body.right-collapsed .page.detail-page.active { right: 0; }
+
+    /* ── Follow system ─────────────────────────────────── */
+
+    .follow-btn {
+      display: inline-flex; align-items: center;
+      gap: 0.35rem;
+      background: var(--nav-bg); color: var(--nav-text);
+      border: none; border-radius: 20px;
+      padding: 0.35rem 1rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; flex-shrink: 0;
+      transition: background 0.18s, color 0.18s;
+      white-space: nowrap;
+    }
+    .follow-btn:hover { background: var(--accent); color: #fff; }
+    .follow-btn.following {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .follow-btn.following:hover {
+      border-color: #dc3545; color: #dc3545;
+      background: rgba(220,53,69,0.06);
+    }
+    .follow-btn.following::before { content: 'Following'; }
+    .follow-btn.following:hover::before { content: 'Unfollow'; }
+
+    /* Following / Followers list modal */
+    .followlist-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 600;
+      align-items: center; justify-content: center;
+    }
+    .followlist-modal.open { display: flex; }
+    .followlist-box {
+      background: var(--surface); border-radius: 8px;
+      width: 380px; max-width: 94vw; max-height: 80vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 16px 56px rgba(0,0,0,0.2);
+    }
+    .followlist-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .followlist-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+    }
+    .followlist-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+    }
+    .followlist-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .followlist-tab {
+      flex: 1; padding: 0.7rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); text-align: center;
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer; transition: color 0.2s, border-color 0.2s;
+    }
+    .followlist-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .followlist-list { flex: 1; overflow-y: auto; }
+    .followlist-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .followlist-item:last-child { border-bottom: none; }
+    .followlist-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; font-weight: 500; color: #fff;
+      flex-shrink: 0;
+    }
+    .followlist-name {
+      flex: 1;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; color: var(--text);
+    }
+    .followlist-empty {
+      padding: 2rem; text-align: center;
+      font-style: italic; color: var(--text-muted); font-size: 0.9rem;
+    }
+
+    /* ── Profile Overlay ───────────────────────────────── */
+
+    .profile-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
+      background: var(--bg);
+      z-index: 300;
+      flex-direction: column;
+      overflow-y: auto;
+      transition: left 0.28s ease, right 0.28s ease;
+    }
+    .profile-overlay.active { display: flex; }
+    body.nav-collapsed .profile-overlay { left: 0; }
+    @media (max-width: 1100px) { .profile-overlay { right: 0; } }
+
+    /* Sticky top bar */
+    .profile-topbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.7rem 1.2rem;
+      background: rgba(240,235,224,0.88);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .profile-back-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text); display: flex; align-items: center;
+      padding: 0; flex-shrink: 0;
+    }
+    .profile-topbar-info { flex: 1; min-width: 0; }
+    .profile-topbar-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+      line-height: 1.2;
+    }
+    .profile-topbar-posts {
+      font-size: 0.7rem; color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .profile-topbar-actions { display: flex; gap: 0.5rem; }
+    .profile-topbar-icon {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); display: flex; align-items: center;
+      padding: 0.3rem; border-radius: 50%;
+      transition: background 0.15s;
+    }
+    .profile-topbar-icon:hover { background: rgba(0,0,0,0.07); }
+
+    /* Banner */
+    .profile-banner {
+      position: relative;
+      height: 180px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .profile-banner-img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .profile-banner-gradient {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--nav-bg) 0%, var(--accent-dark) 50%, #8b6d3f 100%);
+    }
+
+    /* Avatar row */
+    .profile-avatar-row {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 1.4rem;
+      margin-top: -44px;
+      flex-shrink: 0;
+      position: relative; z-index: 2;
+    }
+    .profile-avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      border: 4px solid var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2rem; font-weight: 400; color: #fff;
+      flex-shrink: 0; overflow: hidden;
+      background: var(--nav-bg);
+    }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .profile-edit-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.42rem 1.1rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--text); cursor: pointer;
+      transition: background 0.18s;
+      margin-bottom: 4px;
+    }
+    .profile-edit-btn:hover { background: rgba(0,0,0,0.06); }
+
+    /* Info section */
+    .profile-info {
+      padding: 0.9rem 1.4rem 0;
+      flex-shrink: 0;
+    }
+    .profile-display-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.3rem; font-weight: 500; color: var(--text);
+      line-height: 1.2; margin-bottom: 0.1rem;
+    }
+    .profile-handle {
+      font-size: 0.82rem; color: var(--text-muted);
+      margin-bottom: 0.7rem;
+    }
+    .profile-bio {
+      font-size: 0.92rem; line-height: 1.6; color: var(--text);
+      margin-bottom: 0.7rem; white-space: pre-wrap;
+    }
+    .profile-meta {
+      display: flex; flex-wrap: wrap; gap: 0.7rem 1.2rem;
+      font-size: 0.8rem; color: var(--text-muted);
+      margin-bottom: 0.9rem;
+    }
+    .profile-meta-item {
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .profile-meta-item svg { flex-shrink: 0; }
+    .profile-stats {
+      display: flex; gap: 1.4rem;
+      font-size: 0.85rem;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-stat-btn {
+      background: none; border: none; cursor: pointer; padding: 0;
+      font-size: 0.85rem; color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .profile-stat-btn:hover { color: var(--text); text-decoration: underline; }
+    .profile-stat-btn strong { color: var(--text); font-weight: 600; }
+
+    /* Tabs */
+    .profile-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      position: sticky;
+      top: 53px; /* topbar height */
+      background: var(--bg); z-index: 9;
+    }
+    .profile-tab {
+      flex: 1;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.9rem 0.5rem;
+      border-bottom: 2px solid transparent;
+      cursor: pointer; background: none;
+      border-top: none; border-left: none; border-right: none;
+      transition: color 0.2s, border-color 0.2s;
+      text-align: center;
+    }
+    .profile-tab:hover { color: var(--text); background: rgba(0,0,0,0.02); }
+    .profile-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Feed */
+    .profile-feed { flex: 1; }
+    .profile-pane { display: none; }
+    .profile-pane.active { display: block; }
+    .profile-feed-empty {
+      padding: 3rem 1.4rem; text-align: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text-muted); font-style: italic;
+    }
+
+    /* Post card in profile feed */
+    .profile-post-card {
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s;
+    }
+    .profile-post-card:hover { background: rgba(139,109,63,0.04); }
+    .profile-post-header {
+      display: flex; align-items: center; gap: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .profile-post-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.85rem; font-weight: 500; color: #fff;
+      flex-shrink: 0;
+    }
+    .profile-post-meta { flex: 1; min-width: 0; }
+    .profile-post-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; font-weight: 500; color: var(--text);
+    }
+    .profile-post-time {
+      font-size: 0.7rem; color: var(--text-muted);
+    }
+    .profile-post-text {
+      font-size: 0.9rem; line-height: 1.6; color: var(--text);
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .profile-post-stats {
+      display: flex; gap: 1.4rem; margin-top: 0.6rem;
+    }
+    .profile-post-stat {
+      font-size: 0.75rem; color: var(--text-light);
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .profile-reply-thread {
+      font-size: 0.72rem; color: var(--accent);
+      margin-bottom: 0.3rem; font-style: italic;
+    }
+
+    /* Edit Profile modal */
+    .profile-edit-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .profile-edit-modal.open { display: flex; }
+    .profile-edit-box {
+      background: var(--surface); border-radius: 8px;
+      width: 440px; max-width: 94vw; max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 16px 56px rgba(0,0,0,0.2);
+    }
+    .profile-edit-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--surface); z-index: 2;
+    }
+    .profile-edit-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+    }
+    .profile-edit-actions { display: flex; align-items: center; gap: 0.7rem; }
+    .profile-edit-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+    }
+    .profile-save-btn {
+      background: var(--nav-bg); color: var(--nav-text);
+      border: none; border-radius: 20px;
+      padding: 0.38rem 1rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.82rem; font-weight: 500; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .profile-save-btn:hover { background: var(--accent); color: #fff; }
+
+    /* Banner edit area inside modal */
+    .profile-edit-banner {
+      position: relative; height: 110px;
+      overflow: hidden; cursor: pointer;
+    }
+    .profile-edit-banner-img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .profile-edit-banner-gradient {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--nav-bg) 0%, var(--accent-dark) 50%, #8b6d3f 100%);
+    }
+    .profile-edit-banner-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .profile-edit-banner:hover .profile-edit-banner-overlay { opacity: 1; }
+    .profile-edit-banner-overlay span {
+      color: #fff; font-size: 0.75rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .profile-edit-avatar-row {
+      position: relative;
+      margin: -30px 0 0 1.2rem; display: inline-block;
+    }
+    .profile-edit-avatar {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 3px solid var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.3rem; color: #fff; overflow: hidden;
+      cursor: pointer; position: relative;
+    }
+    .profile-edit-avatar img { width:100%; height:100%; object-fit:cover; }
+    .profile-edit-avatar-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .profile-edit-avatar:hover .profile-edit-avatar-overlay { opacity: 1; }
+
+    .profile-edit-fields { padding: 1rem 1.2rem; }
+    .profile-edit-field { margin-bottom: 1rem; }
+    .profile-edit-field label {
+      display: block; font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.3rem;
+    }
+    .profile-edit-field input,
+    .profile-edit-field textarea {
+      width: 100%; padding: 0.55rem 0.8rem;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: var(--bg); color: var(--text);
+      font-family: Georgia, serif; font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .profile-edit-field input:focus,
+    .profile-edit-field textarea:focus { border-color: var(--accent); }
+    .profile-edit-field textarea { resize: vertical; min-height: 72px; }
+    .profile-edit-charcount {
+      font-size: 0.68rem; color: var(--text-light);
+      text-align: right; margin-top: 0.2rem;
+    }
+
+    /* Sign-in prompt for profile when logged out */
+    .profile-signin-prompt {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; padding: 3rem;
+    }
+    .profile-signin-prompt p {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text-muted); font-size: 1.05rem; text-align: center;
+    }
+    .profile-signin-prompt-btn {
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 20px; padding: 0.6rem 1.6rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; cursor: pointer;
+    }
+    .profile-signin-prompt-btn:hover { background: var(--accent-dark); }
+
+    /* ── Chat Overlay ──────────────────────────────────── */
+
+    .chat-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
+      background: var(--surface);
+      z-index: 300;
+      flex-direction: row;
+      transition: left 0.28s ease, right 0.28s ease;
+    }
+    .chat-overlay.active { display: flex; }
+    body.nav-collapsed .chat-overlay { left: 0; }
+    @media (max-width: 1100px) { .chat-overlay { right: 0; } }
+
+    /* ─ Thread list (left column) ─ */
+    .chat-threads {
+      width: 300px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+    }
+    @media (max-width: 700px) {
+      .chat-threads { width: 100%; border-right: none; }
+      .chat-threads.hidden { display: none; }
+      .chat-active-pane.empty { display: none; }
+    }
+
+    .chat-threads-header {
+      padding: 1rem 1.2rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .chat-threads-title-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .chat-threads-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.35rem; font-weight: 500; color: var(--text);
+    }
+    .chat-new-btn {
+      background: var(--nav-bg); color: var(--nav-text);
+      border: none; border-radius: 50%;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .chat-new-btn:hover { background: var(--accent); color: #fff; }
+
+    .chat-search-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.4rem 0.9rem;
+    }
+    .chat-search-bar svg { color: var(--text-light); flex-shrink: 0; }
+    .chat-search-input {
+      flex: 1; border: none; background: transparent;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; color: var(--text); outline: none;
+    }
+    .chat-search-input::placeholder { color: var(--text-light); }
+
+    .chat-thread-list {
+      flex: 1; overflow-y: auto;
+    }
+
+    .chat-thread-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .chat-thread-item:hover { background: rgba(139,109,63,0.05); }
+    .chat-thread-item.active { background: rgba(139,109,63,0.09); }
+
+    .chat-thread-avatar {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: #fff;
+    }
+    .chat-thread-body { flex: 1; min-width: 0; }
+    .chat-thread-row1 { display: flex; align-items: baseline; justify-content: space-between; }
+    .chat-thread-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.95rem; font-weight: 500; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .chat-thread-time {
+      font-size: 0.68rem; color: var(--text-light);
+      flex-shrink: 0; margin-left: 0.4rem;
+    }
+    .chat-thread-preview {
+      font-size: 0.8rem; color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 0.15rem;
+    }
+    .chat-thread-dot {
+      flex-shrink: 0; width: 8px; height: 8px;
+      border-radius: 50%; background: var(--accent);
+      display: none;
+    }
+    .chat-thread-item.unread .chat-thread-dot { display: block; }
+    .chat-thread-item.unread .chat-thread-name { font-weight: 600; }
+    .chat-thread-item.unread .chat-thread-preview { color: var(--text); }
+
+    .chat-threads-empty {
+      padding: 2rem 1.2rem; text-align: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text-muted); font-size: 0.9rem; font-style: italic;
+    }
+
+    /* ─ Active pane (right column) ─ */
+    .chat-active-pane {
+      flex: 1; display: flex; flex-direction: column;
+      background: var(--bg); min-width: 0;
+    }
+
+    /* Placeholder */
+    .chat-placeholder {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; padding: 2rem;
+    }
+    .chat-placeholder-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+    }
+    .chat-placeholder-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem; font-weight: 400; color: var(--text);
+    }
+    .chat-placeholder-sub {
+      font-size: 0.88rem; color: var(--text-muted); text-align: center;
+      max-width: 260px; line-height: 1.55;
+    }
+    .chat-placeholder-btn {
+      background: var(--nav-bg); color: var(--nav-text);
+      border: none; border-radius: 20px;
+      padding: 0.6rem 1.6rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.88rem; font-weight: 500; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chat-placeholder-btn:hover { background: var(--accent); color: #fff; }
+
+    /* Active thread */
+    .chat-thread-header {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface); flex-shrink: 0;
+    }
+    .chat-back-thread {
+      background: none; border: none; cursor: pointer;
+      color: var(--accent); padding: 0; display: flex; align-items: center;
+    }
+    .chat-thread-header-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+    }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto;
+      padding: 1rem 1.2rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .chat-msg {
+      display: flex; flex-direction: column;
+      max-width: 72%;
+    }
+    .chat-msg.mine { align-self: flex-end; align-items: flex-end; }
+    .chat-msg.theirs { align-self: flex-start; align-items: flex-start; }
+
+    .chat-bubble {
+      padding: 0.55rem 0.9rem;
+      border-radius: 16px;
+      font-size: 0.9rem; line-height: 1.5;
+      word-break: break-word;
+    }
+    .chat-msg.mine .chat-bubble {
+      background: var(--nav-bg); color: var(--nav-text);
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.theirs .chat-bubble {
+      background: var(--surface); color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg-time {
+      font-size: 0.62rem; color: var(--text-light);
+      margin-top: 0.18rem; padding: 0 0.2rem;
+    }
+
+    .chat-date-sep {
+      text-align: center;
+      font-size: 0.65rem; color: var(--text-light);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin: 0.6rem 0;
+    }
+
+    .chat-messages-loading {
+      text-align: center; font-style: italic;
+      color: var(--text-muted); font-size: 0.85rem; padding: 2rem;
+    }
+
+    .chat-compose {
+      display: flex; align-items: flex-end; gap: 0.7rem;
+      padding: 0.8rem 1.2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface); flex-shrink: 0;
+    }
+    .chat-compose-input {
+      flex: 1; border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.5rem 1rem;
+      font-family: Georgia, serif; font-size: 0.9rem;
+      color: var(--text); background: var(--bg);
+      resize: none; outline: none; min-height: 38px;
+      max-height: 120px; overflow-y: auto; line-height: 1.45;
+      transition: border-color 0.2s;
+    }
+    .chat-compose-input:focus { border-color: var(--accent); }
+    .chat-send-btn {
+      flex-shrink: 0; width: 36px; height: 36px;
+      border-radius: 50%; background: var(--nav-bg);
+      color: var(--nav-text); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .chat-send-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .chat-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* New-chat modal */
+    .chat-newchat-modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 400;
+      align-items: center; justify-content: center;
+    }
+    .chat-newchat-modal.open { display: flex; }
+    .chat-newchat-box {
+      background: var(--surface);
+      border-radius: 8px; width: 360px; max-width: 92vw;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+    .chat-newchat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-newchat-header-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; font-weight: 500; color: var(--text);
+    }
+    .chat-newchat-close {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+    }
+    .chat-newchat-search {
+      display: flex; align-items: center; gap: 0.5rem;
+      margin: 0.8rem 1.2rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.4rem 0.9rem;
+    }
+    .chat-newchat-input {
+      flex: 1; border: none; background: transparent;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; color: var(--text); outline: none;
+    }
+    .chat-newchat-input::placeholder { color: var(--text-light); }
+    .chat-newchat-results { max-height: 240px; overflow-y: auto; }
+    .chat-newchat-result {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.7rem 1.2rem; cursor: pointer;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: background 0.15s;
+    }
+    .chat-newchat-result:hover { background: rgba(139,109,63,0.06); }
+    .chat-newchat-result-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; color: var(--text);
+    }
+    .chat-newchat-result-email {
+      font-size: 0.72rem; color: var(--text-muted);
+    }
+    .chat-newchat-empty {
+      padding: 1.2rem; text-align: center;
+      font-style: italic; color: var(--text-muted); font-size: 0.85rem;
+    }
+
+    /* ── Notifications Overlay ─────────────────────────── */
+
+    .notif-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
+      background: var(--bg);
+      z-index: 300;
+      overflow-y: auto;
+      flex-direction: column;
+      transition: left 0.28s ease, right 0.28s ease;
+    }
+    .notif-overlay.active { display: flex; }
+    body.nav-collapsed .notif-overlay { left: 0; }
+    @media (max-width: 1100px) { .notif-overlay { right: 0; } }
+
+    .notif-header {
+      position: sticky; top: 0;
+      background: var(--bg);
+      padding: 1.4rem 2rem 0;
+      border-bottom: 1px solid var(--border);
+      z-index: 10; flex-shrink: 0;
+    }
+
+    .notif-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .notif-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem; font-weight: 400; color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .notif-mark-read {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); background: none; border: none;
+      cursor: pointer; padding: 0;
+    }
+    .notif-mark-read:hover { color: var(--accent-dark); }
+
+    .notif-tabs {
+      display: flex; gap: 0;
+    }
+    .notif-tab {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.6rem 1.2rem 0.8rem;
+      border-bottom: 2px solid transparent;
+      cursor: pointer; background: none;
+      border-top: none; border-left: none; border-right: none;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .notif-tab:hover { color: var(--text); }
+    .notif-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .notif-back-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); padding: 0.7rem 2rem;
+      border-bottom: 1px solid var(--border); width: 100%; text-align: left;
+    }
+    .notif-back-btn:hover { color: var(--accent-dark); }
+
+    .notif-list { flex: 1; }
+
+    .notif-pane { display: none; }
+    .notif-pane.active { display: block; }
+
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      cursor: default;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: rgba(139,109,63,0.04); }
+    .notif-item.unread { background: rgba(139,109,63,0.06); }
+    .notif-item.unread:hover { background: rgba(139,109,63,0.1); }
+
+    .notif-type-icon {
+      flex-shrink: 0; width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 0.15rem;
+    }
+    .notif-type-icon.like    { background: rgba(220,53,69,0.12); color: #dc3545; }
+    .notif-type-icon.reply   { background: rgba(139,109,63,0.15); color: var(--accent); }
+    .notif-type-icon.follow  { background: rgba(34,139,34,0.12); color: #228b22; }
+
+    .notif-avatar {
+      flex-shrink: 0; width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--nav-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--nav-text);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .notif-body { flex: 1; min-width: 0; }
+
+    .notif-text {
+      font-size: 0.9rem; line-height: 1.5; color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .notif-text strong { font-weight: 600; color: var(--text); }
+
+    .notif-excerpt {
+      font-size: 0.8rem; color: var(--text-muted);
+      line-height: 1.45; font-style: italic;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .notif-time {
+      font-size: 0.68rem; color: var(--text-light);
+      letter-spacing: 0.04em; margin-top: 0.2rem;
+    }
+
+    .notif-empty {
+      padding: 4rem 2rem;
+      text-align: center;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text-muted); font-size: 1rem; font-style: italic;
+    }
+
+    .notif-signin-prompt {
+      padding: 3rem 2rem; text-align: center;
+    }
+    .notif-signin-prompt p {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text-muted); font-size: 1rem; margin-bottom: 1rem;
+    }
+    .notif-signin-btn {
+      background: var(--accent); color: #fff;
+      border: none; padding: 0.55rem 1.4rem;
+      border-radius: 4px; cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.88rem; letter-spacing: 0.06em;
+    }
+    .notif-signin-btn:hover { background: var(--accent-dark); }
+
+    /* ── Explore Overlay ───────────────────────────────── */
+
+    .explore-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
+      background: var(--bg);
+      z-index: 300;
+      overflow-y: auto;
+      flex-direction: column;
+      transition: left 0.28s ease, right 0.28s ease;
+    }
+    .explore-overlay.active { display: flex; }
+    body.nav-collapsed .explore-overlay { left: 0; }
+    @media (max-width: 1100px) {
+      .explore-overlay { right: 0; }
+    }
+
+    /* Search bar */
+    .explore-search-wrap {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      padding: 1.2rem 2rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .explore-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 0.55rem 1.1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .explore-search-bar:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139,109,63,0.12);
+    }
+    .explore-search-bar svg { flex-shrink: 0; color: var(--text-light); }
+
+    .explore-search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+    }
+    .explore-search-input::placeholder { color: var(--text-light); }
+
+    .explore-search-opts {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      padding: 0 0.2rem;
+    }
+    .explore-search-opt {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.2rem 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .explore-search-opt:hover,
+    .explore-search-opt.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(139,109,63,0.07);
+    }
+
+    /* Tabs */
+    .explore-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: sticky;
+      top: calc(3.1rem + 2.4rem); /* approx search bar height */
+      z-index: 9;
+    }
+
+    .explore-tab {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.9rem 1.4rem;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .explore-tab:hover { color: var(--text); }
+    .explore-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Tab panes */
+    .explore-pane { display: none; padding: 1.8rem 2rem; }
+    .explore-pane.active { display: block; }
+
+    /* Explore section heading */
+    .explore-section-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Story/topic cards */
+    .explore-cards { display: flex; flex-direction: column; gap: 0; }
+
+    .explore-card {
+      display: flex;
+      gap: 1.2rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      border-radius: 4px;
+    }
+    .explore-card:last-child { border-bottom: none; }
+    .explore-card:hover { background: rgba(139,109,63,0.04); padding-left: 0.4rem; }
+
+    .explore-card-thumb {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .explore-card-thumb-placeholder {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      border-radius: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      font-size: 1.5rem;
+    }
+
+    .explore-card-body { flex: 1; min-width: 0; }
+
+    .explore-card-tag {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .explore-card-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 0.3rem;
+    }
+
+    .explore-card-snippet {
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    .explore-card-meta {
+      font-size: 0.68rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* Art grid (3-up) */
+    .explore-art-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 900px) {
+      .explore-art-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .explore-art-card {
+      cursor: pointer;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .explore-art-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    }
+    .explore-art-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+    .explore-art-card-label {
+      padding: 0.5rem 0.7rem 0.6rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Back button in explore */
+    .explore-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 0.7rem 2rem;
+      border-bottom: 1px solid var(--border);
+      width: 100%;
+      text-align: left;
+    }
+    .explore-back-btn:hover { color: var(--accent-dark); }
 
     /* Sticky back button inside detail overlays */
     .detail-back-btn {
@@ -999,6 +2301,13 @@
     body.nav-collapsed .sidebar { transform: translateX(-100%); }
     body.nav-collapsed .main    { margin-left: 0; }
 
+    /* Hide right panel below 1100px — not enough room for 3 columns */
+    @media (max-width: 1100px) {
+      .right-panel { display: none; }
+      .main { margin-right: 0; }
+      .page.detail-page.active { right: 0; }
+    }
+
     /* Hamburger bars: dark when floating over light content (collapsed state) */
     body.nav-collapsed .hamburger span { background: var(--text); }
     body.nav-collapsed .hamburger:hover { background: rgba(0,0,0,0.07); }
@@ -1667,6 +2976,45 @@
       <li><a href="#" class="nav-link" data-page="contact">Contacts and Opportunities</a></li>
       <li><a href="#" class="nav-link" data-page="thoughts">Conversation</a></li>
     </ul>
+
+    <!-- ── Social / Community Nav ─── -->
+    <div class="nav-divider"></div>
+    <ul>
+      <li>
+        <a href="#" class="nav-social-link" id="nav-explore" data-social="explore">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Explore
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-social-link" id="nav-notifications" data-social="notifications">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          Notifications
+          <span class="nav-badge" id="notif-badge">0</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-social-link" id="nav-chat" data-social="chat">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Chat
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-social-link" id="nav-profile" data-social="profile">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Profile
+        </a>
+      </li>
+    </ul>
+
   </nav>
 
 </aside>
@@ -2764,6 +4112,499 @@
 
 </main>
 
+<!-- ── Following / Followers modal ─────────────────── -->
+<div class="followlist-modal" id="followlist-modal">
+  <div class="followlist-box">
+    <div class="followlist-header">
+      <div class="followlist-title" id="followlist-title">Following</div>
+      <button class="followlist-close" id="followlist-close">&times;</button>
+    </div>
+    <div class="followlist-tabs">
+      <button class="followlist-tab active" data-fl-tab="following">Following</button>
+      <button class="followlist-tab" data-fl-tab="followers">Followers</button>
+    </div>
+    <div class="followlist-list" id="followlist-list"></div>
+  </div>
+</div>
+
+<!-- ── Profile Overlay ──────────────────────────────── -->
+<div class="profile-overlay" id="profile-overlay">
+
+  <!-- Sticky top bar -->
+  <div class="profile-topbar">
+    <button class="profile-back-btn" id="profile-back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="profile-topbar-info">
+      <div class="profile-topbar-name" id="profile-topbar-name">Profile</div>
+      <div class="profile-topbar-posts" id="profile-topbar-posts"></div>
+    </div>
+    <div class="profile-topbar-actions">
+      <button class="profile-topbar-icon" id="profile-topbar-explore" title="Explore">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Signed-out prompt -->
+  <div class="profile-signin-prompt" id="profile-signin-prompt" style="display:none;">
+    <p>Sign in to view your profile.</p>
+    <button class="profile-signin-prompt-btn" id="profile-signin-prompt-btn">Sign In</button>
+  </div>
+
+  <!-- Profile content (shown when signed in) -->
+  <div id="profile-content" style="display:none;flex-direction:column;flex:1;">
+
+    <!-- Banner -->
+    <div class="profile-banner" id="profile-banner">
+      <div class="profile-banner-gradient" id="profile-banner-inner"></div>
+    </div>
+
+    <!-- Avatar + Edit button -->
+    <div class="profile-avatar-row">
+      <div class="profile-avatar" id="profile-avatar"></div>
+      <button class="profile-edit-btn" id="profile-edit-btn">Edit profile</button>
+    </div>
+
+    <!-- Info -->
+    <div class="profile-info">
+      <div class="profile-display-name" id="profile-display-name"></div>
+      <div class="profile-handle" id="profile-handle"></div>
+      <div class="profile-bio" id="profile-bio" style="display:none;"></div>
+      <div class="profile-meta" id="profile-meta"></div>
+      <div class="profile-stats">
+        <button class="profile-stat-btn" id="profile-following-btn"><strong id="profile-following-count">0</strong> Following</button>
+        <button class="profile-stat-btn" id="profile-followers-btn"><strong id="profile-followers-count">0</strong> Followers</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-profile-tab="posts">Posts</button>
+      <button class="profile-tab" data-profile-tab="replies">Replies</button>
+    </div>
+
+    <!-- Feed -->
+    <div class="profile-feed">
+      <div class="profile-pane active" id="profile-pane-posts">
+        <div class="profile-feed-empty" id="profile-posts-empty">No posts yet.</div>
+      </div>
+      <div class="profile-pane" id="profile-pane-replies">
+        <div class="profile-feed-empty" id="profile-replies-empty">No replies yet.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit Profile modal -->
+<div class="profile-edit-modal" id="profile-edit-modal">
+  <div class="profile-edit-box">
+    <div class="profile-edit-header">
+      <button class="profile-edit-close" id="profile-edit-close">&times;</button>
+      <div class="profile-edit-title">Edit profile</div>
+      <div class="profile-edit-actions">
+        <button class="profile-save-btn" id="profile-save-btn">Save</button>
+      </div>
+    </div>
+    <!-- Banner preview -->
+    <div class="profile-edit-banner" id="profile-edit-banner-preview">
+      <div class="profile-edit-banner-gradient" id="profile-edit-banner-inner"></div>
+      <div class="profile-edit-banner-overlay"><span>Change banner</span></div>
+    </div>
+    <!-- Avatar preview -->
+    <div class="profile-edit-avatar-row">
+      <div class="profile-edit-avatar" id="profile-edit-avatar-preview">
+        <div class="profile-edit-avatar-overlay">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="profile-edit-fields">
+      <div class="profile-edit-field">
+        <label>Name</label>
+        <input type="text" id="profile-edit-name" maxlength="50" placeholder="Your name">
+      </div>
+      <div class="profile-edit-field">
+        <label>Bio <span class="profile-edit-charcount" id="profile-bio-count">0 / 160</span></label>
+        <textarea id="profile-edit-bio" maxlength="160" placeholder="Tell the world about yourself…" rows="3"></textarea>
+      </div>
+      <div class="profile-edit-field">
+        <label>Location</label>
+        <input type="text" id="profile-edit-location" maxlength="60" placeholder="Where are you?">
+      </div>
+      <div class="profile-edit-field">
+        <label>Banner image URL <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="url" id="profile-edit-banner-url" placeholder="https://…">
+      </div>
+      <div class="profile-edit-field">
+        <label>Profile photo URL <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="url" id="profile-edit-photo-url" placeholder="https://…">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Chat Overlay ──────────────────────────────────── -->
+<div class="chat-overlay" id="chat-overlay">
+
+  <!-- Left: thread list -->
+  <div class="chat-threads" id="chat-threads">
+    <div class="chat-threads-header">
+      <div class="chat-threads-title-row">
+        <div class="chat-threads-title">Chat</div>
+        <button class="chat-new-btn" id="chat-new-btn" title="New chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+      <div class="chat-search-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="chat-search-input" id="chat-search-input" placeholder="Search" autocomplete="off">
+      </div>
+    </div>
+    <div class="chat-thread-list" id="chat-thread-list">
+      <div class="chat-threads-empty" id="chat-threads-empty">No conversations yet.</div>
+    </div>
+  </div>
+
+  <!-- Right: active thread or placeholder -->
+  <div class="chat-active-pane empty" id="chat-active-pane">
+
+    <!-- Placeholder (shown when no thread selected) -->
+    <div class="chat-placeholder" id="chat-placeholder">
+      <div class="chat-placeholder-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="chat-placeholder-title">Start Conversation</div>
+      <div class="chat-placeholder-sub">Choose from your existing conversations, or start a new one.</div>
+      <button class="chat-placeholder-btn" id="chat-placeholder-new">New chat</button>
+    </div>
+
+    <!-- Active thread (shown when a thread is open) -->
+    <div class="chat-thread-view" id="chat-thread-view" style="display:none;flex:1;flex-direction:column;min-height:0;display:none;">
+      <div class="chat-thread-header" id="chat-thread-header">
+        <button class="chat-back-thread" id="chat-back-thread">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="chat-thread-avatar" id="chat-active-avatar" style="width:32px;height:32px;font-size:0.8rem;"></div>
+        <div class="chat-thread-header-name" id="chat-active-name"></div>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-messages-loading">Loading messages…</div>
+      </div>
+      <div class="chat-compose" id="chat-compose">
+        <textarea class="chat-compose-input" id="chat-compose-input" placeholder="Start a new message" rows="1"></textarea>
+        <button class="chat-send-btn" id="chat-send-btn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- New-chat modal -->
+<div class="chat-newchat-modal" id="chat-newchat-modal">
+  <div class="chat-newchat-box">
+    <div class="chat-newchat-header">
+      <div class="chat-newchat-header-title">New Message</div>
+      <button class="chat-newchat-close" id="chat-newchat-close">&times;</button>
+    </div>
+    <div class="chat-newchat-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="chat-newchat-input" id="chat-newchat-input" placeholder="Search by name or email…" autocomplete="off">
+    </div>
+    <div class="chat-newchat-results" id="chat-newchat-results">
+      <div class="chat-newchat-empty">Type to search for users.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Notifications Overlay ────────────────────────── -->
+<div class="notif-overlay" id="notif-overlay">
+
+  <button class="notif-back-btn" id="notif-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </button>
+
+  <div class="notif-header">
+    <div class="notif-header-row">
+      <div class="notif-title">Notifications</div>
+      <button class="notif-mark-read" id="notif-mark-read">Mark all read</button>
+    </div>
+    <div class="notif-tabs">
+      <button class="notif-tab active" data-notif-tab="all">All</button>
+      <button class="notif-tab" data-notif-tab="mentions">Mentions</button>
+    </div>
+  </div>
+
+  <div class="notif-list" id="notif-list">
+    <div class="notif-pane active" id="notif-pane-all">
+      <div class="notif-empty" id="notif-empty-all">No notifications yet.</div>
+    </div>
+    <div class="notif-pane" id="notif-pane-mentions">
+      <div class="notif-empty" id="notif-empty-mentions">No mentions yet.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Explore Overlay ──────────────────────────────── -->
+<div class="explore-overlay" id="explore-overlay">
+
+  <button class="explore-back-btn" id="explore-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Back
+  </button>
+
+  <!-- Search -->
+  <div class="explore-search-wrap">
+    <div class="explore-search-bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="explore-search-input" id="explore-search-input" placeholder="Search bakasan.art or the web…" autocomplete="off">
+    </div>
+    <div class="explore-search-opts">
+      <button class="explore-search-opt active" data-search="site">This Site</button>
+      <button class="explore-search-opt" data-search="google">Google</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="explore-tabs">
+    <button class="explore-tab active" data-tab="foryou">For You</button>
+    <button class="explore-tab" data-tab="buddhism">Buddhism</button>
+    <button class="explore-tab" data-tab="art">Art</button>
+  </div>
+
+  <!-- For You -->
+  <div class="explore-pane active" id="explore-pane-foryou">
+    <div class="explore-section-title">Today's Highlights</div>
+    <div class="explore-cards">
+
+      <div class="explore-card" data-target="murasaki">
+        <img class="explore-card-thumb" src="images/murasaki.png" alt="Lady Murasaki">
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Women of Buddhism</div>
+          <div class="explore-card-title">Lady Murasaki Shikibu — The World's First Novelist</div>
+          <div class="explore-card-snippet">Court lady, poet, and diarist — her Tale of Genji changed literature forever.</div>
+          <div class="explore-card-meta">Painting · Story</div>
+        </div>
+      </div>
+
+      <div class="explore-card" data-target="green-tara">
+        <img class="explore-card-thumb" src="images/GreenTara.jpg" alt="Green Tara">
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Buddhist Iconography</div>
+          <div class="explore-card-title">Green Tara — Swift Compassionate Liberator</div>
+          <div class="explore-card-snippet">Of the twenty-one Taras, Green Tara responds to prayers before they are completed.</div>
+          <div class="explore-card-meta">Painting · Story</div>
+        </div>
+      </div>
+
+      <div class="explore-card" data-target="kuan-yin">
+        <img class="explore-card-thumb" src="images/Kuan-Yin.jpg" alt="Kuan Yin">
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Buddhist Iconography</div>
+          <div class="explore-card-title">Kuan Yin — She Who Hears the Cries of the World</div>
+          <div class="explore-card-snippet">The Bodhisattva of compassion, beloved across China, Japan, and Southeast Asia.</div>
+          <div class="explore-card-meta">Painting · Story</div>
+        </div>
+      </div>
+
+      <div class="explore-card" data-target="gotami">
+        <img class="explore-card-thumb" src="images/Mahapajapati.jpg" alt="Mahaprajapati">
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Women of Buddhism</div>
+          <div class="explore-card-title">Mahaprajapati Gotami — First Buddhist Nun</div>
+          <div class="explore-card-snippet">The Buddha's foster mother founded the first community of ordained women practitioners.</div>
+          <div class="explore-card-meta">Painting · Story</div>
+        </div>
+      </div>
+
+      <div class="explore-card" data-target="thoughts">
+        <div class="explore-card-thumb-placeholder">✦</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Community</div>
+          <div class="explore-card-title">Join the Conversation</div>
+          <div class="explore-card-snippet">Share your thoughts on the paintings, the women of Buddhism, or your own practice.</div>
+          <div class="explore-card-meta">Conversation · Open</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Buddhism -->
+  <div class="explore-pane" id="explore-pane-buddhism">
+    <div class="explore-section-title">Buddhism &amp; Dharma</div>
+    <div class="explore-cards">
+
+      <div class="explore-card">
+        <div class="explore-card-thumb-placeholder">☸</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Zen</div>
+          <div class="explore-card-title">Shoshin — The Art of Beginner's Mind</div>
+          <div class="explore-card-snippet">Approaching each moment free of assumption and open to wonder — the foundation of Zen practice.</div>
+          <div class="explore-card-meta">Dharma Note</div>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <div class="explore-card-thumb-placeholder">🪷</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Pure Land</div>
+          <div class="explore-card-title">Nembutsu and the Compassion of Amida Buddha</div>
+          <div class="explore-card-snippet">The recitation of Namu Amida Butsu as a practice of entrusting — faith as receiving rather than achieving.</div>
+          <div class="explore-card-meta">Dharma Note</div>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <div class="explore-card-thumb-placeholder">🏔</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">History</div>
+          <div class="explore-card-title">Buddhism's Spread Along the Silk Road</div>
+          <div class="explore-card-snippet">From India through Central Asia and into China and Japan — tracing the journey of the Dharma across centuries.</div>
+          <div class="explore-card-meta">Historical Context</div>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <div class="explore-card-thumb-placeholder">☯</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Interfaith</div>
+          <div class="explore-card-title">Parallels Between Kuan Yin and the Virgin Mary</div>
+          <div class="explore-card-snippet">Two compassionate feminine figures across East and West — scholars explore the cultural bridges between traditions.</div>
+          <div class="explore-card-meta">Comparative Religion</div>
+        </div>
+      </div>
+
+      <div class="explore-card">
+        <div class="explore-card-thumb-placeholder">🧘</div>
+        <div class="explore-card-body">
+          <div class="explore-card-tag">Practice</div>
+          <div class="explore-card-title">Walking Meditation — Kinhin in Zen Tradition</div>
+          <div class="explore-card-snippet">Slow deliberate steps between periods of seated zazen — kinhin is not a break from practice but practice itself applied to motion.</div>
+          <div class="explore-card-meta">Practice Guide</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Art -->
+  <div class="explore-pane" id="explore-pane-art">
+    <div class="explore-section-title">The Bakasan Collection</div>
+    <div class="explore-art-grid">
+      <div class="explore-art-card" data-target="murasaki">
+        <img src="images/murasaki.png" alt="Lady Murasaki">
+        <div class="explore-art-card-label">Lady Murasaki Shikibu</div>
+      </div>
+      <div class="explore-art-card" data-target="green-tara">
+        <img src="images/GreenTara.jpg" alt="Green Tara">
+        <div class="explore-art-card-label">Green Tara</div>
+      </div>
+      <div class="explore-art-card" data-target="kuan-yin">
+        <img src="images/Kuan-Yin.jpg" alt="Kuan Yin">
+        <div class="explore-art-card-label">Kuan Yin</div>
+      </div>
+      <div class="explore-art-card" data-target="black-tara">
+        <img src="images/BlackTara.png" alt="Black Tara">
+        <div class="explore-art-card-label">Black Tara</div>
+      </div>
+      <div class="explore-art-card" data-target="kannon">
+        <img src="images/Kannon.jpg" alt="Kannon">
+        <div class="explore-art-card-label">Kannon</div>
+      </div>
+      <div class="explore-art-card" data-target="amida">
+        <img src="images/AmidaBuddah.jpg" alt="Amida Buddha">
+        <div class="explore-art-card-label">Amida Buddha</div>
+      </div>
+      <div class="explore-art-card" data-target="oiran">
+        <img src="images/Oiran.jpg" alt="Oiran">
+        <div class="explore-art-card-label">Oiran #3</div>
+      </div>
+      <div class="explore-art-card" data-target="peacock">
+        <img src="images/Peacock.jpg" alt="Peacock Kimono">
+        <div class="explore-art-card-label">Peacock Kimono</div>
+      </div>
+      <div class="explore-art-card" data-target="forest">
+        <img src="images/forest.jpg" alt="Forest for the Leaves">
+        <div class="explore-art-card-label">Forest for the Leaves</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Right Panel: Buddhist & Religious News ───────── -->
+<aside class="right-panel" id="right-panel">
+
+  <div class="right-panel-header">
+    <div class="right-panel-kicker">Dharma &amp; World Religion</div>
+    <div class="right-panel-title">Topics &amp; News</div>
+  </div>
+
+  <div class="right-panel-body" id="news-feed">
+
+    <div class="news-item">
+      <div class="news-item-tag">Zen</div>
+      <div class="news-item-headline">The Art of Beginner's Mind in Daily Practice</div>
+      <div class="news-item-snippet">Shoshin — the "beginner's mind" — invites us to approach each moment as if for the first time, free of assumption and open to wonder.</div>
+      <div class="news-item-meta">Editorial</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">Pure Land</div>
+      <div class="news-item-headline">Nembutsu and the Compassion of Amida Buddha</div>
+      <div class="news-item-snippet">The recitation of Namu Amida Butsu as a practice of entrusting — how Shin Buddhism understands faith as receiving rather than achieving.</div>
+      <div class="news-item-meta">Dharma Note</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">Tibetan</div>
+      <div class="news-item-headline">Green Tara: Protector and Swift Liberator</div>
+      <div class="news-item-snippet">Of the twenty-one Taras, Green Tara is revered for her swift compassionate action — said to respond to prayers before they are even completed.</div>
+      <div class="news-item-meta">Iconography</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">History</div>
+      <div class="news-item-headline">Buddhism's Spread Along the Silk Road</div>
+      <div class="news-item-snippet">From the Indian subcontinent through Central Asia and into China and Japan — tracing the extraordinary journey of the Dharma across centuries.</div>
+      <div class="news-item-meta">Historical Context</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">Women of Buddhism</div>
+      <div class="news-item-headline">Mahaprajapati and the First Bhikkhuni Sangha</div>
+      <div class="news-item-snippet">The Buddha's foster mother became the first ordained Buddhist nun, founding a community of women practitioners that endures to this day.</div>
+      <div class="news-item-meta">Biography</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">Interfaith</div>
+      <div class="news-item-headline">Parallels Between Kuan Yin and the Virgin Mary</div>
+      <div class="news-item-snippet">Both traditions hold a compassionate feminine figure who hears the cries of those who suffer. Scholars explore the cultural bridges between East and West.</div>
+      <div class="news-item-meta">Comparative Religion</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-tag">Practice</div>
+      <div class="news-item-headline">Walking Meditation: Kinhin in Zen Tradition</div>
+      <div class="news-item-snippet">Slow deliberate steps between periods of seated zazen — kinhin is not a break from practice but practice itself, applied to motion.</div>
+      <div class="news-item-meta">Dharma Note</div>
+    </div>
+
+  </div>
+
+  <div class="right-panel-footer">
+    <p>Topics updated periodically.<br>Content is editorial and educational.</p>
+  </div>
+
+</aside>
+
 <!-- Paintings data — add new paintings in data/paintings.js -->
 <script src="data/paintings.js"></script>
 
@@ -2847,11 +4688,1031 @@
     if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
   }
 
+  // ── Follow system ────────────────────────────────────
+
+  // Cache of UIDs the current user is following (refreshed on auth change)
+  let followingCache = new Set();
+
+  async function followRefreshCache() {
+    if (!cvUser) { followingCache = new Set(); return; }
+    const snap = await fbDb.collection('follows').doc(cvUser.uid)
+      .collection('following').get();
+    followingCache = new Set(snap.docs.map(d => d.id));
+  }
+
+  async function followUser(targetUid, targetName) {
+    if (!cvUser) { cvOpenModal('login'); return; }
+    if (targetUid === cvUser.uid) return;
+    const myName = cvUser.displayName || cvUser.email;
+    const FV     = firebase.firestore.FieldValue;
+    const batch  = fbDb.batch();
+
+    // Write into my following sub-collection
+    batch.set(
+      fbDb.collection('follows').doc(cvUser.uid).collection('following').doc(targetUid),
+      { followedAt: FV.serverTimestamp(), name: targetName }
+    );
+    // Write into target's followers sub-collection
+    batch.set(
+      fbDb.collection('follows').doc(targetUid).collection('followers').doc(cvUser.uid),
+      { followedAt: FV.serverTimestamp(), name: myName }
+    );
+    // Increment counts
+    batch.set(fbDb.collection('users').doc(cvUser.uid),
+      { followingCount: FV.increment(1) }, { merge: true });
+    batch.set(fbDb.collection('users').doc(targetUid),
+      { followersCount: FV.increment(1) }, { merge: true });
+
+    await batch.commit();
+    followingCache.add(targetUid);
+
+    // Notify target
+    notifWrite(targetUid, 'follow', myName, null, null);
+
+    // Update all follow buttons for this target in the DOM
+    followUpdateButtons(targetUid, true);
+  }
+
+  async function unfollowUser(targetUid) {
+    if (!cvUser) return;
+    const FV    = firebase.firestore.FieldValue;
+    const batch = fbDb.batch();
+
+    batch.delete(
+      fbDb.collection('follows').doc(cvUser.uid).collection('following').doc(targetUid)
+    );
+    batch.delete(
+      fbDb.collection('follows').doc(targetUid).collection('followers').doc(cvUser.uid)
+    );
+    batch.set(fbDb.collection('users').doc(cvUser.uid),
+      { followingCount: FV.increment(-1) }, { merge: true });
+    batch.set(fbDb.collection('users').doc(targetUid),
+      { followersCount: FV.increment(-1) }, { merge: true });
+
+    await batch.commit();
+    followingCache.delete(targetUid);
+    followUpdateButtons(targetUid, false);
+  }
+
+  function followUpdateButtons(targetUid, isFollowing) {
+    document.querySelectorAll(`.follow-btn[data-follow-uid="${targetUid}"]`).forEach(btn => {
+      if (isFollowing) {
+        btn.classList.add('following');
+        btn.textContent = ''; // CSS ::before shows "Following"/"Unfollow"
+      } else {
+        btn.classList.remove('following');
+        btn.textContent = 'Follow';
+      }
+    });
+    // Refresh profile stat counts if profile is open
+    if (profileOverlay.classList.contains('active') && cvUser) profileLoad(cvUser);
+  }
+
+  // Global click delegation for all .follow-btn elements
+  document.addEventListener('click', async e => {
+    const btn = e.target.closest('.follow-btn');
+    if (!btn || !btn.dataset.followUid) return;
+    e.stopPropagation();
+    e.preventDefault();
+    if (!cvUser) { cvOpenModal('login'); return; }
+    btn.disabled = true;
+    if (followingCache.has(btn.dataset.followUid)) {
+      await unfollowUser(btn.dataset.followUid);
+    } else {
+      await followUser(btn.dataset.followUid, btn.dataset.followName || '');
+    }
+    btn.disabled = false;
+  }, true); // capture phase so it fires before chat/other handlers
+
+  // ── Following / Followers modal ───────────────────────
+  const followlistModal = document.getElementById('followlist-modal');
+  let followlistActiveTab = 'following';
+
+  document.getElementById('followlist-close').addEventListener('click', () => {
+    followlistModal.classList.remove('open');
+  });
+  followlistModal.addEventListener('click', e => {
+    if (e.target === followlistModal) followlistModal.classList.remove('open');
+  });
+
+  followlistModal.addEventListener('click', e => {
+    const tab = e.target.closest('[data-fl-tab]');
+    if (!tab) return;
+    followlistModal.querySelectorAll('.followlist-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    followlistActiveTab = tab.dataset.flTab;
+    followlistLoad(cvUser?.uid, followlistActiveTab);
+  });
+
+  async function openFollowlist(uid, tab) {
+    if (!uid) return;
+    followlistActiveTab = tab;
+    followlistModal.classList.add('open');
+    followlistModal.querySelectorAll('.followlist-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.flTab === tab);
+    });
+    document.getElementById('followlist-title').textContent =
+      tab === 'following' ? 'Following' : 'Followers';
+    await followlistLoad(uid, tab);
+  }
+
+  async function followlistLoad(uid, tab) {
+    const list = document.getElementById('followlist-list');
+    list.innerHTML = '<div class="followlist-empty">Loading…</div>';
+    const snap = await fbDb.collection('follows').doc(uid)
+      .collection(tab).orderBy('followedAt', 'desc').limit(100).get();
+    if (snap.empty) {
+      list.innerHTML = `<div class="followlist-empty">No ${tab} yet.</div>`;
+      return;
+    }
+    list.innerHTML = snap.docs.map(d => {
+      const personUid  = tab === 'following' ? d.id : d.id; // doc id IS the uid
+      const personName = d.data().name || 'Unknown';
+      const color = profileColor ? profileColor(personName)
+        : '#8b6d3f';
+      const alreadyFollowing = followingCache.has(personUid);
+      const isSelf = cvUser && cvUser.uid === personUid;
+      return `<div class="followlist-item">
+        <div class="followlist-avatar" style="background:${color}">${personName.charAt(0).toUpperCase()}</div>
+        <div class="followlist-name">${personName}</div>
+        ${!isSelf ? `<button class="follow-btn${alreadyFollowing?' following':''}"
+          data-follow-uid="${personUid}" data-follow-name="${personName}">
+          ${alreadyFollowing?'':'Follow'}
+        </button>` : '<span style="font-size:0.72rem;color:var(--text-light)">You</span>'}
+      </div>`;
+    }).join('');
+  }
+
+  // Wire profile stat buttons to open the modal
+  document.getElementById('profile-following-btn').addEventListener('click', () => {
+    if (cvUser) openFollowlist(cvUser.uid, 'following');
+  });
+  document.getElementById('profile-followers-btn').addEventListener('click', () => {
+    if (cvUser) openFollowlist(cvUser.uid, 'followers');
+  });
+
+  // ── Explore "For You" — posts from followed users ─────
+  async function exploreLoadForYou() {
+    const pane = document.getElementById('explore-pane-foryou');
+    if (!cvUser || followingCache.size === 0) return; // keep static cards when not following anyone
+
+    // Firestore "in" query supports max 10 values
+    const followedUids = [...followingCache].slice(0, 10);
+    const snap = await fbDb.collection('posts')
+      .where('authorUid', 'in', followedUids)
+      .where('parentId', '==', null)
+      .orderBy('createdAt', 'desc')
+      .limit(20).get();
+
+    if (snap.empty) return; // keep static editorial cards
+
+    const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const color = name => {
+      const c = ['#6b7c93','#8b6d3f','#5a7a4a','#7a5a8a','#4a7a7a','#8a4a4a'];
+      return c[(name||'?').charCodeAt(0) % c.length];
+    };
+    const relTime = ts => {
+      if (!ts) return '';
+      const s = Math.floor((Date.now() - (ts.toMillis?.() || ts.seconds*1000)) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return Math.floor(s/60)+'m';
+      if (s < 86400) return Math.floor(s/3600)+'h';
+      return Math.floor(s/86400)+'d';
+    };
+
+    pane.innerHTML = `<div class="explore-section-title">From People You Follow</div>
+      <div class="explore-cards">` +
+      posts.map(p => {
+        const nm = p.authorName || 'Anonymous';
+        return `<div class="explore-card">
+          <div class="explore-card-thumb-placeholder" style="background:${color(nm)};color:#fff;border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;">${nm.charAt(0).toUpperCase()}</div>
+          <div class="explore-card-body">
+            <div class="explore-card-tag">${nm}</div>
+            <div class="explore-card-title" style="font-weight:400">${p.text.length>120?p.text.substring(0,120)+'…':p.text}</div>
+            <div class="explore-card-meta">${relTime(p.createdAt)} · ${p.pageId||'Conversation'}</div>
+          </div>
+        </div>`;
+      }).join('') + '</div>';
+  }
+
+  // Refresh cache + For You feed on auth change
+  const _origAuthHandler = fbAuth.onAuthStateChanged.bind(fbAuth);
+  // We extend the existing auth handler via a second listener
+  fbAuth.onAuthStateChanged(async user => {
+    if (user) {
+      await followRefreshCache();
+      if (exploreOverlay.classList.contains('active')) exploreLoadForYou();
+    } else {
+      followingCache = new Set();
+    }
+  });
+
+  // Also refresh For You when Explore opens
+  const _origOpenExplore = openExplore;
+  openExplore = function() {
+    _origOpenExplore();
+    if (cvUser) exploreLoadForYou();
+  };
+
+  // ── Profile overlay ──────────────────────────────────
+  const profileOverlay   = document.getElementById('profile-overlay');
+  const profileContent   = document.getElementById('profile-content');
+  const profileSigninPrm = document.getElementById('profile-signin-prompt');
+  const profileEditModal = document.getElementById('profile-edit-modal');
+
+  let profilePostsUnsub  = null;
+  let profileData        = {};  // cached Firestore profile fields
+
+  // ── Avatar color (reuse chat palette) ────────────────
+  function profileColor(name) {
+    const c = ['#6b7c93','#8b6d3f','#5a7a4a','#7a5a8a','#4a7a7a','#8a4a4a'];
+    return c[(name||'?').charCodeAt(0) % c.length];
+  }
+
+  function profileRelTime(ts) {
+    if (!ts) return '';
+    const ms  = ts.toMillis ? ts.toMillis() : (ts.seconds||0)*1000;
+    const sec = Math.floor((Date.now() - ms)/1000);
+    if (sec < 60)    return 'just now';
+    if (sec < 3600)  return Math.floor(sec/60)  + 'm';
+    if (sec < 86400) return Math.floor(sec/3600) + 'h';
+    return new Date(ms).toLocaleDateString(undefined, {month:'short', day:'numeric'});
+  }
+
+  // ── Render profile header ─────────────────────────────
+  function profileRenderHeader(user, data, postCount) {
+    const name    = data.displayName || user.displayName || user.email;
+    const handle  = '@' + (user.email||'').split('@')[0];
+    const color   = profileColor(name);
+    const initial = name.trim().charAt(0).toUpperCase();
+    const joinDate= user.metadata?.creationTime
+      ? 'Joined ' + new Date(user.metadata.creationTime).toLocaleDateString(undefined, {month:'long', year:'numeric'})
+      : '';
+
+    // Topbar
+    document.getElementById('profile-topbar-name').textContent  = name;
+    document.getElementById('profile-topbar-posts').textContent = postCount + (postCount === 1 ? ' post' : ' posts');
+
+    // Banner
+    const bannerInner = document.getElementById('profile-banner-inner');
+    if (data.bannerUrl) {
+      bannerInner.outerHTML = `<img class="profile-banner-img" id="profile-banner-inner" src="${data.bannerUrl}" alt="Banner">`;
+    }
+
+    // Avatar
+    const avatarEl = document.getElementById('profile-avatar');
+    if (data.photoUrl) {
+      avatarEl.innerHTML = `<img src="${data.photoUrl}" alt="${name}">`;
+    } else {
+      avatarEl.style.background = color;
+      avatarEl.textContent = initial;
+    }
+
+    // Info
+    document.getElementById('profile-display-name').textContent = name;
+    document.getElementById('profile-handle').textContent = handle;
+
+    const bioEl = document.getElementById('profile-bio');
+    if (data.bio) { bioEl.textContent = data.bio; bioEl.style.display = ''; }
+    else { bioEl.style.display = 'none'; }
+
+    // Meta row
+    const metaEl = document.getElementById('profile-meta');
+    let metaHtml = '';
+    if (data.location) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${data.location}</span>`;
+    if (joinDate) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${joinDate}</span>`;
+    metaEl.innerHTML = metaHtml;
+
+    // Stats
+    document.getElementById('profile-following-count').textContent = data.followingCount || 0;
+    document.getElementById('profile-followers-count').textContent = data.followersCount || 0;
+  }
+
+  // ── Render a post card ────────────────────────────────
+  function profileRenderPost(post, isReply) {
+    const name  = post.authorName || 'Anonymous';
+    const color = profileColor(name);
+    const replyLine = isReply && post.parentId
+      ? `<div class="profile-reply-thread">↩ Replying to a post</div>` : '';
+    return `<div class="profile-post-card">
+      <div class="profile-post-header">
+        <div class="profile-post-avatar" style="background:${color}">${name.charAt(0).toUpperCase()}</div>
+        <div class="profile-post-meta">
+          <div class="profile-post-name">${name} <span class="profile-post-time">· ${profileRelTime(post.createdAt)}</span></div>
+        </div>
+      </div>
+      ${replyLine}
+      <div class="profile-post-text">${(post.text||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+      <div class="profile-post-stats">
+        <span class="profile-post-stat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ${post.replyCount||0}
+        </span>
+        <span class="profile-post-stat">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          ${post.likeCount||0}
+        </span>
+      </div>
+    </div>`;
+  }
+
+  // ── Load profile data ─────────────────────────────────
+  async function profileLoad(user) {
+    profileSigninPrm.style.display = 'none';
+    profileContent.style.display   = 'flex';
+
+    // Fetch Firestore profile doc
+    const snap = await fbDb.collection('users').doc(user.uid).get();
+    profileData = snap.exists ? snap.data() : {};
+
+    // Subscribe to user's posts (ordered by time desc)
+    if (profilePostsUnsub) profilePostsUnsub();
+    profilePostsUnsub = fbDb.collection('posts')
+      .where('authorUid', '==', user.uid)
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .onSnapshot(snap => {
+        const all    = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const posts  = all.filter(p => !p.parentId);
+        const replies= all.filter(p =>  p.parentId);
+
+        profileRenderHeader(user, profileData, all.length);
+
+        const postsPane   = document.getElementById('profile-pane-posts');
+        const repliesPane = document.getElementById('profile-pane-replies');
+
+        postsPane.innerHTML = posts.length
+          ? posts.map(p => profileRenderPost(p, false)).join('')
+          : '<div class="profile-feed-empty">No posts yet.</div>';
+
+        repliesPane.innerHTML = replies.length
+          ? replies.map(p => profileRenderPost(p, true)).join('')
+          : '<div class="profile-feed-empty">No replies yet.</div>';
+      }, () => {});
+  }
+
+  // ── Open / close ──────────────────────────────────────
+  function openProfile() {
+    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
+    exploreOverlay.classList.remove('active');
+    notifOverlay.classList.remove('active');
+    chatOverlay.classList.remove('active');
+    profileOverlay.classList.add('active');
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('nav-profile').classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+
+    if (cvUser) {
+      profileLoad(cvUser);
+    } else {
+      profileContent.style.display   = 'none';
+      profileSigninPrm.style.display = 'flex';
+    }
+  }
+
+  function closeProfile() {
+    profileOverlay.classList.remove('active');
+    document.getElementById('nav-profile').classList.remove('active');
+    if (profilePostsUnsub) { profilePostsUnsub(); profilePostsUnsub = null; }
+  }
+
+  document.getElementById('profile-back').addEventListener('click', closeProfile);
+
+  // Explore shortcut in topbar
+  document.getElementById('profile-topbar-explore').addEventListener('click', () => {
+    closeProfile(); openExplore();
+  });
+
+  // Sign-in prompt button
+  document.getElementById('profile-signin-prompt-btn').addEventListener('click', () => {
+    closeProfile(); cvOpenModal('login');
+  });
+
+  // Tab switching
+  profileOverlay.addEventListener('click', e => {
+    const tab = e.target.closest('[data-profile-tab]');
+    if (tab) {
+      profileOverlay.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      profileOverlay.querySelectorAll('.profile-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('profile-pane-' + tab.dataset.profileTab).classList.add('active');
+    }
+  });
+
+  // ── Edit Profile modal ────────────────────────────────
+  function openEditProfile() {
+    if (!cvUser) return;
+    const name = profileData.displayName || cvUser.displayName || cvUser.email || '';
+    document.getElementById('profile-edit-name').value     = name;
+    document.getElementById('profile-edit-bio').value      = profileData.bio      || '';
+    document.getElementById('profile-edit-location').value = profileData.location || '';
+    document.getElementById('profile-edit-banner-url').value = profileData.bannerUrl || '';
+    document.getElementById('profile-edit-photo-url').value  = profileData.photoUrl  || '';
+    document.getElementById('profile-bio-count').textContent =
+      (profileData.bio||'').length + ' / 160';
+
+    // Preview avatar in modal
+    const editAvatar = document.getElementById('profile-edit-avatar-preview');
+    if (profileData.photoUrl) {
+      editAvatar.innerHTML = `<img src="${profileData.photoUrl}" alt="${name}"><div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+    } else {
+      editAvatar.style.background = profileColor(name);
+      editAvatar.innerHTML = name.charAt(0).toUpperCase() + `<div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+    }
+
+    profileEditModal.classList.add('open');
+  }
+
+  function closeEditProfile() { profileEditModal.classList.remove('open'); }
+
+  document.getElementById('profile-edit-btn').addEventListener('click', openEditProfile);
+  document.getElementById('profile-edit-close').addEventListener('click', closeEditProfile);
+  profileEditModal.addEventListener('click', e => { if (e.target === profileEditModal) closeEditProfile(); });
+
+  // Bio char count
+  document.getElementById('profile-edit-bio').addEventListener('input', function() {
+    document.getElementById('profile-bio-count').textContent = this.value.length + ' / 160';
+  });
+
+  // Save
+  document.getElementById('profile-save-btn').addEventListener('click', async () => {
+    if (!cvUser) return;
+    const saveBtn = document.getElementById('profile-save-btn');
+    saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+
+    const name      = document.getElementById('profile-edit-name').value.trim() || (cvUser.displayName || cvUser.email);
+    const bio       = document.getElementById('profile-edit-bio').value.trim();
+    const location  = document.getElementById('profile-edit-location').value.trim();
+    const bannerUrl = document.getElementById('profile-edit-banner-url').value.trim();
+    const photoUrl  = document.getElementById('profile-edit-photo-url').value.trim();
+
+    // Update Firebase Auth display name
+    if (name !== cvUser.displayName) {
+      await cvUser.updateProfile({ displayName: name });
+    }
+
+    // Update Firestore user doc
+    const update = {
+      displayName: name,
+      displayNameLower: name.toLowerCase(),
+      bio, location, bannerUrl, photoUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await fbDb.collection('users').doc(cvUser.uid).set(update, { merge: true });
+    profileData = { ...profileData, ...update };
+
+    closeEditProfile();
+    profileLoad(cvUser);
+    saveBtn.disabled = false; saveBtn.textContent = 'Save';
+  });
+
+  // ── Chat overlay ─────────────────────────────────────
+  const chatOverlay       = document.getElementById('chat-overlay');
+  const chatThreadList    = document.getElementById('chat-thread-list');
+  const chatActivePane    = document.getElementById('chat-active-pane');
+  const chatPlaceholder   = document.getElementById('chat-placeholder');
+  const chatThreadView    = document.getElementById('chat-thread-view');
+  const chatMessagesEl    = document.getElementById('chat-messages');
+  const chatComposeInput  = document.getElementById('chat-compose-input');
+  const chatSendBtn       = document.getElementById('chat-send-btn');
+  const chatActiveName    = document.getElementById('chat-active-name');
+  const chatActiveAvatar  = document.getElementById('chat-active-avatar');
+  const chatNewchatModal  = document.getElementById('chat-newchat-modal');
+  const chatNewchatInput  = document.getElementById('chat-newchat-input');
+  const chatNewchatResults= document.getElementById('chat-newchat-results');
+
+  let chatConvUnsub   = null;  // thread list listener
+  let chatMsgUnsub    = null;  // active message listener
+  let chatActiveConvId= null;
+  let chatActiveOther = null;  // { uid, name }
+
+  // Avatar colours keyed by first letter
+  const CHAT_COLORS = ['#6b7c93','#8b6d3f','#5a7a4a','#7a5a8a','#4a7a7a','#8a4a4a'];
+  function chatColor(name) {
+    const i = (name || '?').charCodeAt(0) % CHAT_COLORS.length;
+    return CHAT_COLORS[i];
+  }
+  function chatInitial(name) { return (name||'?').trim().charAt(0).toUpperCase(); }
+
+  function chatRelTime(ts) {
+    if (!ts) return '';
+    const ms  = ts.toMillis ? ts.toMillis() : (ts.seconds||0)*1000;
+    const sec = Math.floor((Date.now() - ms) / 1000);
+    if (sec < 60)    return 'now';
+    if (sec < 3600)  return Math.floor(sec/60)  + 'm';
+    if (sec < 86400) return Math.floor(sec/3600) + 'h';
+    const d = Math.floor(sec/86400);
+    return d < 7 ? d+'d' : Math.floor(d/7)+'w';
+  }
+
+  function chatDateLabel(ts) {
+    if (!ts) return '';
+    const ms = ts.toMillis ? ts.toMillis() : (ts.seconds||0)*1000;
+    return new Date(ms).toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+  }
+
+  // ── Conversation ID (deterministic from two UIDs) ─────
+  function chatConvId(uid1, uid2) {
+    return [uid1, uid2].sort().join('_');
+  }
+
+  // ── Open / close ──────────────────────────────────────
+  function openChat() {
+    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
+    exploreOverlay.classList.remove('active');
+    notifOverlay.classList.remove('active');
+    chatOverlay.classList.add('active');
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('nav-chat').classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+    if (cvUser) chatSubscribeThreads();
+  }
+
+  function closeChat() {
+    chatOverlay.classList.remove('active');
+    document.getElementById('nav-chat').classList.remove('active');
+    if (chatConvUnsub) { chatConvUnsub(); chatConvUnsub = null; }
+    chatCloseThread();
+  }
+
+  // ── Thread list subscription ──────────────────────────
+  function chatSubscribeThreads() {
+    if (!cvUser) return;
+    if (chatConvUnsub) chatConvUnsub();
+    chatConvUnsub = fbDb.collection('conversations')
+      .where('participants', 'array-contains', cvUser.uid)
+      .orderBy('lastMessageAt', 'desc')
+      .limit(30)
+      .onSnapshot(snap => {
+        const threads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        chatRenderThreads(threads);
+      }, () => {});
+  }
+
+  function chatRenderThreads(threads) {
+    const empty = document.getElementById('chat-threads-empty');
+    if (!threads.length) {
+      chatThreadList.innerHTML = '';
+      chatThreadList.appendChild(empty || Object.assign(document.createElement('div'), { className:'chat-threads-empty', textContent:'No conversations yet.' }));
+      return;
+    }
+    chatThreadList.innerHTML = threads.map(t => {
+      const otherId   = t.participants.find(p => p !== cvUser.uid);
+      const otherName = (t.participantNames||{})[otherId] || 'Unknown';
+      const unread    = ((t.unreadCounts||{})[cvUser.uid] || 0) > 0;
+      const isActive  = t.id === chatActiveConvId;
+      return `<div class="chat-thread-item${unread?' unread':''}${isActive?' active':''}" data-conv-id="${t.id}" data-other-uid="${otherId}" data-other-name="${otherName}">
+        <div class="chat-thread-avatar" style="background:${chatColor(otherName)}">${chatInitial(otherName)}</div>
+        <div class="chat-thread-body">
+          <div class="chat-thread-row1">
+            <div class="chat-thread-name">${otherName}</div>
+            <div class="chat-thread-time">${chatRelTime(t.lastMessageAt)}</div>
+          </div>
+          <div class="chat-thread-preview">${t.lastMessage ? (t.lastMessage.length>50?t.lastMessage.substring(0,50)+'…':t.lastMessage) : ''}</div>
+        </div>
+        <div class="chat-thread-dot"></div>
+      </div>`;
+    }).join('');
+
+    // Thread click handler
+    chatThreadList.querySelectorAll('.chat-thread-item').forEach(el => {
+      el.addEventListener('click', () => {
+        chatOpenThread(el.dataset.convId, el.dataset.otherUid, el.dataset.otherName);
+      });
+    });
+
+    // Filter by search
+    const q = document.getElementById('chat-search-input').value.toLowerCase();
+    if (q) chatFilterThreads(q);
+  }
+
+  function chatFilterThreads(q) {
+    chatThreadList.querySelectorAll('.chat-thread-item').forEach(el => {
+      const name = (el.dataset.otherName||'').toLowerCase();
+      el.style.display = name.includes(q) ? '' : 'none';
+    });
+  }
+
+  document.getElementById('chat-search-input').addEventListener('input', e => {
+    chatFilterThreads(e.target.value.toLowerCase());
+  });
+
+  // ── Open a thread ─────────────────────────────────────
+  function chatOpenThread(convId, otherUid, otherName) {
+    chatActiveConvId = convId;
+    chatActiveOther  = { uid: otherUid, name: otherName };
+
+    // UI
+    chatPlaceholder.style.display = 'none';
+    chatThreadView.style.display  = 'flex';
+    chatActiveName.textContent    = otherName;
+    chatActiveAvatar.textContent  = chatInitial(otherName);
+    chatActiveAvatar.style.background = chatColor(otherName);
+
+    // Mark active in list
+    chatThreadList.querySelectorAll('.chat-thread-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.convId === convId);
+    });
+
+    // Subscribe messages
+    if (chatMsgUnsub) chatMsgUnsub();
+    chatMessagesEl.innerHTML = '<div class="chat-messages-loading">Loading…</div>';
+
+    chatMsgUnsub = fbDb.collection('conversations').doc(convId)
+      .collection('messages')
+      .orderBy('createdAt', 'asc')
+      .limit(100)
+      .onSnapshot(snap => {
+        chatRenderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        // Reset unread count for current user
+        fbDb.collection('conversations').doc(convId)
+          .set({ unreadCounts: { [cvUser.uid]: 0 } }, { merge: true });
+      }, () => {});
+  }
+
+  function chatCloseThread() {
+    if (chatMsgUnsub) { chatMsgUnsub(); chatMsgUnsub = null; }
+    chatActiveConvId = null;
+    chatActiveOther  = null;
+    chatPlaceholder.style.display = '';
+    chatThreadView.style.display  = 'none';
+    chatThreadList.querySelectorAll('.chat-thread-item').forEach(el => el.classList.remove('active'));
+  }
+
+  document.getElementById('chat-back-thread').addEventListener('click', chatCloseThread);
+
+  // ── Render messages ───────────────────────────────────
+  function chatRenderMessages(msgs) {
+    if (!msgs.length) {
+      chatMessagesEl.innerHTML = '<div class="chat-messages-loading" style="font-style:italic">No messages yet. Say hello!</div>';
+      return;
+    }
+    let lastDate = null;
+    chatMessagesEl.innerHTML = msgs.map(m => {
+      const mine = m.fromUid === cvUser.uid;
+      const ms   = m.createdAt?.toMillis?.() || (m.createdAt?.seconds||0)*1000;
+      const dateLabel = chatDateLabel(m.createdAt);
+      const sep  = dateLabel !== lastDate
+        ? `<div class="chat-date-sep">${dateLabel}</div>`
+        : '';
+      lastDate = dateLabel;
+      const timeStr = ms ? new Date(ms).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}) : '';
+      return `${sep}<div class="chat-msg ${mine?'mine':'theirs'}">
+        <div class="chat-bubble">${m.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+        <div class="chat-msg-time">${timeStr}</div>
+      </div>`;
+    }).join('');
+    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+  }
+
+  // ── Send message ──────────────────────────────────────
+  chatComposeInput.addEventListener('input', () => {
+    chatSendBtn.disabled = !chatComposeInput.value.trim();
+    chatComposeInput.style.height = 'auto';
+    chatComposeInput.style.height = Math.min(chatComposeInput.scrollHeight, 120) + 'px';
+  });
+  chatComposeInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); }
+  });
+  chatSendBtn.addEventListener('click', chatSend);
+
+  async function chatSend() {
+    if (!cvUser || !chatActiveConvId || !chatActiveOther) return;
+    const text = chatComposeInput.value.trim(); if (!text) return;
+    chatComposeInput.value = '';
+    chatComposeInput.style.height = 'auto';
+    chatSendBtn.disabled = true;
+
+    const FV      = firebase.firestore.FieldValue;
+    const convRef = fbDb.collection('conversations').doc(chatActiveConvId);
+    const msgRef  = convRef.collection('messages').doc();
+
+    await fbDb.batch()
+      .set(msgRef, {
+        fromUid: cvUser.uid,
+        fromName: cvUser.displayName || cvUser.email,
+        text,
+        createdAt: FV.serverTimestamp()
+      })
+      .set(convRef, {
+        participants: [cvUser.uid, chatActiveOther.uid],
+        participantNames: {
+          [cvUser.uid]: cvUser.displayName || cvUser.email,
+          [chatActiveOther.uid]: chatActiveOther.name
+        },
+        lastMessage: text,
+        lastMessageAt: FV.serverTimestamp(),
+        lastMessageBy: cvUser.uid,
+        unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
+      }, { merge: true })
+      .commit();
+
+    // Notify recipient
+    notifWrite(chatActiveOther.uid, 'reply', cvUser.displayName || cvUser.email, 'chat', text);
+  }
+
+  // ── New Chat modal ────────────────────────────────────
+  function openNewChat() {
+    if (!cvUser) { closeChat(); cvOpenModal('login'); return; }
+    chatNewchatModal.classList.add('open');
+    chatNewchatInput.value = '';
+    chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">Type to search for users.</div>';
+    setTimeout(() => chatNewchatInput.focus(), 50);
+  }
+  function closeNewChat() { chatNewchatModal.classList.remove('open'); }
+
+  document.getElementById('chat-new-btn').addEventListener('click', openNewChat);
+  document.getElementById('chat-placeholder-new').addEventListener('click', openNewChat);
+  document.getElementById('chat-newchat-close').addEventListener('click', closeNewChat);
+  chatNewchatModal.addEventListener('click', e => { if (e.target === chatNewchatModal) closeNewChat(); });
+
+  let chatSearchTimer = null;
+  chatNewchatInput.addEventListener('input', () => {
+    clearTimeout(chatSearchTimer);
+    chatSearchTimer = setTimeout(async () => {
+      const q = chatNewchatInput.value.trim().toLowerCase();
+      if (!q) { chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">Type to search for users.</div>'; return; }
+      chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">Searching…</div>';
+      const snap = await fbDb.collection('users')
+        .orderBy('displayNameLower')
+        .startAt(q).endAt(q + '')
+        .limit(10).get();
+      const users = snap.docs.map(d => ({ uid: d.id, ...d.data() }))
+        .filter(u => u.uid !== cvUser.uid);
+      if (!users.length) {
+        chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">No users found.</div>';
+        return;
+      }
+      const followingSnap = cvUser
+        ? await fbDb.collection('follows').doc(cvUser.uid).collection('following').get()
+        : null;
+      const followingSet = new Set(followingSnap ? followingSnap.docs.map(d => d.id) : []);
+
+      chatNewchatResults.innerHTML = users.map(u => {
+        const name = u.displayName || u.email;
+        const alreadyFollowing = followingSet.has(u.uid);
+        return `
+          <div class="chat-newchat-result" data-uid="${u.uid}" data-name="${name}">
+            <div class="chat-thread-avatar" style="background:${chatColor(name)};width:34px;height:34px;font-size:0.85rem;">${chatInitial(name)}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="chat-newchat-result-name">${name}</div>
+              <div class="chat-newchat-result-email">${u.email||''}</div>
+            </div>
+            <button class="follow-btn${alreadyFollowing?' following':''}" data-follow-uid="${u.uid}" data-follow-name="${name}"
+              ${!cvUser?'disabled':''}>
+              ${alreadyFollowing?'':'Follow'}
+            </button>
+          </div>`;
+      }).join('');
+      chatNewchatResults.querySelectorAll('.chat-newchat-result').forEach(el => {
+        el.addEventListener('click', e => {
+          if (e.target.closest('.follow-btn')) return; // handled by follow delegation
+          closeNewChat();
+          const convId = chatConvId(cvUser.uid, el.dataset.uid);
+          chatOpenThread(convId, el.dataset.uid, el.dataset.name);
+        });
+      });
+    }, 300);
+  });
+
+  // ── Notifications overlay ────────────────────────────
+  const notifOverlay   = document.getElementById('notif-overlay');
+  const notifBack      = document.getElementById('notif-back');
+  const notifMarkRead  = document.getElementById('notif-mark-read');
+  const notifBadgeEl   = document.getElementById('notif-badge');
+  let   notifUnsub     = null;
+  let   notifItems     = [];  // cached for tab filtering
+
+  function notifRelTime(ts) {
+    if (!ts) return '';
+    const ms  = ts.toMillis ? ts.toMillis() : ts.seconds * 1000;
+    const sec = Math.floor((Date.now() - ms) / 1000);
+    if (sec < 60)   return 'just now';
+    if (sec < 3600) return Math.floor(sec/60) + 'm ago';
+    if (sec < 86400) return Math.floor(sec/3600) + 'h ago';
+    return Math.floor(sec/86400) + 'd ago';
+  }
+
+  function notifInitial(name) {
+    return (name || '?').trim().charAt(0).toUpperCase();
+  }
+
+  function notifTypeIcon(type) {
+    if (type === 'like') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+    if (type === 'reply') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+    if (type === 'follow') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    return '';
+  }
+
+  function notifActionText(n) {
+    if (n.type === 'like')   return `<strong>${n.fromName}</strong> liked your post`;
+    if (n.type === 'reply')  return `<strong>${n.fromName}</strong> replied to your post`;
+    if (n.type === 'follow') return `<strong>${n.fromName}</strong> started following you`;
+    return '';
+  }
+
+  function notifRenderItem(n) {
+    const unreadCls = n.read ? '' : ' unread';
+    return `
+      <div class="notif-item${unreadCls}" data-notif-id="${n.id}" data-notif-type="${n.type}">
+        <div class="notif-type-icon ${n.type}">${notifTypeIcon(n.type)}</div>
+        <div class="notif-avatar">${notifInitial(n.fromName)}</div>
+        <div class="notif-body">
+          <div class="notif-text">${notifActionText(n)} ${n.pageId ? `<span style="color:var(--text-muted);font-size:0.82rem;">on <em>${n.pageId}</em></span>` : ''}</div>
+          ${n.excerpt ? `<div class="notif-excerpt">"${n.excerpt}"</div>` : ''}
+          <div class="notif-time">${notifRelTime(n.createdAt)}</div>
+        </div>
+      </div>`;
+  }
+
+  function notifRender(items) {
+    const allPane      = document.getElementById('notif-pane-all');
+    const mentionsPane = document.getElementById('notif-pane-mentions');
+
+    const mentions = items.filter(n => n.type === 'reply');
+
+    allPane.innerHTML = items.length
+      ? items.map(notifRenderItem).join('')
+      : '<div class="notif-empty">No notifications yet.</div>';
+
+    mentionsPane.innerHTML = mentions.length
+      ? mentions.map(notifRenderItem).join('')
+      : '<div class="notif-empty">No mentions yet.</div>';
+
+    // Badge
+    const unread = items.filter(n => !n.read).length;
+    if (unread > 0) {
+      notifBadgeEl.textContent = unread > 9 ? '9+' : unread;
+      notifBadgeEl.classList.add('visible');
+    } else {
+      notifBadgeEl.classList.remove('visible');
+    }
+  }
+
+  function notifSubscribe(uid) {
+    if (notifUnsub) { notifUnsub(); notifUnsub = null; }
+    notifUnsub = fbDb.collection('notifications').doc(uid)
+      .collection('items')
+      .orderBy('createdAt', 'desc')
+      .limit(40)
+      .onSnapshot(snap => {
+        notifItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        notifRender(notifItems);
+      }, () => {});
+  }
+
+  function notifUnsubscribe() {
+    if (notifUnsub) { notifUnsub(); notifUnsub = null; }
+    notifItems = [];
+    notifBadgeEl.classList.remove('visible');
+  }
+
+  function openNotif() {
+    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
+    exploreOverlay.classList.remove('active');
+    notifOverlay.classList.add('active');
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('nav-notifications').classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+  }
+
+  function closeNotif() {
+    notifOverlay.classList.remove('active');
+    document.getElementById('nav-notifications').classList.remove('active');
+  }
+
+  notifBack.addEventListener('click', closeNotif);
+
+  // Tab switching
+  notifOverlay.addEventListener('click', e => {
+    const tab = e.target.closest('[data-notif-tab]');
+    if (tab) {
+      notifOverlay.querySelectorAll('.notif-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      notifOverlay.querySelectorAll('.notif-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('notif-pane-' + tab.dataset.notifTab).classList.add('active');
+    }
+  });
+
+  // Mark all read
+  notifMarkRead.addEventListener('click', async () => {
+    if (!cvUser || !notifItems.length) return;
+    const batch = fbDb.batch();
+    notifItems.filter(n => !n.read).forEach(n => {
+      batch.update(
+        fbDb.collection('notifications').doc(cvUser.uid).collection('items').doc(n.id),
+        { read: true }
+      );
+    });
+    await batch.commit();
+  });
+
+  // Helper: write a notification to another user
+  async function notifWrite(toUid, type, fromName, pageId, excerpt) {
+    if (!toUid || toUid === cvUser.uid) return; // no self-notifications
+    await fbDb.collection('notifications').doc(toUid).collection('items').add({
+      type, fromUid: cvUser.uid, fromName,
+      pageId: pageId || null,
+      excerpt: excerpt ? excerpt.substring(0, 100) : null,
+      read: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  // ── Explore overlay ──────────────────────────────────
+  const exploreOverlay = document.getElementById('explore-overlay');
+  const exploreBack    = document.getElementById('explore-back');
+  const exploreInput   = document.getElementById('explore-search-input');
+  let   exploreSearchMode = 'site'; // 'site' | 'google'
+
+  function openExplore() {
+    // Close any open detail pages
+    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
+    exploreOverlay.classList.add('active');
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('nav-explore').classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    exploreInput.focus();
+    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+  }
+
+  function closeExplore() {
+    exploreOverlay.classList.remove('active');
+    document.getElementById('nav-explore').classList.remove('active');
+  }
+
+  exploreBack.addEventListener('click', closeExplore);
+
+  // Tab switching
+  exploreOverlay.addEventListener('click', e => {
+    const tab = e.target.closest('.explore-tab');
+    if (tab) {
+      exploreOverlay.querySelectorAll('.explore-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      exploreOverlay.querySelectorAll('.explore-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('explore-pane-' + tab.dataset.tab).classList.add('active');
+      return;
+    }
+    // Search mode toggle
+    const opt = e.target.closest('.explore-search-opt');
+    if (opt) {
+      exploreOverlay.querySelectorAll('.explore-search-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      exploreSearchMode = opt.dataset.search;
+      exploreInput.placeholder = exploreSearchMode === 'google'
+        ? 'Search Google…'
+        : 'Search bakasan.art…';
+      return;
+    }
+    // Art grid / story card clicks — navigate to painting
+    const artCard = e.target.closest('[data-target]');
+    if (artCard && artCard.dataset.target) {
+      closeExplore();
+      showPage(artCard.dataset.target);
+      return;
+    }
+  });
+
+  // Search on Enter
+  exploreInput.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const q = exploreInput.value.trim();
+    if (!q) return;
+    if (exploreSearchMode === 'google') {
+      window.open('https://www.google.com/search?q=' + encodeURIComponent(q + ' site:bakasan.art OR Buddhism'), '_blank');
+    } else {
+      // Site search: find matching painting titles or nav pages
+      const lower = q.toLowerCase();
+      const match = (typeof PAINTINGS_DATA !== 'undefined')
+        ? PAINTINGS_DATA.find(p => p.title.toLowerCase().includes(lower) || (p.bodyHtml || '').toLowerCase().includes(lower))
+        : null;
+      if (match) { closeExplore(); showPage(match.id); }
+      else {
+        // Fall back to Google restricted to site
+        window.open('https://www.google.com/search?q=' + encodeURIComponent(q) + '+site:bakasan.art', '_blank');
+      }
+    }
+  });
+
   document.addEventListener('click', e => {
+    // Social nav links
+    const social = e.target.closest('[data-social]');
+    if (social) {
+      e.preventDefault();
+      if (social.dataset.social === 'explore')       { openExplore(); return; }
+      if (social.dataset.social === 'notifications') { openNotif();   return; }
+      if (social.dataset.social === 'chat')          { openChat();    return; }
+      if (social.dataset.social === 'profile')       { openProfile(); return; }
+      return;
+    }
     // Nav links and inline text-links
     const link = e.target.closest('[data-page]');
     if (link && link.dataset.page) {
       e.preventDefault();
+      closeExplore();
       showPage(link.dataset.page);
       return;
     }
@@ -3273,6 +6134,31 @@
       cvRenderAuthBar(s);
       cvRenderCompose(s);
     });
+    // Notifications subscription
+    if (user) notifSubscribe(user.uid);
+    else       notifUnsubscribe();
+
+    // Write/update user profile so they appear in chat search
+    if (user) {
+      const name = user.displayName || user.email;
+      fbDb.collection('users').doc(user.uid).set({
+        displayName: name,
+        displayNameLower: name.toLowerCase(),
+        email: user.email || '',
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+    // Show sign-in prompt inside notif overlay if logged out
+    const allPane = document.getElementById('notif-pane-all');
+    if (!user && allPane) {
+      allPane.innerHTML = `<div class="notif-signin-prompt">
+        <p>Sign in to see your notifications.</p>
+        <button class="notif-signin-btn" id="notif-signin-btn">Sign In</button>
+      </div>`;
+      document.getElementById('notif-signin-btn')?.addEventListener('click', () => {
+        closeNotif(); cvOpenModal('login');
+      });
+    }
   });
 
   // ── Auth Modal ────────────────────────────────────────
@@ -3498,6 +6384,14 @@
         .update(postRef, { [field]: FV.increment(cur ? -1 : 1) })
         .set(interRef, { [action+'d']: !cur }, { merge: true })
         .commit();
+      // Notify post author on new like (not on unlike)
+      if (action === 'like' && !cur) {
+        const postSnap = await postRef.get();
+        if (postSnap.exists) {
+          const pd = postSnap.data();
+          notifWrite(pd.authorUid, 'like', cvUser.displayName || cvUser.email, pageId, pd.text);
+        }
+      }
     }
     else if (action === 'share') {
       const url = window.location.origin + window.location.pathname + '#post-' + postId;
@@ -3525,6 +6419,12 @@
           text, createdAt: FV.serverTimestamp(), likeCount:0, repostCount:0, bookmarkCount:0, replyCount:0, parentId: postId });
         batch.update(postRef, { replyCount: FV.increment(1) });
         await batch.commit();
+        // Notify post author of the reply
+        const parentSnap = await postRef.get();
+        if (parentSnap.exists) {
+          const pd = parentSnap.data();
+          notifWrite(pd.authorUid, 'reply', cvUser.displayName || cvUser.email, pageId, text);
+        }
         rc.remove();
       });
       rc.querySelector('.conv-reply-input').focus();
