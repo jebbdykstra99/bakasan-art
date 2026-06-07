@@ -7215,7 +7215,7 @@
       const postsEl = sec.querySelector('.conv-posts'); if (!postsEl) return;
       const posts = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .sort((a, b) => tsMs(a.createdAt) - tsMs(b.createdAt));
+        .sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt)); // newest first
 
       if (!posts.length) {
         postsEl.innerHTML = '<div class="conv-empty">Be the first to share your thoughts.</div>'; return;
