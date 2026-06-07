@@ -644,9 +644,9 @@
     }
     .post-poll-option:hover { border-color: var(--accent); }
     .post-poll-option.voted { border-color: var(--accent); }
-    .post-poll-fill {
+    .post-poll-fill, .post-poll-bar {
       position: absolute; inset: 0; background: rgba(139,109,63,0.1);
-      transform-origin: left; transition: transform 0.3s;
+      transform-origin: left; transition: width 0.3s;
     }
     .post-poll-label {
       position: relative; font-size: 0.88rem; color: var(--text);
@@ -654,6 +654,9 @@
     .post-poll-pct {
       position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
       font-size: 0.75rem; color: var(--text-muted);
+    }
+    .post-poll-meta {
+      font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;
     }
 
     /* Hide redundant conv-section header/compose inside the thoughts feed */
@@ -7076,6 +7079,15 @@
           ${isOwn?`<button class="conv-delete-btn" data-del-id="${post.id}">${CV_ICONS.trash}</button>`:''}
         </div>
         <div class="conv-post-text">${cvEsc(post.text)}</div>
+        ${post.imageUrl ? `<div class="post-image"><img src="${post.imageUrl}" alt="Post image" loading="lazy"></div>` : ''}
+        ${post.poll ? `<div class="post-poll">${post.poll.options.map((opt,i)=>`
+          <div class="post-poll-option" data-poll-idx="${i}" data-post-id="${post.id}">
+            <div class="post-poll-bar" style="width:${post.poll.votes&&Object.values(post.poll.votes).length?Math.round((Object.values(post.poll.votes).filter(v=>v===i).length/Object.values(post.poll.votes).length)*100):0}%"></div>
+            <span class="post-poll-label">${cvEsc(opt)}</span>
+            <span class="post-poll-pct">${post.poll.votes&&Object.values(post.poll.votes).length?Math.round((Object.values(post.poll.votes).filter(v=>v===i).length/Object.values(post.poll.votes).length)*100):0}%</span>
+          </div>`).join('')}
+          <div class="post-poll-meta">${Object.values(post.poll.votes||{}).length} votes</div>
+        </div>` : ''}
         <div class="conv-actions">
           <button class="conv-action like${lk?' active':''}" data-action="like" data-post-id="${post.id}" title="Like">
             ${lk?CV_ICONS.heartOn:CV_ICONS.heart}
