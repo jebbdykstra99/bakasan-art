@@ -389,21 +389,26 @@
 
     /* ── Right panel collapse tab ── */
     .right-panel-tab {
-      position: absolute;
-      left: -22px; top: 50%;
+      position: fixed;
+      right: var(--right-w);
+      top: 50%;
       transform: translateY(-50%);
       width: 22px; height: 48px;
       background: var(--nav-bg);
       border-radius: 6px 0 0 6px;
+      border: none;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       box-shadow: -3px 0 8px rgba(0,0,0,0.18);
-      transition: background 0.18s;
+      transition: background 0.18s, right 0.28s ease;
       z-index: 101;
     }
     .right-panel-tab:hover { background: var(--accent); }
-    .right-panel-tab svg { transition: transform 0.28s ease; }
+    .right-panel-tab svg { transition: transform 0.28s ease; color: rgba(255,255,255,0.7); }
+    .right-panel-tab:hover svg { color: #fff; }
+    body.right-collapsed .right-panel-tab { right: 0; }
     body.right-collapsed .right-panel-tab svg { transform: scaleX(-1); }
+    @media (max-width: 1100px) { .right-panel-tab { display: none; } }
 
     /* News link active state when panel is open */
     .nav-social-link.news-active { color: var(--nav-active); border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
@@ -5008,13 +5013,6 @@
 <!-- ── Right Panel: Buddhist & Religious News ───────── -->
 <aside class="right-panel" id="right-panel">
 
-  <!-- Collapse/expand tab on left edge -->
-  <button class="right-panel-tab" id="right-panel-tab" title="Toggle news panel" aria-label="Toggle news panel">
-    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="7,2 2,8 7,14"/>
-    </svg>
-  </button>
-
   <div class="right-panel-header">
     <div class="right-panel-kicker">Dharma &amp; World Religion</div>
     <div class="right-panel-title">Topics &amp; News</div>
@@ -7511,6 +7509,13 @@
   <span class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</span>
   <img class="lightbox-img" id="lightbox-img" src="" alt="Painting by Bakasan">
 </div>
+
+<!-- Right panel collapse tab — fixed independently so it's always visible -->
+<button class="right-panel-tab" id="right-panel-tab" title="Toggle news panel" aria-label="Toggle news panel">
+  <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="7,2 2,8 7,14"/>
+  </svg>
+</button>
 
 </body>
 </html>
