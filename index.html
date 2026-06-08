@@ -39,6 +39,8 @@
 
     body {
       font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1rem;          /* 16px body text */
+      line-height: 1.6;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -108,12 +110,12 @@
       font-size: 1.4rem; font-weight: 400;
       letter-spacing: 0.06em;
       color: var(--nav-active);
-      line-height: 1.1; margin-bottom: 0.3rem;
+      line-height: 1.5; margin-bottom: 0.3rem;
     }
 
     .brand-sub {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; font-weight: 300; font-style: italic;
+      font-size: 0.875rem; font-weight: 300; font-style: italic;
       letter-spacing: 0.12em; color: var(--nav-text);
     }
 
@@ -131,7 +133,7 @@
       min-height: 44px;
       padding: 0.5rem 1.8rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; font-weight: 400;
+      font-size: 0.875rem; font-weight: 400;
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--nav-text); text-decoration: none;
       border-left: 2px solid transparent;
@@ -156,7 +158,7 @@
       min-height: 40px;
       padding: 0.4rem 1.8rem 0.4rem 2.6rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.76rem; font-weight: 400;
+      font-size: 0.875rem; font-weight: 400;
       letter-spacing: 0.08em;
       color: rgba(184,168,136,0.75);
       text-decoration: none;
@@ -183,7 +185,7 @@
       min-height: 38px;
       padding: 0.3rem 1.8rem 0.3rem 2.2rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.7rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       letter-spacing: 0.04em;
       color: rgba(184,168,136,0.6);
       text-decoration: none;
@@ -212,7 +214,7 @@
       min-height: 46px;
       padding: 0.5rem 1.8rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; font-weight: 400;
+      font-size: 0.875rem; font-weight: 400;
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--nav-text); text-decoration: none;
       border-left: 2px solid transparent;
@@ -235,7 +237,7 @@
       margin-left: auto;
       background: var(--accent);
       color: #fff;
-      font-size: 0.58rem;
+      font-size: 0.875rem;
       font-weight: 600;
       letter-spacing: 0;
       min-width: 17px;
@@ -304,7 +306,7 @@
 
     .right-panel-kicker {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.65rem; font-weight: 600;
+      font-size: 0.875rem; font-weight: 600;
       letter-spacing: 0.28em; text-transform: uppercase;
       color: #C9A55A; /* 7.7:1 on dark bg — passes WCAG AA */
       margin-bottom: 0.5rem;
@@ -315,7 +317,7 @@
       font-size: 1rem; font-weight: 400;
       letter-spacing: 0.06em;
       color: var(--nav-active);
-      line-height: 1.25;
+      line-height: 1.5;
     }
 
     .right-panel-body {
@@ -338,7 +340,7 @@
 
     .news-item-tag {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; font-weight: 600;
+      font-size: 0.875rem; font-weight: 600;
       letter-spacing: 0.24em; text-transform: uppercase;
       color: #C9A55A; /* 7.7:1 on #1a1410 — passes WCAG AA */
       margin-bottom: 0.4rem;
@@ -347,20 +349,20 @@
     .news-item-headline {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 0.95rem; font-weight: 400;
-      line-height: 1.45;
+      line-height: 1.5;
       color: #f0e8d2; /* 15:1 — passes AAA */
       margin-bottom: 0.45rem;
       transition: color 0.15s;
     }
 
     .news-item-snippet {
-      font-size: 0.78rem; line-height: 1.65;
+      font-size: 0.875rem; line-height: 1.65;
       color: #c8b894; /* 9:1 — passes AA */
       margin-bottom: 0.4rem;
     }
 
     .news-item-meta {
-      font-size: 0.65rem;
+      font-size: 0.875rem;
       letter-spacing: 0.06em;
       color: #a89878; /* 5.5:1 — passes AA */
     }
@@ -372,7 +374,7 @@
     }
 
     .right-panel-footer p {
-      font-size: 0.65rem;
+      font-size: 0.875rem;
       letter-spacing: 0.06em;
       color: #8a7a5e; /* 4.6:1 — passes WCAG AA */
       line-height: 1.6;
@@ -404,10 +406,10 @@
       z-index: 101;
     }
     .right-panel-tab:hover { background: var(--accent); }
-    .right-panel-tab svg { transition: transform 0.28s ease; color: rgba(255,255,255,0.7); }
+    .right-panel-tab svg { transition: transform 0.28s ease; color: rgba(255,255,255,0.7); transform: scaleX(-1); }
     .right-panel-tab:hover svg { color: #fff; }
     body.right-collapsed .right-panel-tab { right: 0; }
-    body.right-collapsed .right-panel-tab svg { transform: scaleX(-1); }
+    body.right-collapsed .right-panel-tab svg { transform: scaleX(1); }
     @media (max-width: 1100px) { .right-panel-tab { display: none; } }
 
     /* News link active state when panel is open */
@@ -515,7 +517,7 @@
       background: rgba(0,0,0,0.55); color: #fff;
       border: none; border-radius: 50%;
       width: 22px; height: 22px; cursor: pointer;
-      font-size: 1rem; line-height: 1;
+      font-size: 1rem; line-height: 1.5;
       display: flex; align-items: center; justify-content: center;
     }
     .compose-image-remove:hover { background: rgba(0,0,0,0.75); }
@@ -566,13 +568,13 @@
     .compose-poll-add {
       background: none; border: none; cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; color: var(--accent);
+      font-size: 0.875rem; color: var(--accent);
       padding: 0; letter-spacing: 0.04em;
     }
     .compose-poll-add:hover { color: var(--accent-dark); }
     .compose-poll-duration {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
       border: 1px solid var(--border); border-radius: 4px;
       padding: 0.2rem 0.5rem; background: transparent;
       outline: none; cursor: pointer;
@@ -589,12 +591,12 @@
       border: 1px solid rgba(139,109,63,0.3);
       border-radius: 12px; padding: 0.2rem 0.6rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; letter-spacing: 0.04em;
+      font-size: 0.875rem; letter-spacing: 0.04em;
     }
     .compose-meta-badge-remove {
       background: none; border: none; cursor: pointer;
       color: inherit; opacity: 0.6; font-size: 0.9rem;
-      padding: 0; line-height: 1;
+      padding: 0; line-height: 1.5;
     }
     .compose-meta-badge-remove:hover { opacity: 1; }
 
@@ -627,7 +629,7 @@
     .compose-schedule-popup label {
       display: block;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--text-muted); margin-bottom: 0.4rem;
     }
     .compose-schedule-popup input[type="datetime-local"] {
@@ -685,10 +687,10 @@
     }
     .post-poll-pct {
       position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
-      font-size: 0.75rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
     }
     .post-poll-meta {
-      font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;
+      font-size: 0.875rem; color: var(--text-muted); margin-top: 0.3rem;
     }
 
     /* Hide redundant conv-section header/compose inside the thoughts feed */
@@ -727,7 +729,7 @@
       border: none; border-radius: 20px;
       padding: 0.35rem 1rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       cursor: pointer; flex-shrink: 0;
       transition: background 0.18s, color 0.18s;
       white-space: nowrap;
@@ -771,7 +773,7 @@
     }
     .followlist-close {
       background: none; border: none; cursor: pointer;
-      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1.5;
     }
     .followlist-tabs {
       display: flex; border-bottom: 1px solid var(--border);
@@ -780,7 +782,7 @@
     .followlist-tab {
       flex: 1; padding: 0.7rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--text-muted); text-align: center;
       background: none; border: none;
       border-bottom: 2px solid transparent;
@@ -846,10 +848,10 @@
     .profile-topbar-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1rem; font-weight: 500; color: var(--text);
-      line-height: 1.2;
+      line-height: 1.5;
     }
     .profile-topbar-posts {
-      font-size: 0.7rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
       letter-spacing: 0.04em;
     }
     .profile-topbar-actions { display: flex; gap: 0.5rem; }
@@ -917,7 +919,7 @@
     .profile-display-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.3rem; font-weight: 500; color: var(--text);
-      line-height: 1.2; margin-bottom: 0.1rem;
+      line-height: 1.5; margin-bottom: 0.1rem;
     }
     .profile-handle {
       font-size: 0.82rem; color: var(--text-muted);
@@ -929,7 +931,7 @@
     }
     .profile-meta {
       display: flex; flex-wrap: wrap; gap: 0.7rem 1.2rem;
-      font-size: 0.8rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
       margin-bottom: 0.9rem;
     }
     .profile-meta-item {
@@ -962,7 +964,7 @@
     .profile-tab {
       flex: 1;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-muted);
       padding: 0.9rem 0.5rem;
       border-bottom: 2px solid transparent;
@@ -1008,21 +1010,21 @@
       font-size: 0.9rem; font-weight: 500; color: var(--text);
     }
     .profile-post-time {
-      font-size: 0.7rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
     }
     .profile-post-text {
-      font-size: 0.9rem; line-height: 1.6; color: var(--text);
+      font-size: 1rem; line-height: 1.6; color: var(--text);
       white-space: pre-wrap; word-break: break-word;
     }
     .profile-post-stats {
       display: flex; gap: 1.4rem; margin-top: 0.6rem;
     }
     .profile-post-stat {
-      font-size: 0.75rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       display: flex; align-items: center; gap: 0.25rem;
     }
     .profile-reply-thread {
-      font-size: 0.72rem; color: var(--accent);
+      font-size: 0.875rem; color: var(--accent);
       margin-bottom: 0.3rem; font-style: italic;
     }
 
@@ -1053,7 +1055,7 @@
     .profile-edit-actions { display: flex; align-items: center; gap: 0.7rem; }
     .profile-edit-close {
       background: none; border: none; cursor: pointer;
-      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1.5;
     }
     .profile-save-btn {
       background: var(--nav-bg); color: var(--nav-text);
@@ -1085,7 +1087,7 @@
     }
     .profile-edit-banner:hover .profile-edit-banner-overlay { opacity: 1; }
     .profile-edit-banner-overlay span {
-      color: #fff; font-size: 0.75rem;
+      color: #fff; font-size: 0.875rem;
       letter-spacing: 0.1em; text-transform: uppercase;
     }
 
@@ -1113,7 +1115,7 @@
     .profile-edit-fields { padding: 1rem 1.2rem; }
     .profile-edit-field { margin-bottom: 1rem; }
     .profile-edit-field label {
-      display: block; font-size: 0.7rem;
+      display: block; font-size: 0.875rem;
       letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--text-muted); margin-bottom: 0.3rem;
     }
@@ -1129,7 +1131,7 @@
     .profile-edit-field textarea:focus { border-color: var(--accent); }
     .profile-edit-field textarea { resize: vertical; min-height: 72px; }
     .profile-edit-charcount {
-      font-size: 0.68rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       text-align: right; margin-top: 0.2rem;
     }
 
@@ -1259,11 +1261,11 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .chat-thread-time {
-      font-size: 0.68rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       flex-shrink: 0; margin-left: 0.4rem;
     }
     .chat-thread-preview {
-      font-size: 0.8rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       margin-top: 0.15rem;
     }
@@ -1362,13 +1364,13 @@
       border-bottom-left-radius: 4px;
     }
     .chat-msg-time {
-      font-size: 0.62rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       margin-top: 0.18rem; padding: 0 0.2rem;
     }
 
     .chat-date-sep {
       text-align: center;
-      font-size: 0.65rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       letter-spacing: 0.1em; text-transform: uppercase;
       margin: 0.6rem 0;
     }
@@ -1390,7 +1392,7 @@
       font-family: Georgia, serif; font-size: 0.9rem;
       color: var(--text); background: var(--bg);
       resize: none; outline: none; min-height: 38px;
-      max-height: 120px; overflow-y: auto; line-height: 1.45;
+      max-height: 120px; overflow-y: auto; line-height: 1.5;
       transition: border-color 0.2s;
     }
     .chat-compose-input:focus { border-color: var(--accent); }
@@ -1430,7 +1432,7 @@
     }
     .chat-newchat-close {
       background: none; border: none; cursor: pointer;
-      font-size: 1.3rem; color: var(--text-muted); line-height: 1;
+      font-size: 1.3rem; color: var(--text-muted); line-height: 1.5;
     }
     .chat-newchat-search {
       display: flex; align-items: center; gap: 0.5rem;
@@ -1457,7 +1459,7 @@
       font-size: 0.9rem; color: var(--text);
     }
     .chat-newchat-result-email {
-      font-size: 0.72rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
     }
     .chat-newchat-empty {
       padding: 1.2rem; text-align: center;
@@ -1501,7 +1503,7 @@
 
     .notif-mark-read {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--accent); background: none; border: none;
       cursor: pointer; padding: 0;
     }
@@ -1512,7 +1514,7 @@
     }
     .notif-tab {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; font-weight: 400;
+      font-size: 0.875rem; font-weight: 400;
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-muted);
       padding: 0.6rem 1.2rem 0.8rem;
@@ -1528,7 +1530,7 @@
       display: flex; align-items: center; gap: 0.5rem;
       background: none; border: none; cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--accent); padding: 0.7rem 2rem;
       border-bottom: 1px solid var(--border); width: 100%; text-align: left;
     }
@@ -1581,13 +1583,13 @@
     .notif-text strong { font-weight: 600; color: var(--text); }
 
     .notif-excerpt {
-      font-size: 0.8rem; color: var(--text-muted);
-      line-height: 1.45; font-style: italic;
+      font-size: 0.875rem; color: var(--text-muted);
+      line-height: 1.5; font-style: italic;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .notif-time {
-      font-size: 0.68rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       letter-spacing: 0.04em; margin-top: 0.2rem;
     }
 
@@ -1678,7 +1680,7 @@
     }
     .explore-search-opt {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.7rem;
+      font-size: 0.875rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-light);
@@ -1710,7 +1712,7 @@
 
     .explore-tab {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -1786,7 +1788,7 @@
 
     .explore-card-tag {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.6rem;
+      font-size: 0.875rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--accent);
@@ -1798,7 +1800,7 @@
       font-size: 1rem;
       font-weight: 500;
       color: var(--text);
-      line-height: 1.35;
+      line-height: 1.5;
       margin-bottom: 0.3rem;
     }
 
@@ -1809,7 +1811,7 @@
     }
 
     .explore-card-meta {
-      font-size: 0.68rem;
+      font-size: 0.875rem;
       color: var(--text-light);
       margin-top: 0.3rem;
       letter-spacing: 0.04em;
@@ -1846,7 +1848,7 @@
     .explore-art-card-label {
       padding: 0.5rem 0.7rem 0.6rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       color: var(--text-muted);
       font-style: italic;
     }
@@ -1860,7 +1862,7 @@
       border: none;
       cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem;
+      font-size: 0.875rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--accent);
@@ -1882,7 +1884,7 @@
       border: none;
       border-bottom: 1px solid var(--border);
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem;
+      font-size: 0.875rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--accent);
@@ -1906,7 +1908,7 @@
 
     .page-kicker {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.65rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.3em; text-transform: uppercase;
       color: var(--accent); margin-bottom: 0.8rem;
     }
@@ -1914,7 +1916,7 @@
     .page-header h1 {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 300;
-      letter-spacing: 0.03em; line-height: 1.1;
+      letter-spacing: 0.03em; line-height: 1.5;
       color: var(--text);
     }
 
@@ -1925,6 +1927,7 @@
     .page-body p {
       font-size: 1.05rem; line-height: 1.9;
       color: var(--text); margin-bottom: 1.7rem;
+      max-width: 72ch;       /* ~65–75 chars — optimal reading width */
     }
 
     .page-body p:last-child { margin-bottom: 0; }
@@ -1958,7 +1961,7 @@
     .lightbox-close {
       position: fixed;
       top: 1.1rem; right: 1.6rem;
-      font-size: 2.4rem; line-height: 1;
+      font-size: 2.4rem; line-height: 1.5;
       color: #fff; opacity: 0.75;
       cursor: pointer; z-index: 9001;
       transition: opacity 0.15s;
@@ -2015,7 +2018,7 @@
 
     .statement-rotator-cap {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.72rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       color: var(--text-light); text-align: center;
       margin: 0.4rem 0 0.6rem; padding: 0;
       clear: both;
@@ -2077,7 +2080,7 @@
     }
 
     .showcase-group-name {
-      font-size: 0.65rem; letter-spacing: 0.14em;
+      font-size: 0.875rem; letter-spacing: 0.14em;
       text-transform: uppercase; color: rgba(255,255,255,0.6);
       margin-bottom: 0.3rem;
     }
@@ -2086,11 +2089,11 @@
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.1rem; font-style: italic; font-weight: 400;
       color: rgba(255,255,255,0.92);
-      line-height: 1.3;
+      line-height: 1.5;
     }
 
     .showcase-hint {
-      font-size: 0.68rem; letter-spacing: 0.08em;
+      font-size: 0.875rem; letter-spacing: 0.08em;
       color: rgba(255,255,255,0.4); margin-top: 0.25rem;
       opacity: 0; transition: opacity 0.2s;
     }
@@ -2102,7 +2105,7 @@
       margin-top: 1rem;
       border-top: 1px solid var(--border);
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       color: var(--text-light); letter-spacing: 0.04em;
     }
 
@@ -2173,7 +2176,7 @@
     .home-welcome-photo span {
       display: block;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       color: var(--text-light); margin-top: 0.5rem;
     }
 
@@ -2215,7 +2218,7 @@
     .welcome-painting-break span {
       display: block;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       color: var(--text-light); margin-top: 0.45rem;
     }
 
@@ -2235,7 +2238,7 @@
 
     .collections-label span {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.65rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.3em; text-transform: uppercase;
       color: var(--text-light);
     }
@@ -2304,13 +2307,13 @@
     .card-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 1.25rem; font-weight: 400;
-      letter-spacing: 0.06em; color: #fff; line-height: 1.2;
+      letter-spacing: 0.06em; color: #fff; line-height: 1.5;
     }
 
     .card-cta {
       position: absolute; top: 1.1rem; right: 1.1rem;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.6rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.2em; text-transform: uppercase;
       color: rgba(255,255,255,0.7);
       border: 1px solid rgba(255,255,255,0.3);
@@ -2365,7 +2368,7 @@
     .wc-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 0.85rem; font-weight: 400;
-      letter-spacing: 0.04em; color: #fff; line-height: 1.25;
+      letter-spacing: 0.04em; color: #fff; line-height: 1.5;
     }
 
     /* ── Artwork detail page ───────────────────────────── */
@@ -2407,7 +2410,7 @@
 
     .artwork-placeholder span {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.7rem; color: rgba(255,255,255,0.3);
+      font-size: 0.875rem; color: rgba(255,255,255,0.3);
       letter-spacing: 0.1em; text-transform: uppercase;
     }
 
@@ -2436,7 +2439,7 @@
 
     .poem .poem-speaker {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.8rem; font-weight: 600;
+      font-size: 0.875rem; font-weight: 600;
       letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--accent); margin-bottom: 0.8rem;
     }
@@ -2453,7 +2456,7 @@
 
     .bio-block h2 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.28em; text-transform: uppercase;
       color: var(--accent); margin-bottom: 1.2rem;
       padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
@@ -2473,7 +2476,7 @@
     .bio-year {
       flex-shrink: 0;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem; font-weight: 600;
+      font-size: 0.875rem; font-weight: 600;
       letter-spacing: 0.05em; color: var(--accent);
       padding-top: 0.15em; min-width: 64px;
     }
@@ -2505,7 +2508,7 @@
 
     .bio-byline {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--accent); margin: 0 0 2rem;
     }
@@ -2546,7 +2549,7 @@
     }
     .bio-photo-cap {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; font-style: italic;
+      font-size: 0.875rem; font-style: italic;
       color: var(--text-light); margin-top: 0.45rem;
     }
     .bio-narrative::after { content: ''; display: table; clear: both; }
@@ -2559,7 +2562,7 @@
 
     .form-field label {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.62rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.25em; text-transform: uppercase;
       color: var(--accent);
     }
@@ -2582,7 +2585,7 @@
       display: inline-block; padding: 0.8rem 2.8rem;
       background: var(--nav-bg); color: var(--nav-text);
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.68rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.28em; text-transform: uppercase;
       border: none; cursor: pointer;
       transition: background 0.2s, color 0.2s; align-self: flex-start;
@@ -2633,8 +2636,8 @@
 
     .ic-name {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.78rem; font-weight: 400;
-      letter-spacing: 0.04em; color: #fff; line-height: 1.2;
+      font-size: 0.875rem; font-weight: 400;
+      letter-spacing: 0.04em; color: #fff; line-height: 1.5;
     }
 
     @media (max-width: 900px) {
@@ -2653,7 +2656,7 @@
 
     .section-intro h2 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.65rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.28em; text-transform: uppercase;
       color: var(--accent); margin-bottom: 1.5rem;
       padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
@@ -2934,12 +2937,12 @@
     .conv-avatar-sm {
       width: 28px; height: 28px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.68rem; font-weight: 600; color: #fff; flex-shrink: 0;
+      font-size: 0.875rem; font-weight: 600; color: #fff; flex-shrink: 0;
     }
     .conv-auth-btn {
       background: none; border: 1px solid var(--border); cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--accent); padding: 0.3rem 0.8rem; border-radius: 50px;
       transition: background 0.2s, color 0.2s;
     }
@@ -2967,7 +2970,7 @@
       background: var(--nav-bg); color: var(--nav-text); border: none;
       cursor: pointer; padding: 0.5rem 1.5rem; border-radius: 50px;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      font-size: 0.875rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
       transition: background 0.2s;
     }
     .conv-post-btn:hover { background: var(--accent); }
@@ -2990,9 +2993,9 @@
       margin-bottom: 0.3rem; flex-wrap: wrap;
     }
     .conv-post-name { font-weight: 600; font-size: 0.93rem; color: var(--text); }
-    .conv-post-time { font-size: 0.77rem; color: var(--text-light); }
+    .conv-post-time { font-size: 0.875rem; color: var(--text-light); }
     .conv-post-text {
-      font-size: 0.97rem; line-height: 1.65; color: var(--text);
+      font-size: 1rem; line-height: 1.65; color: var(--text);
       word-break: break-word; margin-bottom: 0.55rem;
     }
     /* actions row */
@@ -3000,7 +3003,7 @@
     .conv-action {
       display: flex; align-items: center; justify-content: center; gap: 0.28rem;
       background: none; border: none; cursor: pointer;
-      font-size: 0.78rem; color: var(--text-muted);
+      font-size: 0.875rem; color: var(--text-muted);
       padding: 0.28rem 0.5rem; border-radius: 50px;
       min-width: 44px; min-height: 34px;
       transition: background 0.15s, color 0.15s;
@@ -3010,7 +3013,7 @@
     .conv-action.like.active { color: #e0245e; }
     .conv-action.repost.active { color: #17bf63; }
     .conv-action svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .conv-action-count { font-size: 0.77rem; }
+    .conv-action-count { font-size: 0.875rem; }
     /* reply compose inline */
     .conv-reply-compose {
       margin-top: 0.6rem; padding: 0.7rem;
@@ -3032,7 +3035,7 @@
     .conv-reply-avatar {
       width: 30px; height: 30px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.65rem; font-weight: 600; color: #fff; flex-shrink: 0;
+      font-size: 0.875rem; font-weight: 600; color: #fff; flex-shrink: 0;
     }
     .conv-reply-main { flex: 1; min-width: 0; }
     .conv-reply-header { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.18rem; flex-wrap: wrap; }
@@ -3064,7 +3067,7 @@
     .conv-modal-close {
       position: absolute; top: 1rem; right: 1.2rem;
       background: none; border: none; font-size: 1.5rem;
-      cursor: pointer; color: var(--text-muted); line-height: 1;
+      cursor: pointer; color: var(--text-muted); line-height: 1.5;
     }
     .conv-modal-tabs {
       display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.4rem;
@@ -3072,7 +3075,7 @@
     .conv-modal-tab {
       background: none; border: none; cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      font-size: 0.875rem; letter-spacing: 0.15em; text-transform: uppercase;
       padding: 0.55rem 1rem; color: var(--text-light);
       border-bottom: 2px solid transparent; margin-bottom: -1px;
       transition: color 0.2s, border-color 0.2s;
@@ -3081,7 +3084,7 @@
     .conv-modal-field { display: flex; flex-direction: column; gap: 0.32rem; margin-bottom: 0.95rem; }
     .conv-modal-field label {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.62rem; font-weight: 500;
+      font-size: 0.875rem; font-weight: 500;
       letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent);
     }
     .conv-modal-field input {
@@ -3095,12 +3098,12 @@
       width: 100%; padding: 0.75rem; border: none; cursor: pointer; border-radius: 50px;
       background: var(--nav-bg); color: var(--nav-text);
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+      font-size: 0.875rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
       transition: background 0.2s; margin-bottom: 0.75rem;
     }
     .conv-modal-submit:hover { background: var(--accent); }
     .conv-modal-divider {
-      text-align: center; font-size: 0.74rem; color: var(--text-light);
+      text-align: center; font-size: 0.875rem; color: var(--text-light);
       margin: 0.7rem 0; position: relative;
     }
     .conv-modal-divider::before, .conv-modal-divider::after {
@@ -3187,7 +3190,7 @@
     .auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
     .auth-field { margin-bottom: 0.9rem; }
     .auth-field label {
-      display: block; font-size: 0.78rem;
+      display: block; font-size: 0.875rem;
       color: var(--text-muted); margin-bottom: 0.3rem;
       letter-spacing: 0.06em; text-transform: uppercase;
     }
@@ -3257,7 +3260,7 @@
     }
     .comment-meta {
       display: flex; align-items: baseline; gap: 0.6rem;
-      margin-bottom: 0.45rem; font-size: 0.8rem;
+      margin-bottom: 0.45rem; font-size: 0.875rem;
     }
     .comment-author { font-weight: 600; color: var(--accent); }
     .comment-time { color: var(--text-light); }
@@ -3268,7 +3271,7 @@
     .comment-actions { display: flex; gap: 0.9rem; margin-top: 0.5rem; }
     .btn-cmt {
       background: none; border: none; cursor: pointer;
-      font-size: 0.78rem; color: var(--text-light);
+      font-size: 0.875rem; color: var(--text-light);
       padding: 0; font-family: inherit;
       transition: color 0.15s;
     }
@@ -3280,12 +3283,12 @@
       background: var(--accent); color: #fff;
       border: none; padding: 0.32rem 0.85rem;
       border-radius: 4px; cursor: pointer;
-      font-size: 0.8rem; font-family: inherit;
+      font-size: 0.875rem; font-family: inherit;
     }
     .btn-reply-cancel {
       background: none; border: 1px solid var(--border);
       padding: 0.32rem 0.7rem; border-radius: 4px;
-      cursor: pointer; font-size: 0.8rem;
+      cursor: pointer; font-size: 0.875rem;
       color: var(--text-muted); font-family: inherit;
     }
     .replies-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; }
