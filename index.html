@@ -406,10 +406,10 @@
       z-index: 101;
     }
     .right-panel-tab:hover { background: var(--accent); }
-    .right-panel-tab svg { transition: transform 0.28s ease; color: rgba(255,255,255,0.7); }
+    .right-panel-tab svg { transition: transform 0.28s ease; color: rgba(255,255,255,0.7); transform: scaleX(-1); }
     .right-panel-tab:hover svg { color: #fff; }
     body.right-collapsed .right-panel-tab { right: 0; }
-    body.right-collapsed .right-panel-tab svg { transform: scaleX(-1); }
+    body.right-collapsed .right-panel-tab svg { transform: scaleX(1); }
     @media (max-width: 1100px) { .right-panel-tab { display: none; } }
 
     /* News link active state when panel is open */
