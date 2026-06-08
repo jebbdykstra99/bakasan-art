@@ -1998,7 +1998,7 @@
     /* Two-column layout for text-heavy pages */
     #page-introduction .page-body,
     #page-biography    .page-body {
-      column-count: 2;
+      column-count: 1;
       column-gap: 4rem;
       column-rule: 1px solid var(--border);
     }
@@ -2677,7 +2677,7 @@
 
     @media (max-width: 900px) {
       :root { --nav-w: 220px; }
-      .collection-showcase { grid-template-columns: repeat(2, 1fr); height: 340px; }
+      .collection-showcase { grid-template-columns: repeat(3, 1fr); height: 280px; }
       .women-grid { grid-template-columns: repeat(2, 1fr); margin: 0 2.5rem; }
       .collections-grid { margin: 0 2.5rem 3rem; }
       .artwork-intro { flex-direction: column; padding: 2rem 1.5rem 0; }
