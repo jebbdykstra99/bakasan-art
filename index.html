@@ -382,6 +382,32 @@
     body.right-collapsed .right-panel { transform: translateX(100%); }
     body.right-collapsed .main { margin-right: 0; }
     body.right-collapsed .page.detail-page.active { right: 0; }
+    body.right-collapsed .explore-overlay,
+    body.right-collapsed .notif-overlay,
+    body.right-collapsed .chat-overlay,
+    body.right-collapsed .profile-overlay { right: 0; }
+
+    /* ── Right panel collapse tab ── */
+    .right-panel-tab {
+      position: absolute;
+      left: -22px; top: 50%;
+      transform: translateY(-50%);
+      width: 22px; height: 48px;
+      background: var(--nav-bg);
+      border-radius: 6px 0 0 6px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      box-shadow: -3px 0 8px rgba(0,0,0,0.18);
+      transition: background 0.18s;
+      z-index: 101;
+    }
+    .right-panel-tab:hover { background: var(--accent); }
+    .right-panel-tab svg { transition: transform 0.28s ease; }
+    body.right-collapsed .right-panel-tab svg { transform: scaleX(-1); }
+
+    /* News link active state when panel is open */
+    .nav-social-link.news-active { color: var(--nav-active); border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
+    .nav-social-link.news-active svg { opacity: 1; }
 
     /* ── Conversation compose (X.com style) ────────────── */
 
@@ -3372,6 +3398,15 @@
           Profile
         </a>
       </li>
+      <li>
+        <a href="#" class="nav-social-link" id="nav-news" data-social="news">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+            <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+          </svg>
+          News
+        </a>
+      </li>
     </ul>
 
   </nav>
@@ -4973,6 +5008,13 @@
 <!-- ── Right Panel: Buddhist & Religious News ───────── -->
 <aside class="right-panel" id="right-panel">
 
+  <!-- Collapse/expand tab on left edge -->
+  <button class="right-panel-tab" id="right-panel-tab" title="Toggle news panel" aria-label="Toggle news panel">
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="7,2 2,8 7,14"/>
+    </svg>
+  </button>
+
   <div class="right-panel-header">
     <div class="right-panel-kicker">Dharma &amp; World Religion</div>
     <div class="right-panel-title">Topics &amp; News</div>
@@ -6133,6 +6175,11 @@
       if (social.dataset.social === 'notifications') { openNotif();   return; }
       if (social.dataset.social === 'chat')          { openChat();    return; }
       if (social.dataset.social === 'profile')       { openProfile(); return; }
+      if (social.dataset.social === 'news') {
+        const collapsed = document.body.classList.toggle('right-collapsed');
+        setNewsActive(!collapsed);
+        return;
+      }
       return;
     }
     // Nav links and inline text-links
@@ -6165,6 +6212,18 @@
 
   // Toggle sidebar on all screen sizes
   hamburger.addEventListener('click', () => document.body.classList.toggle('nav-collapsed'));
+
+  // ── Right panel collapse tab ─────────────────────────
+  function setNewsActive(active) {
+    const navNews = document.getElementById('nav-news');
+    if (navNews) navNews.classList.toggle('news-active', active);
+  }
+  document.getElementById('right-panel-tab').addEventListener('click', () => {
+    const collapsed = document.body.classList.toggle('right-collapsed');
+    setNewsActive(!collapsed);
+  });
+  // News nav link: toggle right panel
+  // (handled in main click delegate via data-social="news")
 
   // ── Sidebar search button → open Explore ─────────────
   document.getElementById('sidebar-search-btn').addEventListener('click', () => {
