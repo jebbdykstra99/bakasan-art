@@ -7274,7 +7274,7 @@
         <div class="conv-post-text">${cvEsc(post.text)}</div>
         ${post.imageUrl ? `<div class="post-image"><img src="${cvEsc(post.imageUrl)}" alt="Post image" loading="lazy"></div>` : ''}
         ${post.poll ? `<div class="post-poll">${post.poll.options.map((opt,i)=>`
-          <div class="post-poll-option" data-poll-idx="${i}" data-post-id="${post.id}">
+          <div class="post-poll-option${cvUser && post.poll.votes && post.poll.votes[cvUser.uid] === i ? ' voted' : ''}" data-poll-idx="${i}" data-post-id="${post.id}">
             <div class="post-poll-bar" style="width:${post.poll.votes&&Object.values(post.poll.votes).length?Math.round((Object.values(post.poll.votes).filter(v=>v===i).length/Object.values(post.poll.votes).length)*100):0}%"></div>
             <span class="post-poll-label">${cvEsc(opt)}</span>
             <span class="post-poll-pct">${post.poll.votes&&Object.values(post.poll.votes).length?Math.round((Object.values(post.poll.votes).filter(v=>v===i).length/Object.values(post.poll.votes).length)*100):0}%</span>
@@ -7368,6 +7368,15 @@
   // ── Wire event delegation for a section ──────────────
   function cvWireSection(sec) {
     sec.addEventListener('click', async e => {
+      const po = e.target.closest('.post-poll-option');
+      if (po) {
+        if (!cvUser) { cvOpenModal('login'); return; }
+        try {
+          await fbDb.collection('posts').doc(po.dataset.postId)
+            .update({ ['poll.votes.' + cvUser.uid]: parseInt(po.dataset.pollIdx, 10) });
+        } catch(err) { console.error('Poll vote:', err); }
+        return;
+      }
       const ab = e.target.closest('[data-action]');
       if (ab) { await cvHandleAction(ab.dataset.action, ab.dataset.postId, sec.dataset.pageId, sec); return; }
       const db = e.target.closest('[data-del-id]');
