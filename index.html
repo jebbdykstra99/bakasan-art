@@ -7041,8 +7041,15 @@
 
   // ── Current user ──────────────────────────────────────
   let cvUser = null;
+  let cvIsAdmin = false;
   fbAuth.onAuthStateChanged(user => {
     cvUser = user;
+    cvIsAdmin = false;
+    if (user) {
+      fbDb.collection('admins').doc(user.uid).get()
+        .then(d => { cvIsAdmin = d.exists; })
+        .catch(() => {});
+    }
     document.querySelectorAll('.conv-section').forEach(s => {
       cvRenderAuthBar(s);
       cvRenderCompose(s);
@@ -7274,7 +7281,7 @@
           <div class="conv-reply-header">
             <span class="conv-post-name">${cvEsc(rn)}</span>
             <span class="conv-post-time">${cvRelTime(r.createdAt)}</span>
-            ${cvUser && cvUser.uid === r.authorUid ? `<button class="conv-delete-btn" data-del-id="${r.id}">${CV_ICONS.trash}</button>` : ''}
+            ${cvUser && (cvUser.uid === r.authorUid || cvIsAdmin) ? `<button class="conv-delete-btn" data-del-id="${r.id}">${CV_ICONS.trash}</button>` : ''}
           </div>
           <div class="conv-reply-text">${cvEsc(r.text)}</div>
           <div class="conv-actions">
@@ -7291,7 +7298,7 @@
         <div class="conv-post-header">
           <span class="conv-post-name">${cvEsc(nm)}</span>
           <span class="conv-post-time">${cvRelTime(post.createdAt)}</span>
-          ${isOwn?`<button class="conv-delete-btn" data-del-id="${post.id}">${CV_ICONS.trash}</button>`:''}
+          ${(isOwn||cvIsAdmin)?`<button class="conv-delete-btn" data-del-id="${post.id}">${CV_ICONS.trash}</button>`:''}
         </div>
         <div class="conv-post-text">${cvEsc(post.text)}</div>
         ${post.imageUrl ? `<div class="post-image"><img src="${cvEsc(post.imageUrl)}" alt="Post image" loading="lazy"></div>` : ''}
