@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bakasan — A California Buddhist Artist</title>
+  <meta name="description" content="The paintings of Donald 'Bakasan' Peterman — Women of Buddhism, Buddhist Iconography, Asian Ladies, and Fragments of Nature. A California Buddhist artist's life work, honoring Buddhism since 1951.">
+  <link rel="canonical" href="https://bakasan.art/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bakasan.art/">
+  <meta property="og:title" content="Bakasan — A California Buddhist Artist">
+  <meta property="og:description" content="The paintings of Donald 'Bakasan' Peterman — Women of Buddhism, Buddhist Iconography, Asian Ladies, and Fragments of Nature.">
+  <meta property="og:image" content="https://bakasan.art/images/GreenTara.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bakasan — A California Buddhist Artist">
+  <meta name="twitter:description" content="The paintings of Donald 'Bakasan' Peterman — Women of Buddhism, Buddhist Iconography, Asian Ladies, and Fragments of Nature.">
+  <meta name="twitter:image" content="https://bakasan.art/images/GreenTara.jpg">
 
   <!-- Favicons — pink lotus -->
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
@@ -5106,6 +5117,11 @@
 
 <!-- Paintings data — add new paintings in data/paintings.js -->
 <script src="data/paintings.js"></script>
+<script>
+  // Global HTML-escape for all user-generated strings rendered via innerHTML
+  window.escH = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+</script>
 
 <!-- Firebase compat SDK (loaded before main script) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -5394,11 +5410,11 @@
       posts.map(p => {
         const nm = p.authorName || 'Anonymous';
         return `<div class="explore-card">
-          <div class="explore-card-thumb-placeholder" style="background:${color(nm)};color:#fff;border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;">${nm.charAt(0).toUpperCase()}</div>
+          <div class="explore-card-thumb-placeholder" style="background:${color(nm)};color:#fff;border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;">${escH(nm.charAt(0).toUpperCase())}</div>
           <div class="explore-card-body">
-            <div class="explore-card-tag">${nm}</div>
-            <div class="explore-card-title" style="font-weight:400">${p.text.length>120?p.text.substring(0,120)+'…':p.text}</div>
-            <div class="explore-card-meta">${relTime(p.createdAt)} · ${p.pageId||'Conversation'}</div>
+            <div class="explore-card-tag">${escH(nm)}</div>
+            <div class="explore-card-title" style="font-weight:400">${escH(p.text.length>120?p.text.substring(0,120)+'…':p.text)}</div>
+            <div class="explore-card-meta">${relTime(p.createdAt)} · ${escH(p.pageId||'Conversation')}</div>
           </div>
         </div>`;
       }).join('') + '</div>';
@@ -5477,7 +5493,7 @@
     // Meta row
     const metaEl = document.getElementById('profile-meta');
     let metaHtml = '';
-    if (data.location) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${data.location}</span>`;
+    if (data.location) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escH(data.location)}</span>`;
     if (joinDate) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${joinDate}</span>`;
     metaEl.innerHTML = metaHtml;
 
@@ -5494,9 +5510,9 @@
       ? `<div class="profile-reply-thread">↩ Replying to a post</div>` : '';
     return `<div class="profile-post-card">
       <div class="profile-post-header">
-        <div class="profile-post-avatar" style="background:${color}">${name.charAt(0).toUpperCase()}</div>
+        <div class="profile-post-avatar" style="background:${color}">${escH(name.charAt(0).toUpperCase())}</div>
         <div class="profile-post-meta">
-          <div class="profile-post-name">${name} <span class="profile-post-time">· ${profileRelTime(post.createdAt)}</span></div>
+          <div class="profile-post-name">${escH(name)} <span class="profile-post-time">· ${profileRelTime(post.createdAt)}</span></div>
         </div>
       </div>
       ${replyLine}
@@ -5761,14 +5777,14 @@
       const otherName = (t.participantNames||{})[otherId] || 'Unknown';
       const unread    = ((t.unreadCounts||{})[cvUser.uid] || 0) > 0;
       const isActive  = t.id === chatActiveConvId;
-      return `<div class="chat-thread-item${unread?' unread':''}${isActive?' active':''}" data-conv-id="${t.id}" data-other-uid="${otherId}" data-other-name="${otherName}">
-        <div class="chat-thread-avatar" style="background:${chatColor(otherName)}">${chatInitial(otherName)}</div>
+      return `<div class="chat-thread-item${unread?' unread':''}${isActive?' active':''}" data-conv-id="${t.id}" data-other-uid="${otherId}" data-other-name="${escH(otherName)}">
+        <div class="chat-thread-avatar" style="background:${chatColor(otherName)}">${escH(chatInitial(otherName))}</div>
         <div class="chat-thread-body">
           <div class="chat-thread-row1">
-            <div class="chat-thread-name">${otherName}</div>
+            <div class="chat-thread-name">${escH(otherName)}</div>
             <div class="chat-thread-time">${chatRelTime(t.lastMessageAt)}</div>
           </div>
-          <div class="chat-thread-preview">${t.lastMessage ? (t.lastMessage.length>50?t.lastMessage.substring(0,50)+'…':t.lastMessage) : ''}</div>
+          <div class="chat-thread-preview">${t.lastMessage ? escH(t.lastMessage.length>50?t.lastMessage.substring(0,50)+'…':t.lastMessage) : ''}</div>
         </div>
         <div class="chat-thread-dot"></div>
       </div>`;
@@ -5955,13 +5971,13 @@
         const name = u.displayName || u.email;
         const alreadyFollowing = followingSet.has(u.uid);
         return `
-          <div class="chat-newchat-result" data-uid="${u.uid}" data-name="${name}">
-            <div class="chat-thread-avatar" style="background:${chatColor(name)};width:34px;height:34px;font-size:0.85rem;">${chatInitial(name)}</div>
+          <div class="chat-newchat-result" data-uid="${u.uid}" data-name="${escH(name)}">
+            <div class="chat-thread-avatar" style="background:${chatColor(name)};width:34px;height:34px;font-size:0.85rem;">${escH(chatInitial(name))}</div>
             <div style="flex:1;min-width:0;">
-              <div class="chat-newchat-result-name">${name}</div>
-              <div class="chat-newchat-result-email">${u.email||''}</div>
+              <div class="chat-newchat-result-name">${escH(name)}</div>
+              <div class="chat-newchat-result-email">${escH(u.email||'')}</div>
             </div>
-            <button class="follow-btn${alreadyFollowing?' following':''}" data-follow-uid="${u.uid}" data-follow-name="${name}"
+            <button class="follow-btn${alreadyFollowing?' following':''}" data-follow-uid="${u.uid}" data-follow-name="${escH(name)}"
               ${!cvUser?'disabled':''}>
               ${alreadyFollowing?'':'Follow'}
             </button>
@@ -6008,9 +6024,9 @@
   }
 
   function notifActionText(n) {
-    if (n.type === 'like')   return `<strong>${n.fromName}</strong> liked your post`;
-    if (n.type === 'reply')  return `<strong>${n.fromName}</strong> replied to your post`;
-    if (n.type === 'follow') return `<strong>${n.fromName}</strong> started following you`;
+    if (n.type === 'like')   return `<strong>${escH(n.fromName)}</strong> liked your post`;
+    if (n.type === 'reply')  return `<strong>${escH(n.fromName)}</strong> replied to your post`;
+    if (n.type === 'follow') return `<strong>${escH(n.fromName)}</strong> started following you`;
     return '';
   }
 
@@ -6019,10 +6035,10 @@
     return `
       <div class="notif-item${unreadCls}" data-notif-id="${n.id}" data-notif-type="${n.type}">
         <div class="notif-type-icon ${n.type}">${notifTypeIcon(n.type)}</div>
-        <div class="notif-avatar">${notifInitial(n.fromName)}</div>
+        <div class="notif-avatar">${escH(notifInitial(n.fromName))}</div>
         <div class="notif-body">
-          <div class="notif-text">${notifActionText(n)} ${n.pageId ? `<span style="color:var(--text-muted);font-size:0.82rem;">on <em>${n.pageId}</em></span>` : ''}</div>
-          ${n.excerpt ? `<div class="notif-excerpt">"${n.excerpt}"</div>` : ''}
+          <div class="notif-text">${notifActionText(n)} ${n.pageId ? `<span style="color:var(--text-muted);font-size:0.82rem;">on <em>${escH(n.pageId)}</em></span>` : ''}</div>
+          ${n.excerpt ? `<div class="notif-excerpt">"${escH(n.excerpt)}"</div>` : ''}
           <div class="notif-time">${notifRelTime(n.createdAt)}</div>
         </div>
       </div>`;
@@ -7148,7 +7164,7 @@
       const name = cvUser.displayName || cvUser.email;
       bar.innerHTML = `
         <div class="conv-avatar-sm" style="background:${cvAvatarColor(name)}">${cvGetInitials(name)}</div>
-        <span>Signed in as <span class="conv-username">${name}</span></span>
+        <span>Signed in as <span class="conv-username">${cvEsc(name)}</span></span>
         <span class="conv-spacer"></span>
         <button class="conv-auth-btn cv-signout">Sign Out</button>`;
       bar.querySelector('.cv-signout').addEventListener('click', () => fbAuth.signOut());
@@ -7205,10 +7221,10 @@
       const ri = (rInters||{})[r.id]||{};
       const rn = r.authorName || 'Anonymous';
       return `<div class="conv-reply-post" data-post-id="${r.id}">
-        <div class="conv-reply-avatar" style="background:${cvAvatarColor(rn)}">${cvGetInitials(rn)}</div>
+        <div class="conv-reply-avatar" style="background:${cvAvatarColor(rn)}">${cvEsc(cvGetInitials(rn))}</div>
         <div class="conv-reply-main">
           <div class="conv-reply-header">
-            <span class="conv-post-name">${rn}</span>
+            <span class="conv-post-name">${cvEsc(rn)}</span>
             <span class="conv-post-time">${cvRelTime(r.createdAt)}</span>
             ${cvUser && cvUser.uid === r.authorUid ? `<button class="conv-delete-btn" data-del-id="${r.id}">${CV_ICONS.trash}</button>` : ''}
           </div>
@@ -7222,15 +7238,15 @@
         </div></div>`;
     }).join('');
     return `<div class="conv-post" data-post-id="${post.id}">
-      <div class="conv-post-avatar" style="background:${cvAvatarColor(nm)}">${cvGetInitials(nm)}</div>
+      <div class="conv-post-avatar" style="background:${cvAvatarColor(nm)}">${cvEsc(cvGetInitials(nm))}</div>
       <div class="conv-post-main">
         <div class="conv-post-header">
-          <span class="conv-post-name">${nm}</span>
+          <span class="conv-post-name">${cvEsc(nm)}</span>
           <span class="conv-post-time">${cvRelTime(post.createdAt)}</span>
           ${isOwn?`<button class="conv-delete-btn" data-del-id="${post.id}">${CV_ICONS.trash}</button>`:''}
         </div>
         <div class="conv-post-text">${cvEsc(post.text)}</div>
-        ${post.imageUrl ? `<div class="post-image"><img src="${post.imageUrl}" alt="Post image" loading="lazy"></div>` : ''}
+        ${post.imageUrl ? `<div class="post-image"><img src="${cvEsc(post.imageUrl)}" alt="Post image" loading="lazy"></div>` : ''}
         ${post.poll ? `<div class="post-poll">${post.poll.options.map((opt,i)=>`
           <div class="post-poll-option" data-poll-idx="${i}" data-post-id="${post.id}">
             <div class="post-poll-bar" style="width:${post.poll.votes&&Object.values(post.poll.votes).length?Math.round((Object.values(post.poll.votes).filter(v=>v===i).length/Object.values(post.poll.votes).length)*100):0}%"></div>
