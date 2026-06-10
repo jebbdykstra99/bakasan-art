@@ -30,6 +30,21 @@ service cloud.firestore {
         || (request.resource.data[f] is string && request.resource.data[f].size() <= n);
     }
 
+    // Poll vote: only the voter's own entry in poll.votes may change,
+    // the chosen index must be valid, and nothing else in the poll moves
+    function isPollVote() {
+      return onlyChanged(['poll'])
+        && request.resource.data.poll.keys().hasOnly(resource.data.poll.keys())
+        && resource.data.poll.keys().hasOnly(request.resource.data.poll.keys())
+        && request.resource.data.poll.options == resource.data.poll.options
+        && request.resource.data.poll.get('votes', {})
+             .diff(resource.data.poll.get('votes', {}))
+             .affectedKeys().hasOnly([request.auth.uid])
+        && request.resource.data.poll.votes[request.auth.uid] is int
+        && request.resource.data.poll.votes[request.auth.uid] >= 0
+        && request.resource.data.poll.votes[request.auth.uid] < resource.data.poll.options.size();
+    }
+
     // Unread-count-only update on conversations
     function isUnreadUpdate() {
       return onlyChanged(['unreadCounts','lastMessage','lastMessageAt','lastMessageBy','participantNames']);
@@ -81,6 +96,9 @@ service cloud.firestore {
         ||
         // Any authenticated user may bump counters only
         isCounterUpdate()
+        ||
+        // Any authenticated user may cast/change their own poll vote
+        isPollVote()
       );
 
       allow delete: if request.auth != null
