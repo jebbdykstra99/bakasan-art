@@ -114,6 +114,18 @@
     }
     .sidebar-post-btn:hover { background: #fff; }
 
+    .nav-legal {
+      display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+      padding: 0.9rem 1.8rem 1.4rem;
+    }
+    .nav-legal a {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.875rem; font-style: italic;
+      color: rgba(184,168,136,0.75); text-decoration: none;
+    }
+    .nav-legal a:hover { color: var(--nav-active); text-decoration: underline; }
+    .nav-legal span { color: rgba(184,168,136,0.5); font-size: 0.875rem; }
+
     .brand-lotus { display: block; width: 58px; margin: 0 auto 1rem; }
 
     .brand-title {
@@ -3457,6 +3469,12 @@
     <ul>
       <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
     </ul>
+
+    <div class="nav-legal">
+      <a href="privacy.html">Privacy Policy</a>
+      <span>&middot;</span>
+      <a href="terms.html">Terms of Use</a>
+    </div>
 
   </nav>
 
