@@ -45,6 +45,13 @@ service cloud.firestore {
         && request.resource.data.poll.votes[request.auth.uid] < resource.data.poll.options.size();
     }
 
+    // Site admin: has a doc in /admins/{uid}, which can only be created
+    // from the Firebase Console (no client writes allowed)
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
     // Unread-count-only update on conversations
     function isUnreadUpdate() {
       return onlyChanged(['unreadCounts','lastMessage','lastMessageAt','lastMessageBy','participantNames']);
@@ -101,8 +108,17 @@ service cloud.firestore {
         isPollVote()
       );
 
+      // Author or a site admin may delete (moderation)
       allow delete: if request.auth != null
-        && resource.data.authorUid == request.auth.uid;
+        && (resource.data.authorUid == request.auth.uid || isAdmin());
+    }
+
+    // ── Admins ────────────────────────────────────────────────────────────────
+    // Membership managed ONLY from the Firebase Console. A signed-in user may
+    // check their own membership; nobody can list or write from the client.
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
     }
 
     // ── Interactions ──────────────────────────────────────────────────────────
