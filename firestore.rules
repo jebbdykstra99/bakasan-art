@@ -9,9 +9,25 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
 
+    // A counter may only move by 1 in either direction and never below 0
+    function counterOk(f) {
+      return request.resource.data.get(f, 0) is int
+        && request.resource.data.get(f, 0) >= 0
+        && request.resource.data.get(f, 0) - resource.data.get(f, 0) <= 1
+        && request.resource.data.get(f, 0) - resource.data.get(f, 0) >= -1;
+    }
+
     // Counter-only update (like/reply/repost/bookmark counts)
     function isCounterUpdate() {
-      return onlyChanged(['likeCount','replyCount','repostCount','bookmarkCount']);
+      return onlyChanged(['likeCount','replyCount','repostCount','bookmarkCount'])
+        && counterOk('likeCount') && counterOk('replyCount')
+        && counterOk('repostCount') && counterOk('bookmarkCount');
+    }
+
+    // Optional string field must stay within a size limit when present
+    function strMax(f, n) {
+      return !(f in request.resource.data)
+        || (request.resource.data[f] is string && request.resource.data[f].size() <= n);
     }
 
     // Unread-count-only update on conversations
@@ -28,7 +44,13 @@ service cloud.firestore {
         && request.auth.uid == uid
         // Prevent escalating privilege fields
         && !('role' in request.resource.data)
-        && !('admin' in request.resource.data);
+        && !('admin' in request.resource.data)
+        // Sanity limits on profile fields
+        && strMax('displayName', 100)
+        && strMax('displayNameLower', 100)
+        && strMax('bio', 500)
+        && strMax('location', 100)
+        && strMax('website', 200);
       allow delete: if false; // never delete user docs
     }
 
@@ -46,7 +68,12 @@ service cloud.firestore {
         // Must have text, an image, or a poll
         && (request.resource.data.text.size() > 0
             || 'imageUrl' in request.resource.data
-            || 'poll' in request.resource.data);
+            || 'poll' in request.resource.data)
+        // Image URLs must point at our Firebase Storage bucket
+        && (!('imageUrl' in request.resource.data)
+            || (request.resource.data.imageUrl is string
+                && request.resource.data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')))
+        && strMax('authorName', 100);
 
       allow update: if request.auth != null && (
         // Author edits their own post (text, etc.)
@@ -80,7 +107,10 @@ service cloud.firestore {
         // Must supply required fields; fromUid must match the creator
         && request.resource.data.fromUid == request.auth.uid
         && request.resource.data.type in ['like','reply','follow','message']
-        && request.resource.data.read == false;
+        && request.resource.data.read == false
+        && strMax('fromName', 100)
+        && strMax('excerpt', 300)
+        && strMax('pageId', 100);
     }
 
     // ── Conversations ─────────────────────────────────────────────────────────
