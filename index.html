@@ -5122,6 +5122,10 @@
   const subnavAsian       = document.getElementById('subnav-asian-ladies');
   const subnavNature      = document.getElementById('subnav-nature');
 
+  // Submenus the user explicitly collapsed by re-clicking the parent tab.
+  // highlightNav respects these until the parent is clicked again.
+  const navManualClosed = new Set();
+
   const inArtist      = new Set(['home','introduction','statement','biography']);
   const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147','thoughts']);
   const inWomen       = new Set(['women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam']);
@@ -5153,12 +5157,12 @@
   function highlightNav(id) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('[data-page="' + id + '"]').forEach(l => l.classList.add('active'));
-    subnavArtist.classList.toggle('open',      inArtist.has(id));
-    subnavCollection.classList.toggle('open',  inCollection.has(id));
-    subnavWomen.classList.toggle('open',       inWomen.has(id));
-    subnavIconography.classList.toggle('open', inIconography.has(id));
-    subnavAsian.classList.toggle('open',       inAsian.has(id));
-    subnavNature.classList.toggle('open',      inNature.has(id));
+    subnavArtist.classList.toggle('open',      inArtist.has(id)      && !navManualClosed.has('subnav-artist'));
+    subnavCollection.classList.toggle('open',  inCollection.has(id)  && !navManualClosed.has('subnav-collection'));
+    subnavWomen.classList.toggle('open',       inWomen.has(id)       && !navManualClosed.has('subnav-women'));
+    subnavIconography.classList.toggle('open', inIconography.has(id) && !navManualClosed.has('subnav-iconography'));
+    subnavAsian.classList.toggle('open',       inAsian.has(id)       && !navManualClosed.has('subnav-asian-ladies'));
+    subnavNature.classList.toggle('open',      inNature.has(id)      && !navManualClosed.has('subnav-nature'));
   }
 
   // ── showPage: scroll for main sections, overlay for detail pages ──
@@ -6211,6 +6215,17 @@
     const link = e.target.closest('[data-page]');
     if (link && link.dataset.page) {
       e.preventDefault();
+      // Parent tab with a nested submenu: re-click collapses it
+      const sub = link.parentElement.querySelector(':scope > ul.nav-sub, :scope > ul.nav-sub2');
+      if (sub && link.closest('.sidebar')) {
+        if (sub.classList.contains('open')) {
+          sub.classList.remove('open');
+          sub.querySelectorAll('.open').forEach(u => u.classList.remove('open'));
+          navManualClosed.add(sub.id);
+          return; // collapse only — don't navigate
+        }
+        navManualClosed.delete(sub.id);
+      }
       closeExplore();
       closeChat();
       closeNotif();
