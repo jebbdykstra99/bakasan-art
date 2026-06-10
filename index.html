@@ -150,7 +150,7 @@
       max-height: 0;
       transition: max-height 0.35s ease;
     }
-    .nav-sub.open { max-height: 600px; }
+    .nav-sub.open { max-height: 900px; }
 
     .nav-sub > li > a {
       display: flex;
@@ -3322,9 +3322,17 @@
 
   <nav aria-label="Main navigation">
     <ul>
-      <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
       <li>
-        <a href="#" class="nav-link" data-page="collection">The Bakasan Collection</a>
+        <a href="#" class="nav-link active" data-page="home">Home / Artist</a>
+        <ul class="nav-sub" id="subnav-artist">
+          <li><a href="#" class="nav-link" data-page="home">Meet Bakasan</a></li>
+          <li><a href="#" class="nav-link" data-page="introduction">Introduction</a></li>
+          <li><a href="#" class="nav-link" data-page="statement">Artist Statement</a></li>
+          <li><a href="#" class="nav-link" data-page="biography">Selected Biography</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-page="collection">Bakasan Collection</a>
         <ul class="nav-sub" id="subnav-collection">
           <li>
             <a href="#" class="nav-link" data-page="women">Women of Buddhism</a>
@@ -3336,7 +3344,7 @@
               <li><a href="#" class="nav-link" data-page="gotami">Mahaprajapati Gotami</a></li>
               <li><a href="#" class="nav-link" data-page="nukada">Princess Nukada</a></li>
               <li><a href="#" class="nav-link" data-page="tibetan">Tibetan Celestial Dancer</a></li>
-              <li><a href="#" class="nav-link" data-page="siam">Siam Temple Dancer</a></li>
+              <li><a href="#" class="nav-link" data-page="siam">Thai Temple Dancer</a></li>
             </ul>
           </li>
           <li>
@@ -3369,29 +3377,20 @@
               <li><a href="#" class="nav-link" data-page="topanga147">Topanga #147</a></li>
             </ul>
           </li>
+          <li><a href="#" class="nav-link" data-page="thoughts">Conversation</a></li>
         </ul>
       </li>
-      <li><a href="#" class="nav-link" data-page="introduction">Introduction</a></li>
-      <li><a href="#" class="nav-link" data-page="statement">Artist's Statement</a></li>
-      <li><a href="#" class="nav-link" data-page="biography">Selected Biography</a></li>
-      <li><a href="#" class="nav-link" data-page="contact">Contacts and Opportunities</a></li>
-      <li><a href="#" class="nav-link" data-page="thoughts">Conversation</a></li>
     </ul>
-
-    <!-- ── POST button ─── -->
-    <div class="sidebar-post-wrap">
-      <button class="sidebar-post-btn" id="sidebar-post-btn">Post</button>
-    </div>
 
     <!-- ── Social / Community Nav ─── -->
     <div class="nav-divider"></div>
     <ul>
       <li>
-        <a href="#" class="nav-social-link" id="nav-explore" data-social="explore">
+        <a href="#" class="nav-social-link" id="nav-chat" data-social="chat">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
-          Explore
+          Chat
         </a>
       </li>
       <li>
@@ -3404,11 +3403,11 @@
         </a>
       </li>
       <li>
-        <a href="#" class="nav-social-link" id="nav-chat" data-social="chat">
+        <a href="#" class="nav-social-link" id="nav-explore" data-social="explore">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          Chat
+          Explore
         </a>
       </li>
       <li>
@@ -3428,6 +3427,15 @@
           News
         </a>
       </li>
+    </ul>
+
+    <!-- ── POST button ─── -->
+    <div class="sidebar-post-wrap">
+      <button class="sidebar-post-btn" id="sidebar-post-btn">Post</button>
+    </div>
+
+    <ul>
+      <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
     </ul>
 
   </nav>
@@ -5110,13 +5118,19 @@
 <script>
   const sidebar  = document.getElementById('sidebar');
   const hamburger = document.getElementById('hamburger');
+  const subnavArtist      = document.getElementById('subnav-artist');
   const subnavCollection  = document.getElementById('subnav-collection');
   const subnavWomen       = document.getElementById('subnav-women');
   const subnavIconography = document.getElementById('subnav-iconography');
   const subnavAsian       = document.getElementById('subnav-asian-ladies');
   const subnavNature      = document.getElementById('subnav-nature');
 
-  const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147']);
+  // Submenus the user explicitly collapsed by re-clicking the parent tab.
+  // highlightNav respects these until the parent is clicked again.
+  const navManualClosed = new Set();
+
+  const inArtist      = new Set(['home','introduction','statement','biography']);
+  const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147','thoughts']);
   const inWomen       = new Set(['women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam']);
   const inIconography = new Set(['iconography','green-tara','black-tara','kuan-yin','kannon','amida']);
   const inAsian       = new Set(['asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock']);
@@ -5146,11 +5160,12 @@
   function highlightNav(id) {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('[data-page="' + id + '"]').forEach(l => l.classList.add('active'));
-    subnavCollection.classList.toggle('open',  inCollection.has(id));
-    subnavWomen.classList.toggle('open',       inWomen.has(id));
-    subnavIconography.classList.toggle('open', inIconography.has(id));
-    subnavAsian.classList.toggle('open',       inAsian.has(id));
-    subnavNature.classList.toggle('open',      inNature.has(id));
+    subnavArtist.classList.toggle('open',      inArtist.has(id)      && !navManualClosed.has('subnav-artist'));
+    subnavCollection.classList.toggle('open',  inCollection.has(id)  && !navManualClosed.has('subnav-collection'));
+    subnavWomen.classList.toggle('open',       inWomen.has(id)       && !navManualClosed.has('subnav-women'));
+    subnavIconography.classList.toggle('open', inIconography.has(id) && !navManualClosed.has('subnav-iconography'));
+    subnavAsian.classList.toggle('open',       inAsian.has(id)       && !navManualClosed.has('subnav-asian-ladies'));
+    subnavNature.classList.toggle('open',      inNature.has(id)      && !navManualClosed.has('subnav-nature'));
   }
 
   // ── showPage: scroll for main sections, overlay for detail pages ──
@@ -6203,6 +6218,17 @@
     const link = e.target.closest('[data-page]');
     if (link && link.dataset.page) {
       e.preventDefault();
+      // Parent tab with a nested submenu: re-click collapses it
+      const sub = link.parentElement.querySelector(':scope > ul.nav-sub, :scope > ul.nav-sub2');
+      if (sub && link.closest('.sidebar')) {
+        if (sub.classList.contains('open')) {
+          sub.classList.remove('open');
+          sub.querySelectorAll('.open').forEach(u => u.classList.remove('open'));
+          navManualClosed.add(sub.id);
+          return; // collapse only — don't navigate
+        }
+        navManualClosed.delete(sub.id);
+      }
       closeExplore();
       closeChat();
       closeNotif();
