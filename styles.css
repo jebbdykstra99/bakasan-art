@@ -1071,6 +1071,17 @@
     .profile-save-btn:hover { background: var(--accent); color: #fff; }
 
     /* Banner edit area inside modal */
+    .profile-upload-btn {
+      display: block; width: 100%;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.95rem; letter-spacing: 0.04em;
+      background: var(--nav-bg); color: #f0e8d2;
+      border: none; border-radius: 8px;
+      padding: 0.55rem 1rem; margin-bottom: 0.45rem;
+      cursor: pointer; transition: background 0.18s;
+    }
+    .profile-upload-btn:hover { background: var(--accent); color: #fff; }
+    .profile-edit-banner { cursor: pointer; }
     .profile-edit-banner {
       position: relative; height: 110px;
       overflow: hidden; cursor: pointer;
