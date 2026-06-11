@@ -1161,7 +1161,120 @@
     }
   });
 
-  // Search on Enter
+  // ── Live site search ──────────────────────────────────
+  const exploreResults = document.getElementById('explore-results');
+  const SITE_PAGES = [
+    { id: 'home',         label: 'Meet Bakasan',              kind: 'Page' },
+    { id: 'introduction', label: 'Introduction',              kind: 'Page' },
+    { id: 'statement',    label: "Artist's Statement",        kind: 'Page' },
+    { id: 'biography',    label: 'Selected Biography',        kind: 'Page' },
+    { id: 'contact',      label: 'Contacts and Opportunities',kind: 'Page' },
+    { id: 'thoughts',     label: 'Conversation',              kind: 'Community' },
+    { id: 'women',        label: 'Women of Buddhism',         kind: 'Series' },
+    { id: 'iconography',  label: 'Buddhist Iconography',      kind: 'Series' },
+    { id: 'asian-ladies', label: 'Asian Ladies',              kind: 'Series' },
+    { id: 'nature',       label: 'Fragments of Nature',       kind: 'Series' },
+  ];
+
+  let explorePostsCache = null;
+  async function explorePosts() {
+    if (explorePostsCache) return explorePostsCache;
+    try {
+      const snap = await fbDb.collection('posts')
+        .orderBy('createdAt', 'desc').limit(100).get();
+      explorePostsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch(e) { explorePostsCache = []; }
+    return explorePostsCache;
+  }
+
+  function stripHtml(s) { return (s || '').replace(/<[^>]*>/g, ' '); }
+
+  async function exploreSiteSearch(q) {
+    const lower = q.toLowerCase();
+    const rows = [];
+
+    // Paintings: title, caption, era, story text
+    (typeof PAINTINGS_DATA !== 'undefined' ? PAINTINGS_DATA : []).forEach(p => {
+      const hay = [p.title, p.captionTitle, p.era, stripHtml(p.bodyHtml)].join(' ').toLowerCase();
+      if (hay.includes(lower)) {
+        rows.push({ kind: 'Painting', label: p.title, sub: p.captionTitle || '', target: p.id,
+                    thumb: 'images/' + p.file });
+      }
+    });
+
+    // Site pages & series
+    SITE_PAGES.forEach(pg => {
+      if (pg.label.toLowerCase().includes(lower)) {
+        rows.push({ kind: pg.kind, label: pg.label, sub: '', target: pg.id });
+      }
+    });
+
+    // Community posts (recent 100, text match)
+    const posts = await explorePosts();
+    posts.filter(p => (p.text || '').toLowerCase().includes(lower)).slice(0, 5).forEach(p => {
+      rows.push({ kind: 'Post', label: p.authorName || 'Member',
+                  sub: p.text.length > 90 ? p.text.slice(0, 90) + '…' : p.text,
+                  post: p.id });
+    });
+
+    return rows.slice(0, 12);
+  }
+
+  function exploreRenderResults(rows, q) {
+    if (!rows.length) {
+      exploreResults.innerHTML = `<div class="explore-results-empty">No matches for "${escH(q)}" —
+        <a href="https://www.google.com/search?q=${encodeURIComponent(q)}+site:bakasan.art" target="_blank" rel="noopener">search the web</a></div>`;
+      exploreResults.style.display = '';
+      return;
+    }
+    exploreResults.innerHTML = rows.map(r => `
+      <div class="explore-result" ${r.target ? `data-target="${escH(r.target)}"` : `data-post="${escH(r.post)}"`}>
+        ${r.thumb ? `<img class="explore-result-thumb" src="${escH(r.thumb)}" alt="" loading="lazy">`
+                  : `<span class="explore-result-icon">${r.kind === 'Post' ? '&#128172;' : '&#128196;'}</span>`}
+        <div class="explore-result-body">
+          <div class="explore-result-label">${escH(r.label)}</div>
+          ${r.sub ? `<div class="explore-result-sub">${escH(r.sub)}</div>` : ''}
+        </div>
+        <span class="explore-result-kind">${escH(r.kind)}</span>
+      </div>`).join('');
+    exploreResults.style.display = '';
+  }
+
+  let exploreTimer = null;
+  exploreInput.addEventListener('input', () => {
+    clearTimeout(exploreTimer);
+    const q = exploreInput.value.trim();
+    if (exploreSearchMode !== 'site' || q.length < 2) {
+      exploreResults.style.display = 'none';
+      exploreResults.innerHTML = '';
+      return;
+    }
+    exploreTimer = setTimeout(async () => {
+      exploreRenderResults(await exploreSiteSearch(q), q);
+    }, 250);
+  });
+
+  // Result clicks
+  exploreResults.addEventListener('click', e => {
+    const row = e.target.closest('.explore-result');
+    if (!row) return;
+    exploreResults.style.display = 'none';
+    exploreInput.value = '';
+    closeExplore();
+    if (row.dataset.target) showPage(row.dataset.target);
+    else if (row.dataset.post) {
+      showPage('thoughts');
+      const postId = row.dataset.post;
+      let n = 0;
+      const iv = setInterval(() => {
+        const el = document.querySelector('[data-post-id="' + postId + '"]');
+        if (el) { clearInterval(iv); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        if (++n > 40) clearInterval(iv);
+      }, 100);
+    }
+  });
+
+  // Enter: open first result (site mode) or web search (google mode)
   exploreInput.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     const q = exploreInput.value.trim();
@@ -1169,16 +1282,8 @@
     if (exploreSearchMode === 'google') {
       window.open('https://www.google.com/search?q=' + encodeURIComponent(q + ' site:bakasan.art OR Buddhism'), '_blank');
     } else {
-      // Site search: find matching painting titles or nav pages
-      const lower = q.toLowerCase();
-      const match = (typeof PAINTINGS_DATA !== 'undefined')
-        ? PAINTINGS_DATA.find(p => p.title.toLowerCase().includes(lower) || (p.bodyHtml || '').toLowerCase().includes(lower))
-        : null;
-      if (match) { closeExplore(); showPage(match.id); }
-      else {
-        // Fall back to Google restricted to site
-        window.open('https://www.google.com/search?q=' + encodeURIComponent(q) + '+site:bakasan.art', '_blank');
-      }
+      const first = exploreResults.querySelector('.explore-result');
+      if (first) first.click();
     }
   });
 
