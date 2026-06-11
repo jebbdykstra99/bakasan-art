@@ -5501,13 +5501,13 @@
     // Banner
     const bannerInner = document.getElementById('profile-banner-inner');
     if (data.bannerUrl) {
-      bannerInner.outerHTML = `<img class="profile-banner-img" id="profile-banner-inner" src="${data.bannerUrl}" alt="Banner">`;
+      bannerInner.outerHTML = `<img class="profile-banner-img" id="profile-banner-inner" src="${escH(data.bannerUrl)}" alt="Banner">`;
     }
 
     // Avatar
     const avatarEl = document.getElementById('profile-avatar');
     if (data.photoUrl) {
-      avatarEl.innerHTML = `<img src="${data.photoUrl}" alt="${name}">`;
+      avatarEl.innerHTML = `<img src="${escH(data.photoUrl)}" alt="${escH(name)}">`;
     } else {
       avatarEl.style.background = color;
       avatarEl.textContent = initial;
@@ -5660,7 +5660,7 @@
     // Preview avatar in modal
     const editAvatar = document.getElementById('profile-edit-avatar-preview');
     if (profileData.photoUrl) {
-      editAvatar.innerHTML = `<img src="${profileData.photoUrl}" alt="${name}"><div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+      editAvatar.innerHTML = `<img src="${escH(profileData.photoUrl)}" alt="${escH(name)}"><div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
     } else {
       editAvatar.style.background = profileColor(name);
       editAvatar.innerHTML = name.charAt(0).toUpperCase() + `<div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
@@ -5698,17 +5698,21 @@
     }
 
     // Update Firestore user doc
-    const update = {
-      displayName: name,
-      displayNameLower: name.toLowerCase(),
-      bio, location, bannerUrl, photoUrl,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    await fbDb.collection('users').doc(cvUser.uid).set(update, { merge: true });
-    profileData = { ...profileData, ...update };
-
-    closeEditProfile();
-    profileLoad(cvUser);
+    try {
+      const update = {
+        displayName: name,
+        displayNameLower: name.toLowerCase(),
+        bio, location, bannerUrl, photoUrl,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await fbDb.collection('users').doc(cvUser.uid).set(update, { merge: true });
+      profileData = { ...profileData, ...update };
+      closeEditProfile();
+      profileLoad(cvUser);
+    } catch(e) {
+      console.error('Profile save:', e);
+      alert('Could not save profile: ' + (e.message || e.code || 'unknown error'));
+    }
     saveBtn.disabled = false; saveBtn.textContent = 'Save';
   });
 
