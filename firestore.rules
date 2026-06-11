@@ -187,11 +187,16 @@ service cloud.firestore {
           return get(/databases/$(database)/documents/conversations/$(convId)).data;
         }
 
+        // A brand-new thread has no conversation doc yet — reading its
+        // (empty) messages is harmless and required for the live listener
         allow read: if request.auth != null
-          && request.auth.uid in conv().participants;
+          && (!exists(/databases/$(database)/documents/conversations/$(convId))
+              || request.auth.uid in conv().participants);
 
+        // getAfter: the first message is batched together with the
+        // conversation doc creation, so check post-batch state
         allow create: if request.auth != null
-          && request.auth.uid in conv().participants
+          && request.auth.uid in getAfter(/databases/$(database)/documents/conversations/$(convId)).data.participants
           && request.resource.data.fromUid == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0

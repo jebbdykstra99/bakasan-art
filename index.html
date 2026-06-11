@@ -5875,10 +5875,13 @@
       .limit(100)
       .onSnapshot(snap => {
         chatRenderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        // Reset unread count for current user
-        fbDb.collection('conversations').doc(convId)
-          .set({ unreadCounts: { [cvUser.uid]: 0 } }, { merge: true });
-      }, () => {});
+        // Reset unread count (only once the conversation doc exists)
+        if (!snap.empty) {
+          fbDb.collection('conversations').doc(convId)
+            .set({ unreadCounts: { [cvUser.uid]: 0 } }, { merge: true })
+            .catch(() => {});
+        }
+      }, () => { chatRenderMessages([]); });
   }
 
   function chatCloseThread() {
@@ -5938,25 +5941,35 @@
     const convRef = fbDb.collection('conversations').doc(chatActiveConvId);
     const msgRef  = convRef.collection('messages').doc();
 
-    await fbDb.batch()
-      .set(msgRef, {
-        fromUid: cvUser.uid,
-        fromName: cvUser.displayName || cvUser.email,
-        text,
-        createdAt: FV.serverTimestamp()
-      })
-      .set(convRef, {
-        participants: [cvUser.uid, chatActiveOther.uid],
-        participantNames: {
-          [cvUser.uid]: cvUser.displayName || cvUser.email,
-          [chatActiveOther.uid]: chatActiveOther.name
-        },
-        lastMessage: text,
-        lastMessageAt: FV.serverTimestamp(),
-        lastMessageBy: cvUser.uid,
-        unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
-      }, { merge: true })
-      .commit();
+    try {
+      await fbDb.batch()
+        .set(msgRef, {
+          fromUid: cvUser.uid,
+          fromName: cvUser.displayName || cvUser.email,
+          text,
+          createdAt: FV.serverTimestamp()
+        })
+        .set(convRef, {
+          // sorted: keeps the array byte-identical on every send, so the
+          // rules' field-diff never sees "participants" as changed
+          participants: [cvUser.uid, chatActiveOther.uid].sort(),
+          participantNames: {
+            [cvUser.uid]: cvUser.displayName || cvUser.email,
+            [chatActiveOther.uid]: chatActiveOther.name
+          },
+          lastMessage: text,
+          lastMessageAt: FV.serverTimestamp(),
+          lastMessageBy: cvUser.uid,
+          unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
+        }, { merge: true })
+        .commit();
+    } catch(e) {
+      console.error('Chat send:', e);
+      chatComposeInput.value = text;           // restore the typed message
+      chatSendBtn.disabled = false;
+      alert('Message could not be sent: ' + (e.code || e.message));
+      return;
+    }
 
     // Notify recipient
     notifWrite(chatActiveOther.uid, 'reply', cvUser.displayName || cvUser.email, 'chat', text);
@@ -7048,6 +7061,9 @@
   let cvIsAdmin = false;
   fbAuth.onAuthStateChanged(user => {
     cvUser = user;
+    // Re-subscribe the chat thread list if the overlay is already open
+    // (covers sign-in restoring after the user opened Chat)
+    if (user && chatOverlay.classList.contains('active')) chatSubscribeThreads();
     cvIsAdmin = false;
     if (user) {
       fbDb.collection('admins').doc(user.uid).get()
