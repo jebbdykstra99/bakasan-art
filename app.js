@@ -409,6 +409,9 @@
     const snap = await fbDb.collection('users').doc(user.uid).get();
     profileData = snap.exists ? snap.data() : {};
 
+    // Render the header immediately — never leave it blank waiting on posts
+    profileRenderHeader(user, profileData, 0);
+
     // Subscribe to user's posts (ordered by time desc)
     if (profilePostsUnsub) profilePostsUnsub();
     profilePostsUnsub = fbDb.collection('posts')
@@ -520,6 +523,52 @@
   });
 
   // Save
+  // ── Profile image upload from device (banner + photo, 5 MB limit) ──
+  const PROFILE_IMG_MAX = 5 * 1024 * 1024;
+  function wireProfileUpload(fileInputId, urlInputId, triggerIds, applyPreview) {
+    const fileInput = document.getElementById(fileInputId);
+    triggerIds.forEach(id => document.getElementById(id)
+      .addEventListener('click', () => { if (cvUser) fileInput.click(); }));
+    fileInput.addEventListener('change', async () => {
+      const f = fileInput.files[0];
+      fileInput.value = '';
+      if (!f || !cvUser) return;
+      if (!f.type.startsWith('image/')) { alert('Please choose an image file.'); return; }
+      if (f.size > PROFILE_IMG_MAX) {
+        alert('That image is ' + (f.size/1024/1024).toFixed(1) + ' MB — the limit is 5 MB.');
+        return;
+      }
+      const urlInput = document.getElementById(urlInputId);
+      const prev = urlInput.value;
+      urlInput.value = 'Uploading…'; urlInput.disabled = true;
+      try {
+        const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
+        const ref = fbStorage.ref(`posts/${cvUser.uid}/profile-${Date.now()}.${ext}`);
+        await ref.put(f);
+        const url = await ref.getDownloadURL();
+        urlInput.value = url;
+        applyPreview(url);
+      } catch(e) {
+        console.error('Profile image upload:', e);
+        urlInput.value = prev;
+        alert('Upload failed: ' + (e.code || e.message));
+      }
+      urlInput.disabled = false;
+    });
+  }
+  wireProfileUpload('profile-banner-file', 'profile-edit-banner-url',
+    ['profile-edit-banner-preview', 'profile-banner-upload-btn'],
+    url => {
+      document.getElementById('profile-edit-banner-inner').outerHTML =
+        `<img class="profile-banner-img" id="profile-edit-banner-inner" src="${escH(url)}" alt="Banner">`;
+    });
+  wireProfileUpload('profile-photo-file', 'profile-edit-photo-url',
+    ['profile-edit-avatar-preview', 'profile-photo-upload-btn'],
+    url => {
+      const av = document.getElementById('profile-edit-avatar-preview');
+      av.innerHTML = `<img src="${escH(url)}" alt="Profile photo"><div class="profile-edit-avatar-overlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
+    });
+
   document.getElementById('profile-save-btn').addEventListener('click', async () => {
     if (!cvUser) return;
     const saveBtn = document.getElementById('profile-save-btn');

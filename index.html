@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 
@@ -1433,7 +1433,9 @@
       </div>
     </div>
     <!-- Banner preview -->
-    <div class="profile-edit-banner" id="profile-edit-banner-preview">
+    <input type="file" id="profile-banner-file" accept="image/*" style="display:none">
+    <input type="file" id="profile-photo-file" accept="image/*" style="display:none">
+    <div class="profile-edit-banner" id="profile-edit-banner-preview" title="Click to upload a banner from your device">
       <div class="profile-edit-banner-gradient" id="profile-edit-banner-inner"></div>
       <div class="profile-edit-banner-overlay"><span>Change banner</span></div>
     </div>
@@ -1459,12 +1461,14 @@
         <input type="text" id="profile-edit-location" maxlength="60" placeholder="Where are you?">
       </div>
       <div class="profile-edit-field">
-        <label>Banner image URL <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
-        <input type="url" id="profile-edit-banner-url" placeholder="https://…">
+        <label>Banner image <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <button type="button" class="profile-upload-btn" id="profile-banner-upload-btn">Upload from this device</button>
+        <input type="url" id="profile-edit-banner-url" placeholder="…or paste an image address (https://…)">
       </div>
       <div class="profile-edit-field">
-        <label>Profile photo URL <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
-        <input type="url" id="profile-edit-photo-url" placeholder="https://…">
+        <label>Profile photo <span style="font-size:0.65rem;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <button type="button" class="profile-upload-btn" id="profile-photo-upload-btn">Upload from this device</button>
+        <input type="url" id="profile-edit-photo-url" placeholder="…or paste an image address (https://…)">
       </div>
     </div>
   </div>
@@ -1852,7 +1856,7 @@
 </button>
 
 <!-- Paintings data — add new paintings in data/paintings.js -->
-<script src="data/paintings.js?v=7"></script>
+<script src="data/paintings.js?v=8"></script>
 
 <!-- Firebase compat SDK (loaded before main script) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1863,7 +1867,7 @@
 <!-- Emoji picker web component (MIT, zero deps) -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=9"></script>
 
 
 <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Painting enlarged view">
