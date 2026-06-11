@@ -920,7 +920,7 @@
   function notifRenderItem(n) {
     const unreadCls = n.read ? '' : ' unread';
     return `
-      <div class="notif-item${unreadCls}" data-notif-id="${n.id}" data-notif-type="${n.type}">
+      <div class="notif-item${unreadCls}" data-notif-id="${n.id}" data-notif-type="${n.type}"${n.pageId === 'chat' && n.fromUid ? ` data-chat-uid="${escH(n.fromUid)}" data-chat-name="${escH(n.fromName||'')}"` : ''}>
         <div class="notif-type-icon ${n.type}">${notifTypeIcon(n.type)}</div>
         <div class="notif-avatar">${escH(notifInitial(n.fromName))}</div>
         <div class="notif-body">
@@ -928,6 +928,9 @@
           ${n.excerpt ? `<div class="notif-excerpt">"${escH(n.excerpt)}"</div>` : ''}
           <div class="notif-time">${notifRelTime(n.createdAt)}</div>
         </div>
+        ${n.pageId === 'chat' && n.fromUid ? `<button class="notif-reply-btn" title="Reply in chat" aria-label="Reply in chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+        </button>` : ''}
       </div>`;
   }
 
@@ -998,6 +1001,24 @@
       tab.classList.add('active');
       notifOverlay.querySelectorAll('.notif-pane').forEach(p => p.classList.remove('active'));
       document.getElementById('notif-pane-' + tab.dataset.notifTab).classList.add('active');
+    }
+  });
+
+  // Clicking a notification marks it read; chat notifications open the thread
+  notifOverlay.addEventListener('click', async e => {
+    const item = e.target.closest('.notif-item');
+    if (!item || !cvUser) return;
+    const n = notifItems.find(x => x.id === item.dataset.notifId);
+    if (n && !n.read) {
+      fbDb.collection('notifications').doc(cvUser.uid)
+        .collection('items').doc(n.id).update({ read: true }).catch(() => {});
+    }
+    // Reply button or any click on a chat-message notification → open that thread
+    if (item.dataset.chatUid && (e.target.closest('.notif-reply-btn') || true)) {
+      closeNotif();
+      openChat();
+      chatOpenThread(chatConvId(cvUser.uid, item.dataset.chatUid),
+                     item.dataset.chatUid, item.dataset.chatName || 'Member');
     }
   });
 

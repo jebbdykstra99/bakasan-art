@@ -1546,6 +1546,19 @@
       transition: background 0.15s;
       cursor: default;
     }
+    .notif-item { cursor: pointer; }
+    .notif-item:hover { background: rgba(139,109,63,0.06); }
+    .notif-reply-btn {
+      align-self: center; flex-shrink: 0;
+      background: none; border: 1px solid var(--border);
+      border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .notif-reply-btn:hover {
+      color: #fff; background: var(--accent); border-color: var(--accent);
+    }
     .notif-item:last-child { border-bottom: none; }
     .notif-item:hover { background: rgba(139,109,63,0.04); }
     .notif-item.unread { background: rgba(139,109,63,0.06); }
