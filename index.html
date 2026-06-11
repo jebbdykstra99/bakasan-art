@@ -5950,7 +5950,9 @@
           createdAt: FV.serverTimestamp()
         })
         .set(convRef, {
-          participants: [cvUser.uid, chatActiveOther.uid],
+          // sorted: keeps the array byte-identical on every send, so the
+          // rules' field-diff never sees "participants" as changed
+          participants: [cvUser.uid, chatActiveOther.uid].sort(),
           participantNames: {
             [cvUser.uid]: cvUser.displayName || cvUser.email,
             [chatActiveOther.uid]: chatActiveOther.name
