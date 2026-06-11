@@ -199,8 +199,14 @@ service cloud.firestore {
           && request.auth.uid in getAfter(/databases/$(database)/documents/conversations/$(convId)).data.participants
           && request.resource.data.fromUid == request.auth.uid
           && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 4000;
+          && request.resource.data.text.size() <= 4000
+          // A message must have text or a photo from our Storage bucket
+          && (request.resource.data.text.size() > 0
+              || (request.resource.data.imageUrl is string
+                  && request.resource.data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')))
+          && (!('imageUrl' in request.resource.data)
+              || (request.resource.data.imageUrl is string
+                  && request.resource.data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')));
 
         allow update, delete: if false;
       }

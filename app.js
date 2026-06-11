@@ -708,6 +708,8 @@
     if (chatMsgUnsub) chatMsgUnsub();
     chatMessagesEl.innerHTML = '<div class="chat-messages-loading">Loading…</div>';
 
+    setTimeout(() => chatComposeInput.focus(), 350);
+
     chatMsgUnsub = fbDb.collection('conversations').doc(convId)
       .collection('messages')
       .orderBy('createdAt', 'asc')
@@ -750,8 +752,14 @@
         : '';
       lastDate = dateLabel;
       const timeStr = ms ? new Date(ms).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}) : '';
+      const imgHtml = m.imageUrl
+        ? `<a href="${escH(m.imageUrl)}" target="_blank" rel="noopener"><img class="chat-msg-img" src="${escH(m.imageUrl)}" alt="Shared photo" loading="lazy"></a>`
+        : '';
+      const textHtml = m.text
+        ? `<div class="chat-bubble">${m.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>`
+        : '';
       return `${sep}<div class="chat-msg ${mine?'mine':'theirs'}">
-        <div class="chat-bubble">${m.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div>
+        ${imgHtml}${textHtml}
         <div class="chat-msg-time">${timeStr}</div>
       </div>`;
     }).join('');
@@ -769,25 +777,77 @@
   });
   chatSendBtn.addEventListener('click', chatSend);
 
+  // ── Chat photo attachment (5 MB limit) ───────────────
+  const CHAT_IMG_MAX = 5 * 1024 * 1024;
+  let chatAttachFile = null;
+  const chatImageBtn   = document.getElementById('chat-image-btn');
+  const chatImageInput = document.getElementById('chat-image-input');
+  const chatAttachChip = document.getElementById('chat-attach-chip');
+  chatImageBtn.addEventListener('click', () => chatImageInput.click());
+  chatImageInput.addEventListener('change', () => {
+    const f = chatImageInput.files[0];
+    chatImageInput.value = '';
+    if (!f) return;
+    if (!f.type.startsWith('image/')) { alert('Only image files can be shared in chat.'); return; }
+    if (f.size > CHAT_IMG_MAX) {
+      alert('That image is ' + (f.size/1024/1024).toFixed(1) + ' MB — the limit is 5 MB. Try a smaller photo.');
+      return;
+    }
+    chatAttachFile = f;
+    document.getElementById('chat-attach-thumb').src = URL.createObjectURL(f);
+    chatAttachChip.style.display = '';
+    chatSendBtn.disabled = false;
+  });
+  document.getElementById('chat-attach-remove').addEventListener('click', () => {
+    chatAttachFile = null;
+    chatAttachChip.style.display = 'none';
+    chatSendBtn.disabled = !chatComposeInput.value.trim();
+  });
+
+  async function chatUploadImage(file) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const ref = fbStorage.ref(`chat/${cvUser.uid}/${Date.now()}.${ext}`);
+    await ref.put(file);
+    return ref.getDownloadURL();
+  }
+
   async function chatSend() {
     if (!cvUser || !chatActiveConvId || !chatActiveOther) return;
-    const text = chatComposeInput.value.trim(); if (!text) return;
+    const text = chatComposeInput.value.trim();
+    if (!text && !chatAttachFile) return;
     chatComposeInput.value = '';
     chatComposeInput.style.height = 'auto';
     chatSendBtn.disabled = true;
+
+    let imageUrl = null;
+    if (chatAttachFile) {
+      try { imageUrl = await chatUploadImage(chatAttachFile); }
+      catch(e) {
+        console.error('Chat image upload:', e);
+        alert('Photo could not be uploaded: ' + (e.code || e.message));
+        chatComposeInput.value = text;
+        chatSendBtn.disabled = false;
+        return;
+      }
+      chatAttachFile = null;
+      chatAttachChip.style.display = 'none';
+    }
 
     const FV      = firebase.firestore.FieldValue;
     const convRef = fbDb.collection('conversations').doc(chatActiveConvId);
     const msgRef  = convRef.collection('messages').doc();
 
+    const msgData = {
+      fromUid: cvUser.uid,
+      fromName: cvUser.displayName || cvUser.email,
+      text,
+      createdAt: FV.serverTimestamp()
+    };
+    if (imageUrl) msgData.imageUrl = imageUrl;
+
     try {
       await fbDb.batch()
-        .set(msgRef, {
-          fromUid: cvUser.uid,
-          fromName: cvUser.displayName || cvUser.email,
-          text,
-          createdAt: FV.serverTimestamp()
-        })
+        .set(msgRef, msgData)
         .set(convRef, {
           // sorted: keeps the array byte-identical on every send, so the
           // rules' field-diff never sees "participants" as changed
@@ -796,7 +856,7 @@
             [cvUser.uid]: cvUser.displayName || cvUser.email,
             [chatActiveOther.uid]: chatActiveOther.name
           },
-          lastMessage: text,
+          lastMessage: text || '\ud83d\udcf7 Photo',
           lastMessageAt: FV.serverTimestamp(),
           lastMessageBy: cvUser.uid,
           unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
