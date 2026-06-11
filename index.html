@@ -7059,6 +7059,9 @@
   let cvIsAdmin = false;
   fbAuth.onAuthStateChanged(user => {
     cvUser = user;
+    // Re-subscribe the chat thread list if the overlay is already open
+    // (covers sign-in restoring after the user opened Chat)
+    if (user && chatOverlay.classList.contains('active')) chatSubscribeThreads();
     cvIsAdmin = false;
     if (user) {
       fbDb.collection('admins').doc(user.uid).get()
