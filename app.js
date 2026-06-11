@@ -1853,6 +1853,11 @@
     measurementId: "G-31WPTPSZQW"
   };
   firebase.initializeApp(firebaseConfig);
+  // App Check (reCAPTCHA v3) — monitoring mode until enforcement is
+  // enabled in the Firebase Console; true = auto-refresh tokens
+  try {
+    firebase.appCheck().activate('6LfIoRgtAAAAAO4fIFWR1CNMitueqxMaqgAbDETI', true);
+  } catch(e) { console.warn('App Check:', e.message); }
   const fbAuth    = firebase.auth();
   const fbDb      = firebase.firestore();
   const fbStorage = firebase.storage();
