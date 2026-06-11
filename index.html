@@ -5875,10 +5875,13 @@
       .limit(100)
       .onSnapshot(snap => {
         chatRenderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        // Reset unread count for current user
-        fbDb.collection('conversations').doc(convId)
-          .set({ unreadCounts: { [cvUser.uid]: 0 } }, { merge: true });
-      }, () => {});
+        // Reset unread count (only once the conversation doc exists)
+        if (!snap.empty) {
+          fbDb.collection('conversations').doc(convId)
+            .set({ unreadCounts: { [cvUser.uid]: 0 } }, { merge: true })
+            .catch(() => {});
+        }
+      }, () => { chatRenderMessages([]); });
   }
 
   function chatCloseThread() {
