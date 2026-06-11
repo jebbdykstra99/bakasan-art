@@ -3152,6 +3152,17 @@
     }
     .conv-modal-err.show { display: block; }
     .conv-modal-err.ok { color: #2e7d32; }
+    .pw-field-wrap { position: relative; }
+    .pw-field-wrap input { width: 100%; padding-right: 2.6rem; }
+    .pw-toggle {
+      position: absolute; right: 0.6rem; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-light); padding: 0.3rem;
+      display: flex; align-items: center;
+      min-width: 32px; min-height: 32px; justify-content: center;
+    }
+    .pw-toggle:hover { color: var(--accent); }
     .conv-modal-forgot {
       display: block; background: none; border: none; cursor: pointer;
       font-family: 'Cormorant Garamond', Georgia, serif;
@@ -7045,6 +7056,8 @@
 
   // ── SVG icons ─────────────────────────────────────────
   const CV_ICONS = {
+    eye:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    eyeOff:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
     heart:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
     heartOn:  `<svg viewBox="0 0 24 24" fill="#e0245e" stroke="#e0245e" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
     repost:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
@@ -7134,7 +7147,12 @@
         <div id="cv-panel-login">
           <div class="conv-modal-err" id="cv-login-err"></div>
           <div class="conv-modal-field"><label>Email</label><input type="email" id="cv-login-email" autocomplete="email" placeholder="you@email.com"></div>
-          <div class="conv-modal-field"><label>Password</label><input type="password" id="cv-login-pw" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+          <div class="conv-modal-field"><label>Password</label>
+            <div class="pw-field-wrap">
+              <input type="password" id="cv-login-pw" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+              <button type="button" class="pw-toggle" data-pw-for="cv-login-pw" aria-label="Show password" title="Show password">${CV_ICONS.eye}</button>
+            </div>
+          </div>
           <button class="conv-modal-submit" id="cv-login-btn">Sign In</button>
           <button class="conv-modal-forgot" id="cv-forgot-btn" type="button">Forgot password?</button>
           <div class="conv-modal-divider">or</div>
@@ -7144,7 +7162,12 @@
           <div class="conv-modal-err" id="cv-reg-err"></div>
           <div class="conv-modal-field"><label>Display Name</label><input type="text" id="cv-reg-name" autocomplete="name" placeholder="Your Name"></div>
           <div class="conv-modal-field"><label>Email</label><input type="email" id="cv-reg-email" autocomplete="email" placeholder="you@email.com"></div>
-          <div class="conv-modal-field"><label>Password</label><input type="password" id="cv-reg-pw" autocomplete="new-password" placeholder="At least 6 characters"></div>
+          <div class="conv-modal-field"><label>Password</label>
+            <div class="pw-field-wrap">
+              <input type="password" id="cv-reg-pw" autocomplete="new-password" placeholder="At least 6 characters">
+              <button type="button" class="pw-toggle" data-pw-for="cv-reg-pw" aria-label="Show password" title="Show password">${CV_ICONS.eye}</button>
+            </div>
+          </div>
           <button class="conv-modal-submit" id="cv-reg-btn">Create Account</button>
           <div class="conv-modal-divider">or</div>
           <button class="conv-google-btn" id="cv-google-reg">${CV_ICONS.google} Continue with Google</button>
@@ -7157,6 +7180,15 @@
       t.classList.add('active');
       document.getElementById('cv-panel-login').style.display    = t.dataset.tab === 'login' ? '' : 'none';
       document.getElementById('cv-panel-register').style.display = t.dataset.tab === 'register' ? '' : 'none';
+    }));
+    ov.querySelectorAll('.pw-toggle').forEach(btn => btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.pwFor);
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.innerHTML = show ? CV_ICONS.eyeOff : CV_ICONS.eye;
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      btn.title = show ? 'Hide password' : 'Show password';
+      input.focus();
     }));
     document.getElementById('cv-modal-close').addEventListener('click', cvCloseModal);
     ov.addEventListener('click', e => { if (e.target === ov) cvCloseModal(); });
