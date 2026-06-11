@@ -1735,6 +1735,7 @@
       transition: background 0.15s;
     }
     .explore-result:hover { background: rgba(139,109,63,0.07); }
+    a.explore-result { text-decoration: none; color: inherit; }
     .explore-result-thumb {
       width: 44px; height: 44px; object-fit: cover;
       border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0;
