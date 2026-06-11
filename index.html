@@ -5941,25 +5941,33 @@
     const convRef = fbDb.collection('conversations').doc(chatActiveConvId);
     const msgRef  = convRef.collection('messages').doc();
 
-    await fbDb.batch()
-      .set(msgRef, {
-        fromUid: cvUser.uid,
-        fromName: cvUser.displayName || cvUser.email,
-        text,
-        createdAt: FV.serverTimestamp()
-      })
-      .set(convRef, {
-        participants: [cvUser.uid, chatActiveOther.uid],
-        participantNames: {
-          [cvUser.uid]: cvUser.displayName || cvUser.email,
-          [chatActiveOther.uid]: chatActiveOther.name
-        },
-        lastMessage: text,
-        lastMessageAt: FV.serverTimestamp(),
-        lastMessageBy: cvUser.uid,
-        unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
-      }, { merge: true })
-      .commit();
+    try {
+      await fbDb.batch()
+        .set(msgRef, {
+          fromUid: cvUser.uid,
+          fromName: cvUser.displayName || cvUser.email,
+          text,
+          createdAt: FV.serverTimestamp()
+        })
+        .set(convRef, {
+          participants: [cvUser.uid, chatActiveOther.uid],
+          participantNames: {
+            [cvUser.uid]: cvUser.displayName || cvUser.email,
+            [chatActiveOther.uid]: chatActiveOther.name
+          },
+          lastMessage: text,
+          lastMessageAt: FV.serverTimestamp(),
+          lastMessageBy: cvUser.uid,
+          unreadCounts: { [chatActiveOther.uid]: FV.increment(1) }
+        }, { merge: true })
+        .commit();
+    } catch(e) {
+      console.error('Chat send:', e);
+      chatComposeInput.value = text;           // restore the typed message
+      chatSendBtn.disabled = false;
+      alert('Message could not be sent: ' + (e.code || e.message));
+      return;
+    }
 
     // Notify recipient
     notifWrite(chatActiveOther.uid, 'reply', cvUser.displayName || cvUser.email, 'chat', text);
