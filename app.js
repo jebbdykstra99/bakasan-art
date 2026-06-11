@@ -1213,6 +1213,20 @@
     }
   });
 
+  // ── For You: painting thumbnail grid ──────────────────
+  // Shuffled per visit for now; personalization can replace the
+  // ordering once we have per-user interest signals.
+  (function() {
+    const grid = document.getElementById('explore-foryou-grid');
+    if (!grid || typeof PAINTINGS_DATA === 'undefined') return;
+    const shuffled = [...PAINTINGS_DATA].sort(() => Math.random() - 0.5);
+    grid.innerHTML = shuffled.map(p => `
+      <div class="explore-art-tile" data-target="${escH(p.id)}" title="${escH(p.title)}">
+        <img src="images/${escH(p.file)}" alt="${escH(p.title)}" loading="lazy">
+        <span class="explore-art-tile-label">${escH(p.title)}</span>
+      </div>`).join('');
+  })();
+
   // ── Live site search ──────────────────────────────────
   const exploreResults = document.getElementById('explore-results');
   const SITE_PAGES = [
@@ -2042,6 +2056,8 @@
   document.querySelectorAll('[data-target]').forEach(card => {
     const id = card.dataset.target;
     if (skipIds.has(id)) return;
+    // Explore overlay manages its own imagery (tiles + highlight cards)
+    if (card.closest('.explore-overlay')) return;
 
     // Resolve the image src
     const src = 'images/' + (
