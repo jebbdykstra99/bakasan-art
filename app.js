@@ -1150,6 +1150,9 @@
       exploreInput.placeholder = exploreSearchMode === 'google'
         ? 'Search Google…'
         : 'Search bakasan.art…';
+      // Re-run the search with whatever is already typed
+      exploreInput.dispatchEvent(new Event('input', { bubbles: true }));
+      exploreInput.focus();
       return;
     }
     // Art grid / story card clicks — navigate to painting
@@ -1190,13 +1193,14 @@
   function stripHtml(s) { return (s || '').replace(/<[^>]*>/g, ' '); }
 
   async function exploreSiteSearch(q) {
-    const lower = q.toLowerCase();
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const hits = hay => words.every(w => hay.includes(w));
     const rows = [];
 
     // Paintings: title, caption, era, story text
     (typeof PAINTINGS_DATA !== 'undefined' ? PAINTINGS_DATA : []).forEach(p => {
       const hay = [p.title, p.captionTitle, p.era, stripHtml(p.bodyHtml)].join(' ').toLowerCase();
-      if (hay.includes(lower)) {
+      if (hits(hay)) {
         rows.push({ kind: 'Painting', label: p.title, sub: p.captionTitle || '', target: p.id,
                     thumb: 'images/' + p.file });
       }
@@ -1204,14 +1208,14 @@
 
     // Site pages & series
     SITE_PAGES.forEach(pg => {
-      if (pg.label.toLowerCase().includes(lower)) {
+      if (hits(pg.label.toLowerCase())) {
         rows.push({ kind: pg.kind, label: pg.label, sub: '', target: pg.id });
       }
     });
 
     // Community posts (recent 100, text match)
     const posts = await explorePosts();
-    posts.filter(p => (p.text || '').toLowerCase().includes(lower)).slice(0, 5).forEach(p => {
+    posts.filter(p => hits((p.text || '').toLowerCase())).slice(0, 5).forEach(p => {
       rows.push({ kind: 'Post', label: p.authorName || 'Member',
                   sub: p.text.length > 90 ? p.text.slice(0, 90) + '…' : p.text,
                   post: p.id });
@@ -1244,9 +1248,23 @@
   exploreInput.addEventListener('input', () => {
     clearTimeout(exploreTimer);
     const q = exploreInput.value.trim();
-    if (exploreSearchMode !== 'site' || q.length < 2) {
+    if (q.length < 2) {
       exploreResults.style.display = 'none';
       exploreResults.innerHTML = '';
+      return;
+    }
+    if (exploreSearchMode === 'google') {
+      const url = 'https://www.google.com/search?q=' + encodeURIComponent(q + ' Buddhism OR site:bakasan.art');
+      exploreResults.innerHTML = `
+        <a class="explore-result" href="${url}" target="_blank" rel="noopener">
+          <span class="explore-result-icon">&#127760;</span>
+          <div class="explore-result-body">
+            <div class="explore-result-label">Search Google for &ldquo;${escH(q)}&rdquo;</div>
+            <div class="explore-result-sub">Opens in a new tab</div>
+          </div>
+          <span class="explore-result-kind">Web</span>
+        </a>`;
+      exploreResults.style.display = '';
       return;
     }
     exploreTimer = setTimeout(async () => {
@@ -1279,12 +1297,8 @@
     if (e.key !== 'Enter') return;
     const q = exploreInput.value.trim();
     if (!q) return;
-    if (exploreSearchMode === 'google') {
-      window.open('https://www.google.com/search?q=' + encodeURIComponent(q + ' site:bakasan.art OR Buddhism'), '_blank');
-    } else {
-      const first = exploreResults.querySelector('.explore-result');
-      if (first) first.click();
-    }
+    const first = exploreResults.querySelector('.explore-result');
+    if (first) first.click();
   });
 
   document.addEventListener('click', e => {
