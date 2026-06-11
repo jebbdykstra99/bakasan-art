@@ -2483,6 +2483,14 @@
   (function() {
     function handlePostHash() {
       const hash = window.location.hash;
+      // #<painting-id> or #<section-id> → navigate directly (deep links / share pages)
+      if (hash.length > 1 && !hash.startsWith('#post-')) {
+        const id = hash.slice(1);
+        if (MAIN_SECTIONS.includes(id) || DETAIL_SECTIONS.includes(id)) {
+          showPage(id);
+        }
+        return;
+      }
       if (!hash.startsWith('#post-')) return;
       const postId = hash.slice(6);
       if (!postId) return;
