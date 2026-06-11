@@ -1499,7 +1499,7 @@
       const sec = document.createElement('section');
       sec.className = 'page';
       sec.id = 'page-' + p.id;
-      const imgSrc = 'images/' + p.file;
+      const imgSrc = 'images/' + p.file + '?v=3';
       const subtitleHtml = p.subtitle
         ? `<p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:0.9rem;color:var(--text-muted);margin-top:0.2rem;">${p.subtitle}</p>` : '';
       const bodyContent = p.bodyHtml && p.bodyHtml.trim()
@@ -1599,13 +1599,8 @@
   // All 23 paintings in one pool. Guarantees no image appears
   // in more than one of the 4 panels simultaneously.
   (function() {
-    const ALL = [
-      'murasaki.png','okoi.jpg','Niijo.jpg','NunRengetsu.jpg',
-      'Mahapajapati.jpg','Princess_Nukada.jpg','Tibetan_Celestial_Dancer.jpg','Siam_Temple_Dancer.jpg',
-      'GreenTara.jpg','BlackTara.png','Kuan-Yin.jpg','Kannon.jpg','AmidaBuddah.jpg',
-      'Oiran.jpg','Brocade.jpg','IndonesianSari.jpg','Burmese.jpg','kimono.jpg','Peacock.jpg',
-      'treesandroots.jpg','forest.jpg','lumbini.jpg','Debussy.jpg',
-    ];
+    // Derived from PAINTINGS_DATA so it can never drift from the real paths
+    const ALL = PAINTINGS_DATA.map(p => p.file);
 
     const CARD_IDS = ['asian-ladies','iconography'];
     const INTERVAL = 7000;   // ms between swaps
@@ -1684,38 +1679,14 @@
 
   // ── Collection page rotating showcase ────────────────
   (function() {
+    // Derived from PAINTINGS_DATA so showcase always matches the data file
+    const byCat = cat => PAINTINGS_DATA.filter(p => p.category === cat)
+      .map(p => ({ id: p.id, file: p.file, title: p.title }));
     const GROUPS = [
-      { name: 'Women of Buddhism', pageId: 'women', paintings: [
-        { id: 'murasaki',   file: 'murasaki.png',                 title: 'Lady Murasaki Shikibu' },
-        { id: 'okoi',       file: 'okoi.jpg',                     title: 'Okoi (The Geisha)' },
-        { id: 'niijo',      file: 'Niijo.jpg',                    title: 'Lady Niijo' },
-        { id: 'rengetsu',   file: 'NunRengetsu.jpg',              title: 'Nun Rengetsu' },
-        { id: 'gotami',     file: 'Mahapajapati.jpg',             title: 'Mahaprajapati Gotami' },
-        { id: 'nukada',     file: 'Princess_Nukada.jpg',          title: 'Princess Nukada' },
-        { id: 'tibetan',    file: 'Tibetan_Celestial_Dancer.jpg', title: 'Tibetan Celestial Dancer' },
-        { id: 'siam',       file: 'Siam_Temple_Dancer.jpg',       title: 'Siam Temple Dancer' },
-      ]},
-      { name: 'Buddhist Iconography', pageId: 'iconography', paintings: [
-        { id: 'green-tara', file: 'GreenTara.jpg',    title: 'Green Tara' },
-        { id: 'black-tara', file: 'BlackTara.png',    title: 'Black Tara' },
-        { id: 'kuan-yin',   file: 'Kuan-Yin.jpg',    title: 'Kuan Yin' },
-        { id: 'kannon',     file: 'Kannon.jpg',       title: 'Kannon' },
-        { id: 'amida',      file: 'AmidaBuddah.jpg',  title: 'Amida Buddha' },
-      ]},
-      { name: 'Asian Ladies', pageId: 'asian-ladies', paintings: [
-        { id: 'oiran',      file: 'Oiran.jpg',         title: 'Oiran #3' },
-        { id: 'brocade',    file: 'Brocade.jpg',       title: 'Brocade #12' },
-        { id: 'indonesian', file: 'IndonesianSari.jpg',title: 'Indonesian Sari & Rug' },
-        { id: 'burmese',    file: 'Burmese.jpg',       title: 'Burmese Lady' },
-        { id: 'kimono-rug', file: 'kimono.jpg',        title: 'Kimono on Rug' },
-        { id: 'peacock',    file: 'Peacock.jpg',       title: 'Peacock Kimono' },
-      ]},
-      { name: 'Fragments of Nature', pageId: 'nature', paintings: [
-        { id: 'topanga46',  file: 'treesandroots.jpg', title: 'Topanga #46 — Trees & Roots' },
-        { id: 'forest',     file: 'forest.jpg',        title: 'Forest for the Leaves' },
-        { id: 'topanga103', file: 'lumbini.jpg',        title: 'Topanga #103 — Lumbini' },
-        { id: 'topanga147', file: 'Debussy.jpg',        title: 'Topanga #147 — Debussy' },
-      ]},
+      { name: 'Women of Buddhism',    pageId: 'women',        paintings: byCat('women') },
+      { name: 'Buddhist Iconography', pageId: 'iconography',  paintings: byCat('iconography') },
+      { name: 'Asian Ladies',         pageId: 'asian-ladies', paintings: byCat('asian-ladies') },
+      { name: 'Fragments of Nature',  pageId: 'nature',       paintings: byCat('nature') },
     ];
 
     function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -1751,7 +1722,7 @@
         const panel = document.createElement('div');
         panel.className = 'showcase-panel';
         panel.innerHTML = `
-          <img class="showcase-img" src="images/${painting.file}" alt="${painting.title}">
+          <img class="showcase-img" src="images/${painting.file}?v=3" alt="${painting.title}">
           <div class="showcase-label">
             <div class="showcase-group-name">${group.name}</div>
             <div class="showcase-title">${painting.title}</div>
@@ -1781,16 +1752,20 @@
       const gLabel   = entry.panel.querySelector('.showcase-group-name');
       const tLabel   = entry.panel.querySelector('.showcase-title');
 
-      // Pick a group not currently shown in this panel
+      // Pick a group not currently shown in ANY panel, and a painting
+      // not currently displayed anywhere in the showcase
       const usedGroups = state.map(s => s.group.name);
-      const candidates = GROUPS.filter(g => g.name !== usedGroups[idx]);
-      const newGroup   = pick(candidates);
-      const newPainting = pick(newGroup.paintings);
+      const usedFiles  = state.map(s => s.painting.file);
+      let candidates = GROUPS.filter(g => !usedGroups.includes(g.name));
+      if (!candidates.length) candidates = GROUPS.filter(g => g.name !== usedGroups[idx]);
+      const newGroup = pick(candidates);
+      const fresh = newGroup.paintings.filter(p => !usedFiles.includes(p.file));
+      const newPainting = pick(fresh.length ? fresh : newGroup.paintings);
 
       // Crossfade
       img.style.opacity = '0';
       setTimeout(() => {
-        img.src             = `images/${newPainting.file}`;
+        img.src             = `images/${newPainting.file}?v=3`;
         img.alt             = newPainting.title;
         gLabel.textContent  = newGroup.name;
         tLabel.textContent  = newPainting.title;
