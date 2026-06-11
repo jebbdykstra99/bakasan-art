@@ -62,17 +62,29 @@ service cloud.firestore {
     // Only the owner can write their own document.
     match /users/{uid} {
       allow read: if true;
-      allow create, update: if request.auth != null
+      allow create: if request.auth != null
         && request.auth.uid == uid
-        // Prevent escalating privilege fields
         && !('role' in request.resource.data)
         && !('admin' in request.resource.data)
-        // Sanity limits on profile fields
         && strMax('displayName', 100)
         && strMax('displayNameLower', 100)
         && strMax('bio', 500)
         && strMax('location', 100)
         && strMax('website', 200);
+      allow update: if request.auth != null && (
+        // Owner edits their own profile
+        (request.auth.uid == uid
+          && !('role' in request.resource.data)
+          && !('admin' in request.resource.data)
+          && strMax('displayName', 100)
+          && strMax('displayNameLower', 100)
+          && strMax('bio', 500)
+          && strMax('location', 100)
+          && strMax('website', 200))
+        ||
+        // Follow/unfollow: any signed-in user may bump followersCount by 1
+        (onlyChanged(['followersCount']) && counterOk('followersCount'))
+      );
       allow delete: if false; // never delete user docs
     }
 
