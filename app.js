@@ -2147,8 +2147,28 @@
   // ── Current user ──────────────────────────────────────
   let cvUser = null;
   let cvIsAdmin = false;
+  // ── Global sidebar auth chip (visible on every page) ──
+  function renderSidebarAuth(user) {
+    const el = document.getElementById('sidebar-auth');
+    if (!el) return;
+    if (user) {
+      const name = user.displayName || user.email || 'Member';
+      el.innerHTML = `
+        <div class="sidebar-auth-user">
+          <div class="sidebar-auth-avatar" style="background:${cvAvatarColor(name)}">${cvEsc(cvGetInitials(name))}</div>
+          <span class="sidebar-auth-name">${cvEsc(name)}</span>
+        </div>
+        <button class="sidebar-auth-btn" id="sidebar-signout" title="Sign out">Sign Out</button>`;
+      el.querySelector('#sidebar-signout').addEventListener('click', () => fbAuth.signOut());
+    } else {
+      el.innerHTML = `<button class="sidebar-auth-btn primary" id="sidebar-signin">Sign In / Register</button>`;
+      el.querySelector('#sidebar-signin').addEventListener('click', () => cvOpenModal('login'));
+    }
+  }
+
   fbAuth.onAuthStateChanged(user => {
     cvUser = user;
+    renderSidebarAuth(user);
     // Re-subscribe the chat thread list if the overlay is already open
     // (covers sign-in restoring after the user opened Chat)
     if (user && chatOverlay.classList.contains('active')) chatSubscribeThreads();
