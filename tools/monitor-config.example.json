@@ -2,7 +2,7 @@
   "_comment": "Copy to monitor-config.json (gitignored) and fill in to enable email digests.",
   "resendApiKey": "re_xxxxxxxxxxxxxxxxxxxxxxxx",
   "emailTo": "jebb.dykstra@gmail.com",
-  "emailFrom": "bakasan.art <onboarding@resend.dev>",
+  "emailFrom": "bakasan.art digest <digest@bakasan.art>",
   "emailAlways": false,
   "adminUid": "qMyaEu886sYMoXjKGTZQpVWNMCU2"
 }
