@@ -197,14 +197,38 @@ async function chatActivity(since) {
   if (JSON_OUT) { console.log(JSON.stringify(summary, null, 2)); }
   else { console.log(text); }
 
-  // Optional email delivery (Resend). Sends when there's activity, or always if emailAlways=true.
   const cfg = loadConfig();
+
+  // In-site admin notification: lands in the bakasan.art Notifications bell.
+  // Written with the Admin SDK, so security rules still block clients from
+  // creating 'digest' notifications themselves.
+  const ADMIN_UID = cfg.adminUid || 'qMyaEu886sYMoXjKGTZQpVWNMCU2';
+  if (total > 0 && !has('--no-site-notif')) {
+    try {
+      const cts = summary.counts;
+      await db.collection('notifications').doc(ADMIN_UID).collection('items').add({
+        type: 'digest',
+        fromUid: 'system',
+        fromName: 'Site Activity',
+        pageId: null,
+        excerpt: `${cts.signups} sign-up${cts.signups === 1 ? '' : 's'}, ` +
+                 `${cts.posts} post${cts.posts === 1 ? '' : 's'}, ` +
+                 `${cts.comments} comment${cts.comments === 1 ? '' : 's'}, ` +
+                 `${cts.chatMessages} chat message${cts.chatMessages === 1 ? '' : 's'}`,
+        read: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log('\n(in-site admin notification posted ✓)');
+    } catch (e) { console.log(`\n(in-site notification failed: ${e.message})`); }
+  }
+
+  // Optional email delivery (Resend). Sends when there's activity, or always if emailAlways=true.
   if (!has('--no-email') && (total > 0 || cfg.emailAlways)) {
     const c = summary.counts;
     const subject = `bakasan.art — ${c.signups} sign-ups, ${c.comments} comments, ${c.chatMessages} chat msgs`;
     const r = await sendEmail(cfg, subject, text);
-    if (r.sent) console.log('\n(email digest sent ✓)');
-    else if (cfg.resendApiKey) console.log(`\n(email not sent: ${r.reason})`);
+    if (r.sent) console.log('(email digest sent ✓)');
+    else if (cfg.resendApiKey) console.log(`(email not sent: ${r.reason})`);
   }
 
   saveWatermark(now);

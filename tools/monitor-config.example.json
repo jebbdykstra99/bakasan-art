@@ -3,5 +3,6 @@
   "resendApiKey": "re_xxxxxxxxxxxxxxxxxxxxxxxx",
   "emailTo": "jebb.dykstra@gmail.com",
   "emailFrom": "bakasan.art <onboarding@resend.dev>",
-  "emailAlways": false
+  "emailAlways": false,
+  "adminUid": "qMyaEu886sYMoXjKGTZQpVWNMCU2"
 }
