@@ -3,3 +3,8 @@
 .claude/
 js/
 _contact/
+
+# Owner tooling secrets & artifacts
+tools/node_modules/
+tools/serviceAccountKey.json
+tools/.activity-watermark.json
