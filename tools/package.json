@@ -1,0 +1,10 @@
+{
+  "name": "bakasan-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Owner tooling for bakasan.art (activity monitor, etc.)",
+  "type": "commonjs",
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}
