@@ -8,3 +8,4 @@ _contact/
 tools/node_modules/
 tools/serviceAccountKey.json
 tools/.activity-watermark.json
+tools/monitor-config.json

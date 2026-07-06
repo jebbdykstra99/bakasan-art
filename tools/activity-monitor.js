@@ -31,6 +31,30 @@ const HERE = __dirname;
 const KEY_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS
   || path.join(HERE, 'serviceAccountKey.json');
 const WATERMARK = path.join(HERE, '.activity-watermark.json');
+const CONFIG_PATH = path.join(HERE, 'monitor-config.json'); // gitignored; optional email settings
+
+// Optional email config:
+//   { "resendApiKey": "re_...", "emailTo": "jebb.dykstra@gmail.com",
+//     "emailFrom": "bakasan.art <onboarding@resend.dev>", "emailAlways": false }
+function loadConfig() {
+  try { return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')); } catch (_) { return {}; }
+}
+async function sendEmail(cfg, subject, text) {
+  if (!cfg.resendApiKey || !cfg.emailTo) return { sent: false, reason: 'no email config' };
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cfg.resendApiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: cfg.emailFrom || 'bakasan.art <onboarding@resend.dev>',
+        to: cfg.emailTo, subject,
+        text,
+      }),
+    });
+    if (!res.ok) return { sent: false, reason: `HTTP ${res.status}: ${(await res.text()).slice(0, 120)}` };
+    return { sent: true };
+  } catch (e) { return { sent: false, reason: e.message }; }
+}
 
 // ── args ──────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -145,8 +169,6 @@ async function chatActivity(since) {
     signups, posts, comments, chats,
   };
 
-  if (JSON_OUT) { console.log(JSON.stringify(summary, null, 2)); saveWatermark(now); return; }
-
   const L = [];
   L.push(`bakasan.art — activity since ${fmt(since)} (PT)`);
   L.push(`Sign-ups: ${signups.length}   Posts: ${posts.length}   Comments: ${comments.length}   ` +
@@ -170,6 +192,20 @@ async function chatActivity(since) {
     L.push('\n── Chat activity (counts only) ──');
     chats.forEach(c => L.push(`  • ${c.between} — ${c.messages == null ? '?' : c.messages} message${c.messages === 1 ? '' : 's'}`));
   }
-  console.log(L.join('\n'));
+  const text = L.join('\n');
+
+  if (JSON_OUT) { console.log(JSON.stringify(summary, null, 2)); }
+  else { console.log(text); }
+
+  // Optional email delivery (Resend). Sends when there's activity, or always if emailAlways=true.
+  const cfg = loadConfig();
+  if (!has('--no-email') && (total > 0 || cfg.emailAlways)) {
+    const c = summary.counts;
+    const subject = `bakasan.art — ${c.signups} sign-ups, ${c.comments} comments, ${c.chatMessages} chat msgs`;
+    const r = await sendEmail(cfg, subject, text);
+    if (r.sent) console.log('\n(email digest sent ✓)');
+    else if (cfg.resendApiKey) console.log(`\n(email not sent: ${r.reason})`);
+  }
+
   saveWatermark(now);
 })().catch(err => { console.error('activity-monitor error:', err.message); process.exit(1); });
