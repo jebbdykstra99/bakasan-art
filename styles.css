@@ -283,7 +283,7 @@
     }
     .nav-badge.visible { display: flex; }
 
-    /* ── Main ─────────────────────────────────────────── */
+    /* Main ─────────────────────────────────────────── */
 
     .main {
       margin-left: var(--nav-w);
@@ -293,27 +293,9 @@
       transition: margin-left 0.28s ease, margin-right 0.28s ease;
     }
 
-    /* Main sections scroll continuously — always visible */
+    /* One view at a time — feed is the default .active page */
     .page { display: none; }
-    .page.main-section {
-      display: block;
-      scroll-margin-top: 0;
-      border-bottom: 2px solid var(--border);
-    }
-    .page.main-section:last-of-type { border-bottom: none; }
-
-    /* Detail/artwork pages — hidden until opened as a full-screen overlay */
-    .page.detail-page { display: none; }
-    .page.detail-page.active {
-      display: block;
-      position: fixed;
-      top: 0; left: var(--nav-w); right: var(--right-w); bottom: 0;
-      overflow-y: auto;
-      z-index: 300;
-      background: var(--bg);
-      transition: left 0.28s ease, right 0.28s ease;
-    }
-    body.nav-collapsed .page.detail-page.active { left: 0; }
+    .page.active { display: block; min-height: 100vh; }
 
     /* ── Right Panel ───────────────────────────────────── */
 
@@ -449,9 +431,27 @@
     body.right-collapsed .notif-overlay,
     body.right-collapsed .explore-overlay { right: 0; }
 
-    /* News link active state when panel is open */
-    .nav-social-link.news-active { color: var(--nav-active); border-left-color: var(--accent); background: rgba(255,255,255,0.05); }
-    .nav-social-link.news-active svg { opacity: 1; }
+    /* News page (center column) — parchment skin over the same cards as the rail */
+    .news-page-list { display: flex; flex-direction: column; gap: 0.9rem; }
+    .news-page-list a.news-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .news-page-list a.news-item:hover { background: #fff; }
+    .news-page-list .news-item-tag { color: var(--accent); }
+    .news-page-list .news-item-headline { color: var(--text); }
+    .news-page-list a.news-item:hover .news-item-headline { color: var(--accent-dark); }
+    .news-page-list .news-item-snippet { color: var(--text-muted); }
+    .news-page-list .news-item-meta { color: var(--text-light); }
+    .news-page-note {
+      font-size: 0.875rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin-top: 0.6rem;
+    }
 
     /* ── Conversation compose (X.com style) ────────────── */
 
@@ -2825,7 +2825,7 @@
 
     .hamburger {
       display: flex; position: fixed;
-      top: 0.9rem; left: 0.9rem; z-index: 200;
+      top: 0.9rem; left: 0.9rem; z-index: 500;
       background: transparent; border: none;
       width: 42px; height: 42px; cursor: pointer;
       flex-direction: column; align-items: center;
@@ -2841,44 +2841,72 @@
       transform-origin: center;
     }
 
-    /* Nav OPEN → animate to × */
+    /* Desktop: nav OPEN → animate to × */
     .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-    /* Nav collapsed state — works on all screen sizes */
+    /* Desktop: nav collapsed — sidebar off-canvas, bars over parchment */
     body.nav-collapsed .sidebar { transform: translateX(-100%); }
     body.nav-collapsed .main    { margin-left: 0; }
-
-    /* Hide right panel below 1100px — not enough room for 3 columns */
-    @media (max-width: 1100px) {
-      .right-panel { display: none; }
-      .main { margin-right: 0; }
-      .page.detail-page.active { right: 0; }
-    }
-
-    /* Nav COLLAPSED → restore 3 bars, dark color over light content */
     body.nav-collapsed .hamburger span:nth-child(1) { transform: none; }
     body.nav-collapsed .hamburger span:nth-child(2) { opacity: 1; transform: none; }
     body.nav-collapsed .hamburger span:nth-child(3) { transform: none; }
     body.nav-collapsed .hamburger span { background: var(--text); }
     body.nav-collapsed .hamburger:hover { background: rgba(0,0,0,0.07); }
 
+    /* Hide right panel below 1100px — not enough room for 3 columns */
+    @media (max-width: 1100px) {
+      .right-panel { display: none; }
+      .main { margin-right: 0; }
+    }
+
     /* Bio narrative should span both columns so floated photos inside it don't break */
     .bio-narrative { column-span: all; }
 
-    /* Mobile overlay (darkens content when nav is open on small screens) */
+    /* Drawer overlay — used on phone/tablet when the hamburger opens the sidebar */
     .nav-overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.52); z-index: 90;
+      background: rgba(0,0,0,0.52); z-index: 350;
       cursor: pointer;
-    }
-    @media (max-width: 768px) {
-      body:not(.nav-collapsed) .nav-overlay { display: block; }
     }
 
     @media (max-width: 900px) {
-      :root { --nav-w: 220px; }
+      /* Full-width canvas; sidebar is a drawer, not a 220px column */
+      :root { --nav-w: 0px; }
+      .sidebar {
+        width: min(300px, 88vw);
+        transform: translateX(-100%);
+        z-index: 400;
+        box-shadow: 8px 0 28px rgba(0,0,0,0.28);
+      }
+      .main { margin-left: 0; }
+      .profile-overlay,
+      .chat-overlay,
+      .notif-overlay,
+      .explore-overlay { left: 0; }
+
+      /* Default hamburger is 3 bars over the parchment */
+      .hamburger span:nth-child(1),
+      .hamburger span:nth-child(2),
+      .hamburger span:nth-child(3) { transform: none; opacity: 1; }
+      .hamburger span { background: var(--text); }
+      .hamburger:hover { background: rgba(0,0,0,0.07); }
+
+      body.nav-open .sidebar { transform: translateX(0); }
+      body.nav-open .nav-overlay { display: block; }
+      body.nav-open .hamburger span { background: var(--nav-text); }
+      body.nav-open .hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+      body.nav-open .hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      body.nav-open .hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+      body.nav-open .hamburger:hover { background: rgba(255,255,255,0.07); }
+
+      /* Keep the hamburger from covering feed tabs / overlay chrome */
+      .thoughts-tabs { padding-left: 3.8rem; }
+      .explore-back-btn, .notif-back-btn { padding-left: 3.8rem; }
+      .profile-topbar { padding-left: 3.8rem; }
+      .chat-nav-toggle { display: flex; }
+
       .collection-showcase { grid-template-columns: repeat(2, 1fr); height: 560px; }
       .women-grid { grid-template-columns: repeat(2, 1fr); margin: 0 2.5rem; }
       .collections-grid { margin: 0 2.5rem 3rem; }
@@ -3219,10 +3247,14 @@
       font-size: 1.7rem; font-weight: 400; color: var(--text); margin-bottom: 1.2rem;
     }
     .conv-modal-close {
-      position: absolute; top: 1rem; right: 1.2rem;
-      background: none; border: none; font-size: 1.5rem;
-      cursor: pointer; color: var(--text-muted); line-height: 1.5;
+      position: absolute; top: 0.7rem; right: 0.7rem;
+      background: none; border: none; font-size: 1.7rem;
+      cursor: pointer; color: var(--text-muted); line-height: 1;
+      width: 40px; height: 40px; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
     }
+    .conv-modal-close:hover { color: var(--text); background: rgba(0,0,0,0.06); }
     .conv-modal-tabs {
       display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.4rem;
     }
