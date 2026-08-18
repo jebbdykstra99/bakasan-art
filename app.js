@@ -15,8 +15,8 @@
   // highlightNav respects these until the parent is clicked again.
   const navManualClosed = new Set();
 
-  const inArtist      = new Set(['home','introduction','statement','biography']);
-  const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147','thoughts']);
+  const inArtist      = new Set(['artist','home','introduction','statement','biography']);
+  const inCollection  = new Set(['collection','women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam','iconography','green-tara','black-tara','kuan-yin','kannon','amida','asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock','nature','topanga46','forest','topanga103','topanga147']);
   const inWomen       = new Set(['women','murasaki','okoi','niijo','rengetsu','gotami','nukada','tibetan','siam']);
   const inIconography = new Set(['iconography','green-tara','black-tara','kuan-yin','kannon','amida']);
   const inAsian       = new Set(['asian-ladies','oiran','brocade','indonesian','burmese','kimono-rug','peacock']);
@@ -24,7 +24,8 @@
 
   // ── Section classification ────────────────────────────
   const MAIN_SECTIONS   = ['home','collection','women','iconography',
-                           'asian-ladies','nature','introduction','statement','biography','contact','thoughts'];
+                           'asian-ladies','nature','introduction','statement','biography','contact','thoughts','news'];
+  const MOBILE_NAV_MQ   = 900;
   // DETAIL_SECTIONS derived from paintings data file — auto-includes all paintings
   const DETAIL_SECTIONS = (typeof PAINTINGS_DATA !== 'undefined')
     ? PAINTINGS_DATA.map(p => p.id)
@@ -42,11 +43,48 @@
     return 'collection';
   }
 
+  function isMobileNav() {
+    return window.innerWidth <= MOBILE_NAV_MQ;
+  }
+
+  function closeMobileNav() {
+    document.body.classList.remove('nav-open');
+    syncHamburgerAria();
+  }
+
+  function syncHamburgerAria() {
+    if (!hamburger) return;
+    const open = isMobileNav()
+      ? document.body.classList.contains('nav-open')
+      : !document.body.classList.contains('nav-collapsed');
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    hamburger.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  }
+
+  function highlightSocial(name) {
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const el = document.querySelector('[data-social="' + name + '"]');
+    if (el) el.classList.add('active');
+    subnavArtist.classList.remove('open');
+    subnavCollection.classList.remove('open');
+    subnavWomen.classList.remove('open');
+    subnavIconography.classList.remove('open');
+    subnavAsian.classList.remove('open');
+    subnavNature.classList.remove('open');
+  }
+
   // ── Nav highlight helper ──────────────────────────────
   function highlightNav(id) {
+    const navId = (id === 'home') ? 'artist' : id;
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    document.querySelectorAll('[data-page="' + id + '"]').forEach(l => l.classList.add('active'));
-    subnavArtist.classList.toggle('open',      inArtist.has(id)      && !navManualClosed.has('subnav-artist'));
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('[data-page="' + navId + '"]').forEach(l => l.classList.add('active'));
+    if (id === 'home' || id === 'artist') {
+      document.querySelectorAll('[data-page="artist"]').forEach(l => l.classList.add('active'));
+    }
+    subnavArtist.classList.toggle('open',      inArtist.has(navId) || inArtist.has(id));
+    if (navManualClosed.has('subnav-artist')) subnavArtist.classList.remove('open');
     subnavCollection.classList.toggle('open',  inCollection.has(id)  && !navManualClosed.has('subnav-collection'));
     subnavWomen.classList.toggle('open',       inWomen.has(id)       && !navManualClosed.has('subnav-women'));
     subnavIconography.classList.toggle('open', inIconography.has(id) && !navManualClosed.has('subnav-iconography'));
@@ -54,33 +92,159 @@
     subnavNature.classList.toggle('open',      inNature.has(id)      && !navManualClosed.has('subnav-nature'));
   }
 
-  // ── showPage: scroll for main sections, overlay for detail pages ──
-  function showPage(id) {
-    if (MAIN_SECTIONS.includes(id)) {
-      // Close any open detail overlay first
-      document.querySelectorAll('.page.detail-page.active')
-              .forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      highlightNav(id);
-    } else {
-      // Detail overlay
-      document.querySelectorAll('.page.detail-page.active')
-              .forEach(p => p.classList.remove('active'));
-      const page = document.getElementById('page-' + id);
-      if (page) {
-        page.classList.add('active');
-        page.scrollTop = 0;
-        highlightNav(id);
-        // Init Firebase conversation section for this painting
-        if (typeof cvInjectSection === 'function') {
-          cvInjectSection(page, id);
-          const convSec = page.querySelector('.conv-section');
-          if (convSec) cvInitSection(convSec);
-        }
-      }
+  function closeSocialOverlays() {
+    const exploreOverlay = document.getElementById('explore-overlay');
+    const notifOverlay   = document.getElementById('notif-overlay');
+    const chatOverlay    = document.getElementById('chat-overlay');
+    const profileOverlay = document.getElementById('profile-overlay');
+    if (exploreOverlay) exploreOverlay.classList.remove('active');
+    if (notifOverlay)   notifOverlay.classList.remove('active');
+    if (chatOverlay)    chatOverlay.classList.remove('active');
+    if (profileOverlay) profileOverlay.classList.remove('active');
+    document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
+  }
+
+  function showContentPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const page = document.getElementById('page-' + id);
+    if (!page) return;
+    page.classList.add('active');
+    window.scrollTo(0, 0);
+    if (typeof cvInjectSection === 'function' && DETAIL_SECTIONS.includes(id)) {
+      cvInjectSection(page, id);
+      const convSec = page.querySelector('.conv-section');
+      if (convSec && typeof cvInitSection === 'function') cvInitSection(convSec);
     }
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+  }
+
+  function selectThoughtsTab(tab) {
+    document.querySelectorAll('.thoughts-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.thoughtsTab === tab);
+    });
+    const forYou = document.getElementById('thoughts-feed-foryou');
+    const following = document.getElementById('thoughts-feed-following');
+    if (forYou) forYou.style.display = tab === 'following' ? 'none' : '';
+    if (following) following.style.display = tab === 'following' ? '' : 'none';
+  }
+
+  function normalizeRoute(route) {
+    let id = String(route || '').replace(/^#/, '').trim();
+    if (!id) id = 'home';
+    try { id = decodeURIComponent(id); } catch (e) { /* keep raw */ }
+    return id;
+  }
+
+  function routeFromHash() {
+    return normalizeRoute(window.location.hash);
+  }
+
+  function go(route) {
+    const id = normalizeRoute(route);
+    const hash = '#' + id;
+    if (location.hash === hash) {
+      applyRoute();
+      return;
+    }
+    location.hash = hash;
+  }
+
+  function viewBack() {
+    if (window.history.length > 1) history.back();
+    else go('home');
+  }
+
+  // ── showPage: navigate via shareable hash routes ──
+  function showPage(id) {
+    if (!id) return;
+    go(id === 'thoughts' ? 'home' : id);
+  }
+
+  function applyRoute() {
+    closeMobileNav();
+    const raw = routeFromHash();
+
+    if (raw.startsWith('post-')) {
+      closeSocialOverlays();
+      showContentPage('thoughts');
+      highlightSocial('home');
+      selectThoughtsTab('foryou');
+      scrollToPost(raw.slice(5));
+      return;
+    }
+
+    if (raw === 'following') {
+      closeSocialOverlays();
+      showContentPage('thoughts');
+      highlightSocial('home');
+      selectThoughtsTab('following');
+      return;
+    }
+
+    if (raw === 'home' || raw === 'feed' || raw === 'thoughts') {
+      closeSocialOverlays();
+      showContentPage('thoughts');
+      highlightSocial('home');
+      selectThoughtsTab('foryou');
+      return;
+    }
+
+    if (raw === 'artist') {
+      closeSocialOverlays();
+      showContentPage('home');
+      highlightNav('artist');
+      return;
+    }
+
+    if (raw === 'chat') {
+      if (typeof openChat === 'function') openChat();
+      return;
+    }
+    if (raw === 'notifications') {
+      if (typeof openNotif === 'function') openNotif();
+      return;
+    }
+    if (raw === 'explore') {
+      if (typeof openExplore === 'function') openExplore();
+      return;
+    }
+    if (raw === 'profile') {
+      if (typeof openProfile === 'function') openProfile();
+      return;
+    }
+
+    if (raw === 'news') {
+      closeSocialOverlays();
+      showContentPage('news');
+      highlightSocial('news');
+      return;
+    }
+
+    if (document.getElementById('page-' + raw)) {
+      closeSocialOverlays();
+      showContentPage(raw);
+      highlightNav(raw);
+      return;
+    }
+
+    closeSocialOverlays();
+    showContentPage('thoughts');
+    highlightSocial('home');
+  }
+
+  function scrollToPost(postId) {
+    if (!postId) return;
+    let attempts = 0;
+    const interval = setInterval(() => {
+      const el = document.querySelector('[data-post-id="' + postId + '"]');
+      if (el) {
+        clearInterval(interval);
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.transition = 'background 0.3s';
+        el.style.background = 'rgba(139,109,63,0.12)';
+        setTimeout(() => { el.style.background = ''; }, 2000);
+      }
+      if (++attempts > 40) clearInterval(interval);
+    }, 100);
   }
 
   // ── Follow system ────────────────────────────────────
@@ -440,15 +604,12 @@
 
   // ── Open / close ──────────────────────────────────────
   function openProfile() {
-    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
-    exploreOverlay.classList.remove('active');
-    notifOverlay.classList.remove('active');
-    chatOverlay.classList.remove('active');
+    closeSocialOverlays();
     profileOverlay.classList.add('active');
     document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
     document.getElementById('nav-profile').classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+    closeMobileNav();
 
     if (cvUser) {
       profileLoad(cvUser);
@@ -464,16 +625,16 @@
     if (profilePostsUnsub) { profilePostsUnsub(); profilePostsUnsub = null; }
   }
 
-  document.getElementById('profile-back').addEventListener('click', closeProfile);
+  document.getElementById('profile-back').addEventListener('click', viewBack);
 
   // Explore shortcut in topbar
   document.getElementById('profile-topbar-explore').addEventListener('click', () => {
-    closeProfile(); openExplore();
+    closeProfile(); go('explore');
   });
 
   // Sign-in prompt button
   document.getElementById('profile-signin-prompt-btn').addEventListener('click', () => {
-    closeProfile(); cvOpenModal('login');
+    if (!cvUser) { cvOpenModal('login'); return; }
   });
 
   // Tab switching
@@ -656,14 +817,12 @@
 
   // ── Open / close ──────────────────────────────────────
   function openChat() {
-    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
-    exploreOverlay.classList.remove('active');
-    notifOverlay.classList.remove('active');
+    closeSocialOverlays();
     chatOverlay.classList.add('active');
     document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
     document.getElementById('nav-chat').classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+    closeMobileNav();
     if (cvUser) chatSubscribeThreads();
   }
 
@@ -925,7 +1084,7 @@
 
   // ── New Chat modal ────────────────────────────────────
   function openNewChat() {
-    if (!cvUser) { closeChat(); cvOpenModal('login'); return; }
+    if (!cvUser) { cvOpenModal('login'); return; }
     chatNewchatModal.classList.add('open');
     chatNewchatInput.value = '';
     chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">Type to search for users.</div>';
@@ -935,7 +1094,12 @@
 
   document.getElementById('chat-new-btn').addEventListener('click', openNewChat);
   document.getElementById('chat-nav-toggle').addEventListener('click', () => {
-    document.body.classList.remove('nav-collapsed');
+    if (isMobileNav()) {
+      document.body.classList.add('nav-open');
+    } else {
+      document.body.classList.remove('nav-collapsed');
+    }
+    syncHamburgerAria();
   });
   document.getElementById('chat-placeholder-new').addEventListener('click', openNewChat);
   document.getElementById('chat-newchat-close').addEventListener('click', closeNewChat);
@@ -1088,13 +1252,12 @@
   }
 
   function openNotif() {
-    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
-    exploreOverlay.classList.remove('active');
+    closeSocialOverlays();
     notifOverlay.classList.add('active');
     document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
     document.getElementById('nav-notifications').classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+    closeMobileNav();
   }
 
   function closeNotif() {
@@ -1102,7 +1265,7 @@
     document.getElementById('nav-notifications').classList.remove('active');
   }
 
-  notifBack.addEventListener('click', closeNotif);
+  notifBack.addEventListener('click', viewBack);
 
   // Tab switching
   notifOverlay.addEventListener('click', e => {
@@ -1126,8 +1289,7 @@
     }
     // Reply button or any click on a chat-message notification → open that thread
     if (item.dataset.chatUid && (e.target.closest('.notif-reply-btn') || true)) {
-      closeNotif();
-      openChat();
+      go('chat');
       chatOpenThread(chatConvId(cvUser.uid, item.dataset.chatUid),
                      item.dataset.chatUid, item.dataset.chatName || 'Member');
     }
@@ -1165,14 +1327,13 @@
   let   exploreSearchMode = 'site'; // 'site' | 'google'
 
   function openExplore() {
-    // Close any open detail pages
-    document.querySelectorAll('.page.detail-page.active').forEach(p => p.classList.remove('active'));
+    closeSocialOverlays();
     exploreOverlay.classList.add('active');
     document.querySelectorAll('.nav-social-link').forEach(l => l.classList.remove('active'));
     document.getElementById('nav-explore').classList.add('active');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     exploreInput.focus();
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+    closeMobileNav();
   }
 
   function closeExplore() {
@@ -1180,7 +1341,7 @@
     document.getElementById('nav-explore').classList.remove('active');
   }
 
-  exploreBack.addEventListener('click', closeExplore);
+  exploreBack.addEventListener('click', viewBack);
 
   // Tab switching
   exploreOverlay.addEventListener('click', e => {
@@ -1209,7 +1370,6 @@
     // Art grid / story card clicks — navigate to painting
     const artCard = e.target.closest('[data-target]');
     if (artCard && artCard.dataset.target) {
-      closeExplore();
       showPage(artCard.dataset.target);
       return;
     }
@@ -1232,11 +1392,13 @@
   // ── Live site search ──────────────────────────────────
   const exploreResults = document.getElementById('explore-results');
   const SITE_PAGES = [
-    { id: 'home',         label: 'Meet Bakasan',              kind: 'Page' },
+    { id: 'home',         label: 'Home',                      kind: 'Feed' },
+    { id: 'artist',       label: 'Meet Bakasan',              kind: 'Page' },
     { id: 'introduction', label: 'Introduction',              kind: 'Page' },
     { id: 'statement',    label: "Artist's Statement",        kind: 'Page' },
     { id: 'biography',    label: 'Selected Biography',        kind: 'Page' },
     { id: 'contact',      label: 'Contacts and Opportunities',kind: 'Page' },
+    { id: 'news',         label: 'Topics & News',             kind: 'Page' },
     { id: 'thoughts',     label: 'Conversation',              kind: 'Community' },
     { id: 'women',        label: 'Women of Buddhism',         kind: 'Series' },
     { id: 'iconography',  label: 'Buddhist Iconography',      kind: 'Series' },
@@ -1343,17 +1505,9 @@
     if (!row) return;
     exploreResults.style.display = 'none';
     exploreInput.value = '';
-    closeExplore();
     if (row.dataset.target) showPage(row.dataset.target);
     else if (row.dataset.post) {
-      showPage('thoughts');
-      const postId = row.dataset.post;
-      let n = 0;
-      const iv = setInterval(() => {
-        const el = document.querySelector('[data-post-id="' + postId + '"]');
-        if (el) { clearInterval(iv); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        if (++n > 40) clearInterval(iv);
-      }, 100);
+      go('post-' + row.dataset.post);
     }
   });
 
@@ -1367,19 +1521,11 @@
   });
 
   document.addEventListener('click', e => {
-    // Social nav links
+    // Social nav links — hash routes
     const social = e.target.closest('[data-social]');
     if (social) {
       e.preventDefault();
-      if (social.dataset.social === 'explore')       { openExplore(); return; }
-      if (social.dataset.social === 'notifications') { openNotif();   return; }
-      if (social.dataset.social === 'chat')          { openChat();    return; }
-      if (social.dataset.social === 'profile')       { openProfile(); return; }
-      if (social.dataset.social === 'news') {
-        const collapsed = document.body.classList.toggle('right-collapsed');
-        setNewsActive(!collapsed);
-        return;
-      }
+      go(social.dataset.social);
       return;
     }
     // Nav links and inline text-links
@@ -1397,20 +1543,16 @@
         }
         navManualClosed.delete(sub.id);
       }
-      closeExplore();
-      closeChat();
-      closeNotif();
-      if (typeof closeProfile === 'function') closeProfile();
       showPage(link.dataset.page);
       return;
     }
     // Any card with data-target (home, women gallery, iconography gallery)
     const card = e.target.closest('[data-target]');
     if (card && card.dataset.target) { showPage(card.dataset.target); return; }
-    // Close nav on mobile overlay / outside click
-    if (window.innerWidth <= 768 && !document.body.classList.contains('nav-collapsed')
-        && !sidebar.contains(e.target) && e.target !== hamburger) {
-      document.body.classList.add('nav-collapsed');
+    // Close mobile drawer on overlay / outside click
+    if (isMobileNav() && document.body.classList.contains('nav-open')
+        && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      closeMobileNav();
     }
   });
 
@@ -1419,36 +1561,45 @@
       const card = e.target.closest('[data-target]');
       if (card) showPage(card.dataset.target);
     }
+    if (e.key === 'Escape') {
+      const authOv = document.getElementById('cv-auth-overlay');
+      if (authOv && authOv.classList.contains('open')) {
+        e.preventDefault();
+        cvCloseModal();
+        return;
+      }
+      if (isMobileNav() && document.body.classList.contains('nav-open')) {
+        closeMobileNav();
+      }
+    }
   });
 
-  // Toggle sidebar on all screen sizes
-  hamburger.addEventListener('click', () => document.body.classList.toggle('nav-collapsed'));
+  // Toggle sidebar: desktop collapse vs mobile drawer
+  hamburger.addEventListener('click', () => {
+    if (isMobileNav()) document.body.classList.toggle('nav-open');
+    else document.body.classList.toggle('nav-collapsed');
+    syncHamburgerAria();
+  });
+  window.addEventListener('resize', syncHamburgerAria);
+  document.getElementById('nav-overlay').addEventListener('click', closeMobileNav);
 
   // ── Right panel collapse tab ─────────────────────────
-  function setNewsActive(active) {
-    const navNews = document.getElementById('nav-news');
-    if (navNews) navNews.classList.toggle('news-active', active);
-  }
   document.getElementById('right-panel-tab').addEventListener('click', () => {
-    const collapsed = document.body.classList.toggle('right-collapsed');
-    setNewsActive(!collapsed);
+    document.body.classList.toggle('right-collapsed');
   });
-  // News nav link: toggle right panel
-  // (handled in main click delegate via data-social="news")
 
   // ── Sidebar search button → open Explore ─────────────
   document.getElementById('sidebar-search-btn').addEventListener('click', () => {
-    openExplore();
+    go('explore');
   });
 
-  // ── Sidebar POST button → go to Conversation + focus compose ──
+  // ── Sidebar POST button → Home feed + focus compose ──
   document.getElementById('sidebar-post-btn').addEventListener('click', () => {
-    showPage('thoughts');
+    go('home');
     setTimeout(() => {
       const input = document.getElementById('thoughts-compose-input');
       if (input) { input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     }, 120);
-    if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
   });
 
   // ── Thoughts compose — full feature set ──────────────
@@ -1480,11 +1631,7 @@
     // ── Tab switching ─────────────────────────────────
     document.querySelectorAll('.thoughts-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.thoughts-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const isFollowing = tab.dataset.thoughtsTab === 'following';
-        document.getElementById('thoughts-feed-foryou').style.display    = isFollowing ? 'none' : '';
-        document.getElementById('thoughts-feed-following').style.display = isFollowing ? ''     : 'none';
+        go(tab.dataset.thoughtsTab === 'following' ? 'following' : 'home');
       });
     });
 
@@ -1743,8 +1890,9 @@
     });
   })();
 
-  // Start with nav collapsed on mobile
-  if (window.innerWidth <= 768) document.body.classList.add('nav-collapsed');
+  // Start with the mobile drawer closed (CSS also defaults this below 900px)
+  closeMobileNav();
+  syncHamburgerAria();
 
   // ── Dynamic painting page generator ─────────────────
   // Builds detail overlay pages from PAINTINGS_DATA.
@@ -1796,11 +1944,8 @@
     });
   })();
 
-  // ── Scrolling layout setup ────────────────────────────
+  // ── View layout setup ─────────────────────────────────
   (function() {
-    const mainEl = document.querySelector('.main');
-
-    // 1. Classify sections
     MAIN_SECTIONS.forEach(id => {
       const el = document.getElementById('page-' + id);
       if (el) el.classList.add('main-section');
@@ -1810,54 +1955,19 @@
       if (el) el.classList.add('detail-page');
     });
 
-    // 2. Reorder main sections in DOM to match nav order
-    MAIN_SECTIONS.forEach(id => {
-      const el = document.getElementById('page-' + id);
-      if (el) mainEl.appendChild(el);
-    });
-
-    // 3. Add sticky back button to every detail page
     DETAIL_SECTIONS.forEach(id => {
       const el = document.getElementById('page-' + id);
       if (!el) return;
       const btn = document.createElement('button');
       btn.className = 'detail-back-btn';
+      btn.type = 'button';
       btn.innerHTML =
         '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
         + '<path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
         + '</svg> Back to Collection';
-      btn.addEventListener('click', () => {
-        el.classList.remove('active');
-        const parent = detailParent(id);
-        const parentEl = document.getElementById('page-' + parent);
-        if (parentEl) parentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        highlightNav(parent);
-      });
+      btn.addEventListener('click', () => go(detailParent(id)));
       el.insertBefore(btn, el.firstChild);
     });
-
-    // 4. Scroll-spy: highlight nav as user scrolls through main sections
-    const spyObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Don't update nav while a detail overlay is open
-          if (document.querySelector('.page.detail-page.active')) return;
-          const id = entry.target.id.replace('page-', '');
-          highlightNav(id);
-        }
-      });
-    }, {
-      rootMargin: '-5% 0px -85% 0px',  // fires when section top enters top 15% of viewport
-      threshold: 0
-    });
-
-    MAIN_SECTIONS.forEach(id => {
-      const el = document.getElementById('page-' + id);
-      if (el) spyObserver.observe(el);
-    });
-
-    // 5. Highlight "Home" on initial load
-    highlightNav('home');
   })();
 
   // ── Home collection card rotation ────────────────────
@@ -2221,7 +2331,7 @@
         <button class="notif-signin-btn" id="notif-signin-btn">Sign In</button>
       </div>`;
       document.getElementById('notif-signin-btn')?.addEventListener('click', () => {
-        closeNotif(); cvOpenModal('login');
+        cvOpenModal('login');
       });
     }
   });
@@ -2233,7 +2343,7 @@
     ov.className = 'conv-modal-overlay'; ov.id = 'cv-auth-overlay';
     ov.innerHTML = `
       <div class="conv-modal">
-        <button class="conv-modal-close" id="cv-modal-close">&times;</button>
+        <button type="button" class="conv-modal-close" id="cv-modal-close" aria-label="Close sign in">&times;</button>
         <h2>Join the Conversation</h2>
         <div class="conv-modal-tabs">
           <button class="conv-modal-tab active" data-tab="login">Sign In</button>
@@ -2285,7 +2395,11 @@
       btn.title = show ? 'Hide password' : 'Show password';
       input.focus();
     }));
-    document.getElementById('cv-modal-close').addEventListener('click', cvCloseModal);
+    document.getElementById('cv-modal-close').addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      cvCloseModal();
+    });
     ov.addEventListener('click', e => { if (e.target === ov) cvCloseModal(); });
 
     document.getElementById('cv-login-btn').addEventListener('click', async () => {
@@ -2345,9 +2459,13 @@
     cvBuildModal();
     const ov = document.getElementById('cv-auth-overlay');
     ov.classList.add('open');
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'true');
     ov.querySelectorAll('.conv-modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     document.getElementById('cv-panel-login').style.display    = tab === 'login' ? '' : 'none';
     document.getElementById('cv-panel-register').style.display = tab === 'register' ? '' : 'none';
+    const closeBtn = document.getElementById('cv-modal-close');
+    if (closeBtn) closeBtn.focus();
   }
   function cvCloseModal() {
     const ov = document.getElementById('cv-auth-overlay');
@@ -2741,44 +2859,30 @@
     });
   })();
 
-  // ── Deep-link handler: #post-{postId} → open Conversation and scroll to post ──
+  // ── Hash router: shareable views + browser back ─────
+  window.addEventListener('hashchange', applyRoute);
+  window.addEventListener('popstate', applyRoute);
+  if (!location.hash || location.hash === '#') {
+    history.replaceState(null, '', '#home');
+  }
+  applyRoute();
+
+  // ── Contact inquiry (mailto — no backend) ───────────
   (function() {
-    function handlePostHash() {
-      const hash = window.location.hash;
-      // #<painting-id> or #<section-id> → navigate directly (deep links / share pages)
-      if (hash.length > 1 && !hash.startsWith('#post-')) {
-        const id = hash.slice(1);
-        if (MAIN_SECTIONS.includes(id) || DETAIL_SECTIONS.includes(id)) {
-          showPage(id);
-        }
-        return;
-      }
-      if (!hash.startsWith('#post-')) return;
-      const postId = hash.slice(6);
-      if (!postId) return;
-
-      // Navigate to Conversation page
-      showPage('thoughts');
-
-      // Poll until the post element appears in the DOM (feed loads async)
-      let attempts = 0;
-      const interval = setInterval(() => {
-        const el = document.querySelector('[data-post-id="' + postId + '"]');
-        if (el) {
-          clearInterval(interval);
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Briefly highlight the post
-          el.style.transition = 'background 0.3s';
-          el.style.background = 'rgba(139,109,63,0.12)';
-          setTimeout(() => { el.style.background = ''; }, 2000);
-        }
-        if (++attempts > 40) clearInterval(interval); // give up after 4s
-      }, 100);
-    }
-
-    // Run on initial load
-    handlePostHash();
-    // Also handle if hash changes while page is open
-    window.addEventListener('hashchange', handlePostHash);
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = (document.getElementById('contact-name').value || '').trim();
+      const email = (document.getElementById('contact-email').value || '').trim();
+      const message = (document.getElementById('contact-message').value || '').trim();
+      const subject = encodeURIComponent('Bakasan inquiry' + (name ? ' from ' + name : ''));
+      const body = encodeURIComponent(
+        (name ? 'Name: ' + name + '\n' : '') +
+        (email ? 'Email: ' + email + '\n\n' : '\n') +
+        message
+      );
+      window.location.href = 'mailto:jebb@techsectorlaw.com?subject=' + subject + '&body=' + body;
+    });
   })();
 
