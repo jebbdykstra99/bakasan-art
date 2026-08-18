@@ -1,0 +1,17 @@
+{
+  "name": "bakasan.art",
+  "install": "cd tools && npm ci",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "python3 -m http.server 8000 --bind 0.0.0.0",
+      "description": "Serves the static site (index.html, app.js, styles.css, images) at http://localhost:8000. The site is a static GitHub Pages app; there is no build step."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 8000
+    }
+  ]
+}
