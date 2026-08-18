@@ -2069,82 +2069,41 @@
     const container = document.getElementById('collection-showcase');
     if (!container) return;
 
-    // Determine how many panels fill the grid evenly (no empty slots)
-    // Grid is always repeat(N,1fr) — count columns from computed style
-    function getColumnCount() {
-      const cols = getComputedStyle(container).gridTemplateColumns.trim().split(/\s+/).length;
-      // We have 4 groups; use 4 panels if cols divides evenly into 4, else 3
-      // Simple rule: if cols === 2 → 4 panels (2×2), if cols === 3 → 3 panels (1 row), if cols === 1 → 3 panels
-      if (cols === 2) return 4;
-      return 3;
-    }
-
+    // Always one panel per period, in GROUPS order (2×2 on desktop, stacked on mobile)
     const state = [];  // { panel, group, painting }
 
-    function buildShowcase() {
-      const count = getColumnCount();
-      // Remove extra panels or add missing ones
-      while (state.length > count) {
-        const removed = state.pop();
-        removed.panel.remove();
-      }
-      const usedGroupNames = state.map(s => s.group.name);
-      const available = GROUPS.filter(g => !usedGroupNames.includes(g.name));
-      while (state.length < count) {
-        const group = pick(available.length ? available : GROUPS);
-        available.splice(available.indexOf(group), 1);
-        const painting = pick(group.paintings);
-        const panel = document.createElement('div');
-        panel.className = 'showcase-panel';
-        panel.innerHTML = `
+    GROUPS.forEach(group => {
+      const painting = pick(group.paintings);
+      const panel = document.createElement('div');
+      panel.className = 'showcase-panel';
+      panel.innerHTML = `
           <img class="showcase-img" src="images/${painting.file}?v=3" alt="${painting.title}">
           <div class="showcase-label">
             <div class="showcase-group-name">${group.name}</div>
             <div class="showcase-title">${painting.title}</div>
             <div class="showcase-hint">View painting ›</div>
           </div>`;
-        container.appendChild(panel);
-        const entry = { panel, group, painting };
-        state.push(entry);
-        panel.addEventListener('click', () => showPage(entry.painting.id));
-      }
-    }
-
-    buildShowcase();
-
-    // Re-check on resize (debounced)
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(buildShowcase, 150);
+      container.appendChild(panel);
+      const entry = { panel, group, painting };
+      state.push(entry);
+      panel.addEventListener('click', () => showPage(entry.painting.id));
     });
 
-    // Every 4 s: rotate one random panel to a new painting from a DIFFERENT group
+    // Every 7 s: rotate one random panel to a new painting from the same period
     setInterval(() => {
       const idx      = Math.floor(Math.random() * state.length);
       const entry    = state[idx];
       const img      = entry.panel.querySelector('.showcase-img');
-      const gLabel   = entry.panel.querySelector('.showcase-group-name');
       const tLabel   = entry.panel.querySelector('.showcase-title');
 
-      // Pick a group not currently shown in ANY panel, and a painting
-      // not currently displayed anywhere in the showcase
-      const usedGroups = state.map(s => s.group.name);
-      const usedFiles  = state.map(s => s.painting.file);
-      let candidates = GROUPS.filter(g => !usedGroups.includes(g.name));
-      if (!candidates.length) candidates = GROUPS.filter(g => g.name !== usedGroups[idx]);
-      const newGroup = pick(candidates);
-      const fresh = newGroup.paintings.filter(p => !usedFiles.includes(p.file));
-      const newPainting = pick(fresh.length ? fresh : newGroup.paintings);
+      const fresh = entry.group.paintings.filter(p => p.file !== entry.painting.file);
+      const newPainting = pick(fresh.length ? fresh : entry.group.paintings);
 
-      // Crossfade
       img.style.opacity = '0';
       setTimeout(() => {
         img.src             = `images/${newPainting.file}?v=3`;
         img.alt             = newPainting.title;
-        gLabel.textContent  = newGroup.name;
         tLabel.textContent  = newPainting.title;
-        entry.group         = newGroup;
         entry.painting      = newPainting;
         img.style.opacity   = '1';
       }, 900);

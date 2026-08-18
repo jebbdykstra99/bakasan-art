@@ -2197,8 +2197,8 @@
     /* ── Collection page showcase ─────────────────────── */
     .collection-showcase {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      height: 420px;
+      grid-template-columns: 1fr 1fr;
+      height: 680px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -2209,8 +2209,12 @@
       background: #1a1410;
     }
 
-    .showcase-panel + .showcase-panel {
+    .showcase-panel:nth-child(even) {
       border-left: 2px solid var(--bg);
+    }
+
+    .showcase-panel:nth-child(n+3) {
+      border-top: 2px solid var(--bg);
     }
 
     .showcase-img {
@@ -2907,7 +2911,7 @@
       .profile-topbar { padding-left: 3.8rem; }
       .chat-nav-toggle { display: flex; }
 
-      .collection-showcase { grid-template-columns: repeat(2, 1fr); height: 560px; }
+      .collection-showcase { grid-template-columns: 1fr 1fr; height: 560px; }
       .women-grid { grid-template-columns: repeat(2, 1fr); margin: 0 2.5rem; }
       .collections-grid { margin: 0 2.5rem 3rem; }
       .artwork-intro { flex-direction: column; padding: 2rem 1.5rem 0; }
