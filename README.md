@@ -4,6 +4,8 @@ Static GitHub Pages site for the Bakasan collection (`jebbdykstra99/bakasan-art`
 
 Local serve: `python3 -m http.server 8000` from the repo root.
 
+Signed-out visitors without a hash land on `#collection`. `#home` is still the public social feed (it loads real posts after the spinner). The feed is not removed; it is just not the default landing.
+
 ## Remaining manual steps (after this PR merges)
 
 These cannot be finished in the client repo:

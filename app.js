@@ -2878,6 +2878,9 @@
   })();
 
   // ── Hash router: shareable views + browser back ─────
+  // #home remains the public X-style feed (posts are public-read).
+  // Signed-out visitors without a hash land on #collection first so
+  // strangers do not hit that social feed as the default view.
   window.addEventListener('hashchange', applyRoute);
   window.addEventListener('popstate', applyRoute);
   if (!location.hash || location.hash === '#') {
