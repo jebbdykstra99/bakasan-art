@@ -278,6 +278,7 @@
 
   async function followUser(targetUid, targetName) {
     if (!cvUser) { cvOpenModal('login'); return; }
+    if (cvIsOperator) return;
     if (targetUid === cvUser.uid) return;
     const myName = currentPublicName();
     const FV     = firebase.firestore.FieldValue;
@@ -310,7 +311,7 @@
   }
 
   async function unfollowUser(targetUid) {
-    if (!cvUser) return;
+    if (!cvUser || cvIsOperator) return;
     const FV    = firebase.firestore.FieldValue;
     const batch = fbDb.batch();
 
@@ -1107,6 +1108,7 @@
   // ── New Chat modal ────────────────────────────────────
   function openNewChat() {
     if (!cvUser) { cvOpenModal('login'); return; }
+    if (cvIsOperator) return;
     chatNewchatModal.classList.add('open');
     chatNewchatInput.value = '';
     chatNewchatResults.innerHTML = '<div class="chat-newchat-empty">Type to search for users.</div>';
@@ -1860,6 +1862,10 @@
       const text = input.value.trim();
       if (!text && !attachedFile && !pollActive) return;
       if (!cvUser) { cvOpenModal('login'); return; }
+      if (cvIsOperator) {
+        alert('This operator account can reply, like, and chat. It cannot publish a new post.');
+        return;
+      }
       postBtn.disabled = true; postBtn.textContent = 'Posting…';
       try {
         // Upload image if attached
@@ -2251,6 +2257,13 @@
   // ── Current user ──────────────────────────────────────
   let cvUser = null;
   let cvIsAdmin = false;
+  let cvIsOperator = false;
+
+  function applyOperatorChrome() {
+    const wrap = document.getElementById('thoughts-compose-wrap');
+    if (wrap) wrap.style.display = cvIsOperator ? 'none' : '';
+    document.querySelectorAll('.conv-section').forEach(s => cvRenderCompose(s));
+  }
   // ── Global sidebar auth chip (visible on every page) ──
   function renderSidebarAuth(user) {
     const el = document.getElementById('sidebar-auth');
@@ -2277,10 +2290,18 @@
     // (covers sign-in restoring after the user opened Chat)
     if (user && chatOverlay.classList.contains('active')) chatSubscribeThreads();
     cvIsAdmin = false;
+    cvIsOperator = false;
     if (user) {
       fbDb.collection('admins').doc(user.uid).get()
-        .then(d => { cvIsAdmin = d.exists; })
+        .then(d => {
+          const role = d.exists ? ((d.data() || {}).role || 'admin') : null;
+          cvIsAdmin = role === 'admin';
+          cvIsOperator = role === 'operator';
+          applyOperatorChrome();
+        })
         .catch(() => {});
+    } else {
+      applyOperatorChrome();
     }
     document.querySelectorAll('.conv-section').forEach(s => {
       cvRenderAuthBar(s);
@@ -2567,7 +2588,7 @@
   // ── Compose box ───────────────────────────────────────
   function cvRenderCompose(sec) {
     sec.querySelectorAll('.conv-compose').forEach(el => el.remove());
-    if (!cvUser) return;
+    if (!cvUser || cvIsOperator) return;
     const name = currentPublicName();
     const pageId = sec.dataset.pageId;
     const compose = document.createElement('div');
@@ -2665,6 +2686,7 @@
   // ── Actions (like, repost, bookmark, share, reply, delete) ──
   async function cvHandleAction(action, postId, pageId, sec) {
     if (!cvUser && action !== 'share') { cvOpenModal('login'); return; }
+    if (cvIsOperator && action !== 'like' && action !== 'reply' && action !== 'share') return;
     const postRef  = fbDb.collection('posts').doc(postId);
     const interRef = cvUser ? fbDb.collection('interactions').doc(cvUser.uid + '_' + postId) : null;
     const FV = firebase.firestore.FieldValue;

@@ -45,11 +45,34 @@ service cloud.firestore {
         && request.resource.data.poll.votes[request.auth.uid] < resource.data.poll.options.size();
     }
 
-    // Site admin: has a doc in /admins/{uid}, which can only be created
-    // from the Firebase Console (no client writes allowed)
+    // Site admin (full) vs operator (reply / like / chat only).
+    // Membership is written only from the Console or Admin API — no client
+    // writes. Legacy admins/{uid} docs with no role stay full admin.
+    // Operator: admins/{uid} { role: 'operator' }. Do not give the operator
+    // isAdmin() powers (invite rotation, post delete, config writes).
+    function adminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
     function isAdmin() {
       return request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().get('role', 'admin') == 'admin';
+    }
+    function isOperator() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().get('role', 'admin') == 'operator';
+    }
+    function isReplyToExisting() {
+      return request.resource.data.parentId is string
+        && request.resource.data.parentId.size() > 0
+        && request.resource.data.parentId.size() <= 128
+        && exists(/databases/$(database)/documents/posts/$(request.resource.data.parentId));
+    }
+    function isOperatorLikeOrReplyCount() {
+      return request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['likeCount', 'replyCount'])
+        && counterOk('likeCount') && counterOk('replyCount');
     }
 
     // Unread-count-only update on conversations
@@ -103,7 +126,8 @@ service cloud.firestore {
           && strMax('website', 200))
         ||
         // Follow/unfollow: any signed-in user may bump followersCount by 1
-        (onlyChanged(['followersCount']) && counterOk('followersCount'))
+        // (operator cannot follow, so they cannot bump this either)
+        (onlyChanged(['followersCount']) && counterOk('followersCount') && !isOperator())
       );
       allow delete: if false; // never delete user docs
     }
@@ -127,27 +151,36 @@ service cloud.firestore {
         && (!('imageUrl' in request.resource.data)
             || (request.resource.data.imageUrl is string
                 && request.resource.data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')))
-        && strMax('authorName', 100);
+        && strMax('authorName', 100)
+        // Operator may only create replies, not top-level posts
+        && (!isOperator() || isReplyToExisting());
 
       allow update: if request.auth != null && (
-        // Author edits their own post (text, etc.)
-        resource.data.authorUid == request.auth.uid
+        // Author edits their own post (operator: replies only)
+        (resource.data.authorUid == request.auth.uid
+          && (!isOperator() || 'parentId' in resource.data && resource.data.parentId is string))
         ||
-        // Any authenticated user may bump counters only
-        isCounterUpdate()
+        // Regular users may bump any interaction counters
+        (!isOperator() && isCounterUpdate())
         ||
-        // Any authenticated user may cast/change their own poll vote
-        isPollVote()
+        // Operator may only change likeCount / replyCount
+        (isOperator() && isOperatorLikeOrReplyCount())
+        ||
+        // Regular authenticated users may cast/change their own poll vote
+        (!isOperator() && isPollVote())
       );
 
-      // Author or a site admin may delete (moderation)
+      // Author or a site admin may delete. Operator cannot delete anyone.
       allow delete: if request.auth != null
+        && !isOperator()
         && (resource.data.authorUid == request.auth.uid || isAdmin());
     }
 
-    // ── Admins ────────────────────────────────────────────────────────────────
-    // Membership managed ONLY from the Firebase Console. A signed-in user may
-    // check their own membership; nobody can list or write from the client.
+    // ── Admins / operators ────────────────────────────────────────────────────
+    // Full admin: { role: 'admin' } or legacy doc with no role. Console-only.
+    // Operator:   { role: 'operator' } written via Admin API after merge.
+    // A signed-in user may read only their own membership doc (for UI).
+    // Nobody can list or write from the client — not even isAdmin().
     match /admins/{uid} {
       allow get: if request.auth != null && request.auth.uid == uid;
       allow list, create, update, delete: if false;
@@ -202,7 +235,11 @@ service cloud.firestore {
         && (
           likeOrReplyToAuthor(uid)
           ||
-          (request.resource.data.type in ['follow','message']
+          (request.resource.data.type == 'message'
+            && request.auth.uid != uid)
+          ||
+          (request.resource.data.type == 'follow'
+            && !isOperator()
             && request.auth.uid != uid)
         );
     }
@@ -214,7 +251,9 @@ service cloud.firestore {
       allow read: if request.auth != null
         && request.auth.uid in resource.data.participants;
 
+      // Operator may reply in existing threads, not start new ones
       allow create: if request.auth != null
+        && !isOperator()
         && request.auth.uid in request.resource.data.participants
         && request.resource.data.participants.size() == 2;
 
@@ -268,12 +307,14 @@ service cloud.firestore {
     match /follows/{uid}/following/{targetUid} {
       allow read: if true;
       allow write: if request.auth != null
+        && !isOperator()
         && request.auth.uid == uid;
     }
 
     match /follows/{uid}/followers/{followerUid} {
       allow read: if true;
       allow write: if request.auth != null
+        && !isOperator()
         && request.auth.uid == followerUid;
     }
   }
