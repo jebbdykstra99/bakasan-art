@@ -46,22 +46,30 @@ service cloud.firestore {
     }
 
     // Site admin (full) vs operator (reply / like / chat only).
-    // Membership is written only from the Console or Admin API — no client
-    // writes. Legacy admins/{uid} docs with no role stay full admin.
-    // Operator: admins/{uid} { role: 'operator' }. Do not give the operator
-    // isAdmin() powers (invite rotation, post delete, config writes).
+    // Operator Google account is jebb.dykstra@gmail.com —
+    // bakasan-art uid qMyaEu886sYMoXjKGTZQpVWNMCU2 — already in admins/.
+    // That uid is operator even if the existing doc has no role field
+    // (legacy missing-role must not grant full isAdmin()).
+    // jebb@subx.it is public contact only — not a Google mailbox / not a login.
+    // Other full-admin docs: { role: 'admin' } or no role, Console-only.
     function adminDoc() {
       return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
     }
+    function isKnownOperator() {
+      return request.auth != null
+        && request.auth.uid == 'qMyaEu886sYMoXjKGTZQpVWNMCU2';
+    }
     function isAdmin() {
       return request.auth != null
+        && !isKnownOperator()
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
         && adminDoc().get('role', 'admin') == 'admin';
     }
     function isOperator() {
-      return request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        && adminDoc().get('role', 'admin') == 'operator';
+      return isKnownOperator()
+        || (request.auth != null
+          && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          && adminDoc().get('role', 'admin') == 'operator');
     }
     function isReplyToExisting() {
       return request.resource.data.parentId is string
@@ -178,7 +186,8 @@ service cloud.firestore {
 
     // ── Admins / operators ────────────────────────────────────────────────────
     // Full admin: { role: 'admin' } or legacy doc with no role. Console-only.
-    // Operator:   { role: 'operator' } written via Admin API after merge.
+    // Operator uid qMyaEu886sYMoXjKGTZQpVWNMCU2 is already in this collection;
+    // isKnownOperator() scopes it regardless of a missing role field.
     // A signed-in user may read only their own membership doc (for UI).
     // Nobody can list or write from the client — not even isAdmin().
     match /admins/{uid} {

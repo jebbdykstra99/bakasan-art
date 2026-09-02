@@ -1,30 +1,28 @@
-# Stamp the bakasan-art operator role
+# Operator membership (bakasan-art)
 
 Project: **bakasan-art** only.
 
-Operator Google account (do not invent another): **`jebb.dykstra@gmail.com`**. Same human as Jebb; dedicated operator use. CMO never gets the password. Sign-in is Jebb on the CoS computer when needed.
+Operator Google account (do not invent another, including any `subx.it` login): **`jebb.dykstra@gmail.com`**.
 
-`isAdmin()` (full) stays Console-only. The operator is the same `admins/{uid}` collection with a distinct `role`.
+- Auth uid (already in `admins/`): `qMyaEu886sYMoXjKGTZQpVWNMCU2`
+- Same human as Jebb; dedicated operator use
+- CMO never gets the password
+- Sign-in is Jebb on the CoS computer when needed
+- `jebb@subx.it` is the public contact address only. It is not a live Google mailbox yet and is not a sign-in.
 
-## After the account exists in Auth
-
-1. Sign in once as `jebb.dykstra@gmail.com` on bakasan.art (invite code required for Google).
-2. Copy that user's Auth uid from the Firebase Console (Authentication).
-3. Write the membership doc with the Admin SDK or Console. Client writes to `admins/{uid}` are denied.
+Rules treat this uid as operator even if the existing `admins/{uid}` doc has no `role` field (a missing role must not grant full `isAdmin()`). Optional: set `{ role: 'operator' }` on that doc so the document matches. Client writes to `admins/{uid}` are denied.
 
 ```js
 // local only — GOOGLE_APPLICATION_CREDENTIALS must point at bakasan-art
-// Do not commit a key or a live uid.
+// Do not commit a service-account key.
 const admin = require('firebase-admin');
 admin.initializeApp({ projectId: 'bakasan-art' });
-const uid = process.env.BAKASAN_OPERATOR_UID; // paste from Auth, do not commit
-if (!uid) throw new Error('set BAKASAN_OPERATOR_UID');
-admin.firestore().doc('admins/' + uid).set({ role: 'operator' }).then(() => {
-  console.log('operator role set for', uid);
-});
+admin.firestore().doc('admins/qMyaEu886sYMoXjKGTZQpVWNMCU2')
+  .set({ role: 'operator' }, { merge: true })
+  .then(() => console.log('operator role field set'));
 ```
 
-Full site admin (different uid) remains `{ role: 'admin' }` or a legacy doc with no `role`, created from the Console.
+A different uid used as full site admin stays `{ role: 'admin' }` or a legacy no-`role` doc, Console-only.
 
 ## Operator write scope
 
