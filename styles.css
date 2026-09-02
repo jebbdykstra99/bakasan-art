@@ -1652,6 +1652,7 @@
     .notif-type-icon.like    { background: rgba(220,53,69,0.12); color: #dc3545; }
     .notif-type-icon.reply   { background: rgba(139,109,63,0.15); color: var(--accent); }
     .notif-type-icon.follow  { background: rgba(34,139,34,0.12); color: #228b22; }
+    .notif-type-icon.message { background: rgba(70,110,160,0.12); color: #466ea0; }
 
     .notif-avatar {
       flex-shrink: 0; width: 36px; height: 36px;

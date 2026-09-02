@@ -45,11 +45,42 @@ service cloud.firestore {
         && request.resource.data.poll.votes[request.auth.uid] < resource.data.poll.options.size();
     }
 
-    // Site admin: has a doc in /admins/{uid}, which can only be created
-    // from the Firebase Console (no client writes allowed)
+    // Site admin (full) vs operator (reply / like / chat only).
+    // Operator Google account is jebb.dykstra@gmail.com —
+    // bakasan-art uid qMyaEu886sYMoXjKGTZQpVWNMCU2 — already in admins/.
+    // That uid is operator even if the existing doc has no role field
+    // (legacy missing-role must not grant full isAdmin()).
+    // jebb@subx.it is public contact only — not a Google mailbox / not a login.
+    // Other full-admin docs: { role: 'admin' } or no role, Console-only.
+    function adminDoc() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
+    function isKnownOperator() {
+      return request.auth != null
+        && request.auth.uid == 'qMyaEu886sYMoXjKGTZQpVWNMCU2';
+    }
     function isAdmin() {
       return request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        && !isKnownOperator()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().get('role', 'admin') == 'admin';
+    }
+    function isOperator() {
+      return isKnownOperator()
+        || (request.auth != null
+          && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          && adminDoc().get('role', 'admin') == 'operator');
+    }
+    function isReplyToExisting() {
+      return request.resource.data.parentId is string
+        && request.resource.data.parentId.size() > 0
+        && request.resource.data.parentId.size() <= 128
+        && exists(/databases/$(database)/documents/posts/$(request.resource.data.parentId));
+    }
+    function isOperatorLikeOrReplyCount() {
+      return request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['likeCount', 'replyCount'])
+        && counterOk('likeCount') && counterOk('replyCount');
     }
 
     // Unread-count-only update on conversations
@@ -57,37 +88,54 @@ service cloud.firestore {
       return onlyChanged(['unreadCounts','lastMessage','lastMessageAt','lastMessageBy','participantNames']);
     }
 
+    // Public profile docs cannot hide a field. Never persist email, lastSeen,
+    // or location here. Leftover values must be deleted from the Console
+    // after deploy — see scripts/wipe-public-pii.md.
+    function noSensitiveProfile() {
+      return !('email' in request.resource.data)
+        && !('lastSeen' in request.resource.data)
+        && !('location' in request.resource.data);
+    }
+
+    // ── Invite gate ───────────────────────────────────────────────────────────
+    // config/invite.code is readable by get() so the GitHub Pages client can
+    // check it before Auth create. list is denied. Writes are admin-only.
+    // Security is obscurity + rotation: set the code in the Console after
+    // merge. Do not commit a live code.
+    match /config/{docId} {
+      allow get: if docId == 'invite';
+      allow list: if false;
+      allow create, update, delete: if isAdmin();
+    }
+
     // ── Users ─────────────────────────────────────────────────────────────────
     // Public read (needed for chat user search by displayName).
-    // Firestore cannot hide a single field — do not store email/PII here.
-    // Existing email fields must be wiped from the Console after deploy.
-    // Only the owner can write their own document.
+    // Only the owner can write their own document (plus follower-count bumps).
     match /users/{uid} {
       allow read: if true;
       allow create: if request.auth != null
         && request.auth.uid == uid
         && !('role' in request.resource.data)
         && !('admin' in request.resource.data)
-        && !('email' in request.resource.data)
+        && noSensitiveProfile()
         && strMax('displayName', 100)
         && strMax('displayNameLower', 100)
         && strMax('bio', 500)
-        && strMax('location', 100)
         && strMax('website', 200);
       allow update: if request.auth != null && (
         // Owner edits their own profile
         (request.auth.uid == uid
           && !('role' in request.resource.data)
           && !('admin' in request.resource.data)
-          && !('email' in request.resource.data)
+          && noSensitiveProfile()
           && strMax('displayName', 100)
           && strMax('displayNameLower', 100)
           && strMax('bio', 500)
-          && strMax('location', 100)
           && strMax('website', 200))
         ||
         // Follow/unfollow: any signed-in user may bump followersCount by 1
-        (onlyChanged(['followersCount']) && counterOk('followersCount'))
+        // (operator cannot follow, so they cannot bump this either)
+        (onlyChanged(['followersCount']) && counterOk('followersCount') && !isOperator())
       );
       allow delete: if false; // never delete user docs
     }
@@ -111,27 +159,37 @@ service cloud.firestore {
         && (!('imageUrl' in request.resource.data)
             || (request.resource.data.imageUrl is string
                 && request.resource.data.imageUrl.matches('https://firebasestorage[.]googleapis[.]com/.*')))
-        && strMax('authorName', 100);
+        && strMax('authorName', 100)
+        // Operator may only create replies, not top-level posts
+        && (!isOperator() || isReplyToExisting());
 
       allow update: if request.auth != null && (
-        // Author edits their own post (text, etc.)
-        resource.data.authorUid == request.auth.uid
+        // Author edits their own post (operator: replies only)
+        (resource.data.authorUid == request.auth.uid
+          && (!isOperator() || 'parentId' in resource.data && resource.data.parentId is string))
         ||
-        // Any authenticated user may bump counters only
-        isCounterUpdate()
+        // Regular users may bump any interaction counters
+        (!isOperator() && isCounterUpdate())
         ||
-        // Any authenticated user may cast/change their own poll vote
-        isPollVote()
+        // Operator may only change likeCount / replyCount
+        (isOperator() && isOperatorLikeOrReplyCount())
+        ||
+        // Regular authenticated users may cast/change their own poll vote
+        (!isOperator() && isPollVote())
       );
 
-      // Author or a site admin may delete (moderation)
+      // Author or a site admin may delete. Operator cannot delete anyone.
       allow delete: if request.auth != null
+        && !isOperator()
         && (resource.data.authorUid == request.auth.uid || isAdmin());
     }
 
-    // ── Admins ────────────────────────────────────────────────────────────────
-    // Membership managed ONLY from the Firebase Console. A signed-in user may
-    // check their own membership; nobody can list or write from the client.
+    // ── Admins / operators ────────────────────────────────────────────────────
+    // Full admin: { role: 'admin' } or legacy doc with no role. Console-only.
+    // Operator uid qMyaEu886sYMoXjKGTZQpVWNMCU2 is already in this collection;
+    // isKnownOperator() scopes it regardless of a missing role field.
+    // A signed-in user may read only their own membership doc (for UI).
+    // Nobody can list or write from the client — not even isAdmin().
     match /admins/{uid} {
       allow get: if request.auth != null && request.auth.uid == uid;
       allow list, create, update, delete: if false;
@@ -147,20 +205,52 @@ service cloud.firestore {
 
     // ── Notifications ─────────────────────────────────────────────────────────
     // Owner reads, updates (mark-read), and deletes their own items.
-    // Any authenticated user may create a notification for any other user.
-    // (Rate-limiting is handled at the application layer.)
+    // Create is not "any auth → any uid": fromUid must be the signer, type is
+    // allowlisted, keys are locked, and like/reply may only target the author
+    // of posts/{postId}.
+    function notifKeysOk() {
+      return request.resource.data.keys()
+        .hasOnly(['type','fromUid','fromName','pageId','postId','excerpt','read','createdAt']);
+    }
+
+    function optionalStrMax(f, n) {
+      return !(f in request.resource.data)
+        || (request.resource.data[f] is string && request.resource.data[f].size() <= n);
+    }
+
+    function likeOrReplyToAuthor(recipientUid) {
+      return request.resource.data.type in ['like','reply']
+        && request.resource.data.postId is string
+        && request.resource.data.postId.size() > 0
+        && request.resource.data.postId.size() <= 128
+        && exists(/databases/$(database)/documents/posts/$(request.resource.data.postId))
+        && get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.authorUid == recipientUid
+        && request.auth.uid != recipientUid;
+    }
+
     match /notifications/{uid}/items/{itemId} {
       allow read, update, delete: if request.auth != null
         && request.auth.uid == uid;
 
       allow create: if request.auth != null
-        // Must supply required fields; fromUid must match the creator
         && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.fromName is string
         && request.resource.data.type in ['like','reply','follow','message']
         && request.resource.data.read == false
+        && notifKeysOk()
         && strMax('fromName', 100)
-        && strMax('excerpt', 300)
-        && strMax('pageId', 100);
+        && optionalStrMax('excerpt', 300)
+        && optionalStrMax('pageId', 100)
+        && (
+          likeOrReplyToAuthor(uid)
+          ||
+          (request.resource.data.type == 'message'
+            && request.auth.uid != uid)
+          ||
+          (request.resource.data.type == 'follow'
+            && !isOperator()
+            && request.auth.uid != uid)
+        );
     }
 
     // ── Conversations ─────────────────────────────────────────────────────────
@@ -170,7 +260,9 @@ service cloud.firestore {
       allow read: if request.auth != null
         && request.auth.uid in resource.data.participants;
 
+      // Operator may reply in existing threads, not start new ones
       allow create: if request.auth != null
+        && !isOperator()
         && request.auth.uid in request.resource.data.participants
         && request.resource.data.participants.size() == 2;
 
@@ -224,12 +316,14 @@ service cloud.firestore {
     match /follows/{uid}/following/{targetUid} {
       allow read: if true;
       allow write: if request.auth != null
+        && !isOperator()
         && request.auth.uid == uid;
     }
 
     match /follows/{uid}/followers/{followerUid} {
       allow read: if true;
       allow write: if request.auth != null
+        && !isOperator()
         && request.auth.uid == followerUid;
     }
   }
