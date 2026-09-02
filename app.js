@@ -19,8 +19,6 @@
 
   // Public contact only — not a live Google mailbox, not a sign-in.
   const BAKASAN_CONTACT_EMAIL = 'jebb@subx.it';
-  // Operator Google: jebb.dykstra@gmail.com (already in admins/). Not a subx.it login.
-  const BAKASAN_OPERATOR_UID = 'qMyaEu886sYMoXjKGTZQpVWNMCU2';
 
   const sidebar  = document.getElementById('sidebar');
   const hamburger = document.getElementById('hamburger');
@@ -2294,21 +2292,14 @@
     if (user && chatOverlay.classList.contains('active')) chatSubscribeThreads();
     cvIsAdmin = false;
     cvIsOperator = false;
-    if (user && user.uid === BAKASAN_OPERATOR_UID) {
-      cvIsOperator = true;
-      applyOperatorChrome();
-    }
     if (user) {
       fbDb.collection('admins').doc(user.uid).get()
         .then(d => {
+          // Missing role on an existing admins/{uid} doc still means admin.
+          // Operator is role === 'operator' only. No hard-coded uid.
           const role = d.exists ? ((d.data() || {}).role || 'admin') : null;
-          if (user.uid === BAKASAN_OPERATOR_UID) {
-            cvIsOperator = true;
-            cvIsAdmin = false;
-          } else {
-            cvIsAdmin = role === 'admin';
-            cvIsOperator = role === 'operator';
-          }
+          cvIsAdmin = role === 'admin';
+          cvIsOperator = role === 'operator';
           applyOperatorChrome();
         })
         .catch(() => {});

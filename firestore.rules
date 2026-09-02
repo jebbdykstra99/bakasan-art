@@ -46,30 +46,26 @@ service cloud.firestore {
     }
 
     // Site admin (full) vs operator (reply / like / chat only).
-    // Operator Google account is jebb.dykstra@gmail.com —
-    // bakasan-art uid qMyaEu886sYMoXjKGTZQpVWNMCU2 — already in admins/.
-    // That uid is operator even if the existing doc has no role field
-    // (legacy missing-role must not grant full isAdmin()).
+    // isAdmin: signed-in, exists admins/{uid}, role is 'admin'.
+    // Missing role still means admin (legacy docs, including the Gmail uid).
+    // isOperator: signed-in, exists admins/{uid}, role == 'operator' only.
+    // No hard-coded operator uid. Zero operator docs is correct until a
+    // dedicated Bakasan CMO Google account exists and its Auth uid is written
+    // as admins/{newUid} { role: 'operator' }. Do not invent a uid.
+    // Do not pin the Gmail uid as operator. Do not create a subx.it login.
     // jebb@subx.it is public contact only — not a Google mailbox / not a login.
-    // Other full-admin docs: { role: 'admin' } or no role, Console-only.
     function adminDoc() {
       return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
     }
-    function isKnownOperator() {
-      return request.auth != null
-        && request.auth.uid == 'qMyaEu886sYMoXjKGTZQpVWNMCU2';
-    }
     function isAdmin() {
       return request.auth != null
-        && !isKnownOperator()
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
         && adminDoc().get('role', 'admin') == 'admin';
     }
     function isOperator() {
-      return isKnownOperator()
-        || (request.auth != null
-          && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-          && adminDoc().get('role', 'admin') == 'operator');
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().get('role', 'admin') == 'operator';
     }
     function isReplyToExisting() {
       return request.resource.data.parentId is string
@@ -186,8 +182,9 @@ service cloud.firestore {
 
     // ── Admins / operators ────────────────────────────────────────────────────
     // Full admin: { role: 'admin' } or legacy doc with no role. Console-only.
-    // Operator uid qMyaEu886sYMoXjKGTZQpVWNMCU2 is already in this collection;
-    // isKnownOperator() scopes it regardless of a missing role field.
+    // Operator: { role: 'operator' } only — no uid pin. Until a dedicated CMO
+    // Google account is supplied and its Auth uid is written here, this
+    // collection may have zero operator docs. That is correct.
     // A signed-in user may read only their own membership doc (for UI).
     // Nobody can list or write from the client — not even isAdmin().
     match /admins/{uid} {
