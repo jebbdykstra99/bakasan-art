@@ -2,6 +2,23 @@
   window.escH = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
+  // Public display names never include an email (users/{uid} is public-read).
+  function publicDisplayName(name) {
+    const n = String(name || '').trim();
+    if (!n || n.includes('@')) return 'Member';
+    return n.slice(0, 100);
+  }
+  function currentPublicName() {
+    return publicDisplayName(typeof cvUser !== 'undefined' && cvUser && cvUser.displayName);
+  }
+  function publicHandle(name) {
+    const n = publicDisplayName(name);
+    if (n === 'Member') return '';
+    return '@' + n.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 24);
+  }
+
+  const BAKASAN_CONTACT_EMAIL = 'jebb@subx.it';
+
   const sidebar  = document.getElementById('sidebar');
   const hamburger = document.getElementById('hamburger');
   const subnavArtist      = document.getElementById('subnav-artist');
@@ -129,7 +146,7 @@
 
   function normalizeRoute(route) {
     let id = String(route || '').replace(/^#/, '').trim();
-    if (!id) id = 'home';
+    if (!id) id = 'collection';
     try { id = decodeURIComponent(id); } catch (e) { /* keep raw */ }
     return id;
   }
@@ -150,7 +167,7 @@
 
   function viewBack() {
     if (window.history.length > 1) history.back();
-    else go('home');
+    else go('collection');
   }
 
   // ── showPage: navigate via shareable hash routes ──
@@ -227,8 +244,8 @@
     }
 
     closeSocialOverlays();
-    showContentPage('thoughts');
-    highlightSocial('home');
+    showContentPage('collection');
+    highlightNav('collection');
   }
 
   function scrollToPost(postId) {
@@ -262,7 +279,7 @@
   async function followUser(targetUid, targetName) {
     if (!cvUser) { cvOpenModal('login'); return; }
     if (targetUid === cvUser.uid) return;
-    const myName = cvUser.displayName || cvUser.email;
+    const myName = currentPublicName();
     const FV     = firebase.firestore.FieldValue;
     const batch  = fbDb.batch();
 
@@ -489,8 +506,8 @@
 
   // ── Render profile header ─────────────────────────────
   function profileRenderHeader(user, data, postCount) {
-    const name    = data.displayName || user.displayName || user.email;
-    const handle  = '@' + (user.email||'').split('@')[0];
+    const name    = publicDisplayName(data.displayName || user.displayName);
+    const handle  = publicHandle(name);
     const color   = profileColor(name);
     const initial = name.trim().charAt(0).toUpperCase();
     const joinDate= user.metadata?.creationTime
@@ -651,8 +668,9 @@
   // ── Edit Profile modal ────────────────────────────────
   function openEditProfile() {
     if (!cvUser) return;
-    const name = profileData.displayName || cvUser.displayName || cvUser.email || '';
-    document.getElementById('profile-edit-name').value     = name;
+    const name = publicDisplayName(profileData.displayName || cvUser.displayName);
+    const editName = name === 'Member' ? '' : name;
+    document.getElementById('profile-edit-name').value     = editName;
     document.getElementById('profile-edit-bio').value      = profileData.bio      || '';
     document.getElementById('profile-edit-location').value = profileData.location || '';
     document.getElementById('profile-edit-banner-url').value = profileData.bannerUrl || '';
@@ -735,7 +753,13 @@
     const saveBtn = document.getElementById('profile-save-btn');
     saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
 
-    const name      = document.getElementById('profile-edit-name').value.trim() || (cvUser.displayName || cvUser.email);
+    const rawName   = document.getElementById('profile-edit-name').value.trim();
+    if (rawName.includes('@')) {
+      saveBtn.disabled = false; saveBtn.textContent = 'Save';
+      alert('Please use a display name, not an email address.');
+      return;
+    }
+    const name      = publicDisplayName(rawName || cvUser.displayName);
     const bio       = document.getElementById('profile-edit-bio').value.trim();
     const location  = document.getElementById('profile-edit-location').value.trim();
     const bannerUrl = document.getElementById('profile-edit-banner-url').value.trim();
@@ -752,7 +776,8 @@
         displayName: name,
         displayNameLower: name.toLowerCase(),
         bio, location, bannerUrl, photoUrl,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        email: firebase.firestore.FieldValue.delete()
       };
       await fbDb.collection('users').doc(cvUser.uid).set(update, { merge: true });
       profileData = { ...profileData, ...update };
@@ -1047,7 +1072,7 @@
 
     const msgData = {
       fromUid: cvUser.uid,
-      fromName: cvUser.displayName || cvUser.email,
+      fromName: currentPublicName(),
       text,
       createdAt: FV.serverTimestamp()
     };
@@ -1061,7 +1086,7 @@
           // rules' field-diff never sees "participants" as changed
           participants: [cvUser.uid, chatActiveOther.uid].sort(),
           participantNames: {
-            [cvUser.uid]: cvUser.displayName || cvUser.email,
+            [cvUser.uid]: currentPublicName(),
             [chatActiveOther.uid]: chatActiveOther.name
           },
           lastMessage: text || '\ud83d\udcf7 Photo',
@@ -1079,7 +1104,7 @@
     }
 
     // Notify recipient
-    notifWrite(chatActiveOther.uid, 'reply', cvUser.displayName || cvUser.email, 'chat', text);
+    notifWrite(chatActiveOther.uid, 'reply', currentPublicName(), 'chat', text);
   }
 
   // ── New Chat modal ────────────────────────────────────
@@ -1128,14 +1153,13 @@
       const followingSet = new Set(followingSnap ? followingSnap.docs.map(d => d.id) : []);
 
       chatNewchatResults.innerHTML = users.map(u => {
-        const name = u.displayName || u.email;
+        const name = publicDisplayName(u.displayName);
         const alreadyFollowing = followingSet.has(u.uid);
         return `
           <div class="chat-newchat-result" data-uid="${u.uid}" data-name="${escH(name)}">
             <div class="chat-thread-avatar" style="background:${chatColor(name)};width:34px;height:34px;font-size:0.85rem;">${escH(chatInitial(name))}</div>
             <div style="flex:1;min-width:0;">
               <div class="chat-newchat-result-name">${escH(name)}</div>
-              <div class="chat-newchat-result-email">${escH(u.email||'')}</div>
             </div>
             <button class="follow-btn${alreadyFollowing?' following':''}" data-follow-uid="${u.uid}" data-follow-name="${escH(name)}"
               ${!cvUser?'disabled':''}>
@@ -1859,7 +1883,7 @@
         const postData = {
           pageId: 'thoughts',
           authorUid: cvUser.uid,
-          authorName: cvUser.displayName || cvUser.email,
+          authorName: currentPublicName(),
           text: text || '',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           likeCount: 0, replyCount: 0, repostCount: 0, bookmarkCount: 0,
@@ -2164,8 +2188,9 @@
     measurementId: "G-31WPTPSZQW"
   };
   firebase.initializeApp(firebaseConfig);
-  // App Check (reCAPTCHA v3) — monitoring mode until enforcement is
-  // enabled in the Firebase Console; true = auto-refresh tokens
+  // App Check (reCAPTCHA v3) — monitoring-only until Console enforcement
+  // is turned on after merge. This activate() call does not enforce; the
+  // Firebase Console still has to switch the project to enforcement.
   try {
     firebase.appCheck().activate('6LfIoRgtAAAAAO4fIFWR1CNMitueqxMaqgAbDETI', true);
   } catch(e) { console.warn('App Check:', e.message); }
@@ -2221,7 +2246,7 @@
     const el = document.getElementById('sidebar-auth');
     if (!el) return;
     if (user) {
-      const name = user.displayName || user.email || 'Member';
+      const name = publicDisplayName(user.displayName);
       el.innerHTML = `
         <div class="sidebar-auth-user">
           <div class="sidebar-auth-avatar" style="background:${cvAvatarColor(name)}">${cvEsc(cvGetInitials(name))}</div>
@@ -2263,7 +2288,7 @@
     const composeAvatar = document.getElementById('thoughts-compose-avatar');
     if (composeAvatar) {
       if (user) {
-        const n = user.displayName || user.email || '?';
+        const n = publicDisplayName(user.displayName);
         composeAvatar.textContent = n.charAt(0).toUpperCase();
         composeAvatar.style.background = (['#6b7c93','#8b6d3f','#5a7a4a','#7a5a8a','#4a7a7a','#8a4a4a'])[n.charCodeAt(0) % 6];
       } else {
@@ -2272,15 +2297,20 @@
       }
     }
 
-    // Write/update user profile so they appear in chat search
+    // Write/update user profile so they appear in chat search.
+    // Never persist email — users/{uid} is public-read and Firestore
+    // cannot hide a single field. Strip any legacy email on this write.
     if (user) {
-      const name = user.displayName || user.email;
-      fbDb.collection('users').doc(user.uid).set({
-        displayName: name,
-        displayNameLower: name.toLowerCase(),
-        email: user.email || '',
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      const name = publicDisplayName(user.displayName);
+      const payload = {
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        email: firebase.firestore.FieldValue.delete()
+      };
+      if (user.displayName && name !== 'Member') {
+        payload.displayName = name;
+        payload.displayNameLower = name.toLowerCase();
+      }
+      fbDb.collection('users').doc(user.uid).set(payload, { merge: true });
     }
     // Show sign-in prompt inside notif overlay if logged out
     const allPane = document.getElementById('notif-pane-all');
@@ -2336,6 +2366,12 @@
           <div class="conv-modal-divider">or</div>
           <button class="conv-google-btn" id="cv-google-reg">${CV_ICONS.google} Continue with Google</button>
         </div>
+        <label class="conv-modal-consent" for="cv-age-consent">
+          <input type="checkbox" id="cv-age-consent">
+          <span>I confirm I am 13 or older and agree to the
+            <a href="terms.html" target="_blank" rel="noopener">Terms of Use</a>
+            and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+        </label>
       </div>`;
     document.body.appendChild(ov);
 
@@ -2389,11 +2425,23 @@
       } catch(e) { err.textContent = e.message.replace('Firebase: ',''); err.classList.add('show'); }
     });
 
+    function cvConsentOk(errEl) {
+      const box = document.getElementById('cv-age-consent');
+      if (box && box.checked) return true;
+      if (errEl) {
+        errEl.textContent = 'Please confirm you are 13 or older and agree to the Terms and Privacy Policy.';
+        errEl.classList.add('show');
+      }
+      return false;
+    }
+
     document.getElementById('cv-reg-btn').addEventListener('click', async () => {
       const name = document.getElementById('cv-reg-name').value.trim();
       const err  = document.getElementById('cv-reg-err');
       err.classList.remove('show');
+      if (!cvConsentOk(err)) return;
       if (!name) { err.textContent = 'Please enter your display name.'; err.classList.add('show'); return; }
+      if (name.includes('@')) { err.textContent = 'Please use a display name, not an email address.'; err.classList.add('show'); return; }
       try {
         const cred = await fbAuth.createUserWithEmailAndPassword(
           document.getElementById('cv-reg-email').value.trim(),
@@ -2401,12 +2449,23 @@
         );
         await cred.user.updateProfile({ displayName: name });
         cvUser = fbAuth.currentUser;
+        const safe = publicDisplayName(name);
+        await fbDb.collection('users').doc(cred.user.uid).set({
+          displayName: safe,
+          displayNameLower: safe.toLowerCase(),
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          email: firebase.firestore.FieldValue.delete()
+        }, { merge: true });
         cvCloseModal();
       } catch(e) { err.textContent = e.message.replace('Firebase: ',''); err.classList.add('show'); }
     });
 
     const gProvider = new firebase.auth.GoogleAuthProvider();
     async function doGoogle() {
+      const loginVisible = document.getElementById('cv-panel-login').style.display !== 'none';
+      const err = document.getElementById(loginVisible ? 'cv-login-err' : 'cv-reg-err');
+      err.classList.remove('show');
+      if (!cvConsentOk(err)) return;
       try { await fbAuth.signInWithPopup(gProvider); cvCloseModal(); }
       catch(e) { console.warn('Google sign-in:', e.message); }
     }
@@ -2440,7 +2499,7 @@
       title ? title.after(bar) : sec.prepend(bar);
     }
     if (cvUser) {
-      const name = cvUser.displayName || cvUser.email;
+      const name = currentPublicName();
       bar.innerHTML = `
         <div class="conv-avatar-sm" style="background:${cvAvatarColor(name)}">${cvGetInitials(name)}</div>
         <span>Signed in as <span class="conv-username">${cvEsc(name)}</span></span>
@@ -2462,7 +2521,7 @@
   function cvRenderCompose(sec) {
     sec.querySelectorAll('.conv-compose').forEach(el => el.remove());
     if (!cvUser) return;
-    const name = cvUser.displayName || cvUser.email;
+    const name = currentPublicName();
     const pageId = sec.dataset.pageId;
     const compose = document.createElement('div');
     compose.className = 'conv-compose';
@@ -2481,7 +2540,7 @@
       try {
         await fbDb.collection('posts').add({
           pageId, authorUid: cvUser.uid,
-          authorName: cvUser.displayName || cvUser.email,
+          authorName: currentPublicName(),
           text, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           likeCount:0, repostCount:0, bookmarkCount:0, replyCount:0, parentId: null
         });
@@ -2576,7 +2635,7 @@
         const postSnap = await postRef.get();
         if (postSnap.exists) {
           const pd = postSnap.data();
-          notifWrite(pd.authorUid, 'like', cvUser.displayName || cvUser.email, pageId, pd.text);
+          notifWrite(pd.authorUid, 'like', currentPublicName(), pageId, pd.text);
         }
       }
     }
@@ -2602,7 +2661,7 @@
         const text = rc.querySelector('.conv-reply-input').value.trim(); if (!text) return;
         const batch = fbDb.batch();
         const rRef  = fbDb.collection('posts').doc();
-        batch.set(rRef, { pageId, authorUid: cvUser.uid, authorName: cvUser.displayName||cvUser.email,
+        batch.set(rRef, { pageId, authorUid: cvUser.uid, authorName: currentPublicName(),
           text, createdAt: FV.serverTimestamp(), likeCount:0, repostCount:0, bookmarkCount:0, replyCount:0, parentId: postId });
         batch.update(postRef, { replyCount: FV.increment(1) });
         await batch.commit();
@@ -2610,7 +2669,7 @@
         const parentSnap = await postRef.get();
         if (parentSnap.exists) {
           const pd = parentSnap.data();
-          notifWrite(pd.authorUid, 'reply', cvUser.displayName || cvUser.email, pageId, text);
+          notifWrite(pd.authorUid, 'reply', currentPublicName(), pageId, text);
         }
         rc.remove();
       });
@@ -2822,7 +2881,7 @@
   window.addEventListener('hashchange', applyRoute);
   window.addEventListener('popstate', applyRoute);
   if (!location.hash || location.hash === '#') {
-    history.replaceState(null, '', '#home');
+    history.replaceState(null, '', '#collection');
   }
   applyRoute();
 
@@ -2841,7 +2900,7 @@
         (email ? 'Email: ' + email + '\n\n' : '\n') +
         message
       );
-      window.location.href = 'mailto:jebb@techsectorlaw.com?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:' + BAKASAN_CONTACT_EMAIL + '?subject=' + subject + '&body=' + body;
     });
   })();
 

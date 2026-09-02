@@ -52,10 +52,10 @@
 
   <nav aria-label="Main navigation">
 
-    <!-- ── Social chrome (Home is the default view) ─── -->
+    <!-- ── Social chrome (signed-out default is Collection) ─── -->
     <ul>
       <li>
-        <a href="#home" class="nav-social-link active" id="nav-home" data-social="home">
+        <a href="#home" class="nav-social-link" id="nav-home" data-social="home">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10.5L12 3l9 7.5"/><path d="M5 10v10h14V10"/>
           </svg>
@@ -125,7 +125,7 @@
         </ul>
       </li>
       <li>
-        <a href="#collection" class="nav-link" data-page="collection">Collection</a>
+        <a href="#collection" class="nav-link active" data-page="collection">Collection</a>
         <ul class="nav-sub" id="subnav-collection">
           <li>
             <a href="#women" class="nav-link" data-page="women">Women of Buddhism</a>
@@ -407,16 +407,7 @@
 
       <div class="bio-block">
         <h2>Selected Private &amp; Public Collections</h2>
-        <ul class="bio-list">
-          <li><span class="bio-year">&mdash;</span><span>Michelle Denise Boyer, Esq., Venice, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Steven J. Polard, Esq., Topanga, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Jebb Dykstra, Esq., Los Angeles, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Dr. Ann Ludwig, Ph.D., Topanga, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Dr. David Hjerpe, M.D., Las Vegas, Nevada</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Thomas B. Hjerpe, Esq., Eureka, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Lynda Boyer, Santa Monica, California</span></li>
-          <li><span class="bio-year">&mdash;</span><span>Terry Evans, Santa Barbara, California</span></li>
-        </ul>
+        <p>Works from this collection are held in private and public collections.</p>
       </div>
 
     </div>
@@ -424,7 +415,7 @@
   </section>
 
   <!-- ══ THE COLLECTION ══════════════════════════════ -->
-  <section class="page" id="page-collection">
+  <section class="page active" id="page-collection">
     <div class="page-header">
       <div class="page-kicker">Works</div>
       <h1>The Bakasan Collection</h1>
@@ -1235,8 +1226,8 @@
     </div>
     <div class="page-body">
       <p>Bakasan welcomes inquiries from galleries, Buddhist temples, academic institutions, and cultural organizations interested in exhibitions, artist talks, purchases of paintings or limited-edition prints, or collaborative projects centered on Buddhist art and the <em>Women of Buddhism</em> series.</p>
-      <p style="margin-top:1.4rem;">Email <a href="mailto:jebb@techsectorlaw.com" class="text-link">jebb@techsectorlaw.com</a> or send a note with the form below. We read every inquiry.</p>
-      <form class="contact-form" id="contact-form" action="mailto:jebb@techsectorlaw.com" method="post" enctype="text/plain">
+      <p style="margin-top:1.4rem;">Email <a href="mailto:jebb@subx.it" class="text-link">jebb@subx.it</a> or send a note with the form below. We read every inquiry.</p>
+      <form class="contact-form" id="contact-form" action="mailto:jebb@subx.it" method="post" enctype="text/plain">
         <div class="form-field">
           <label for="contact-name">Name</label>
           <input type="text" id="contact-name" name="name" required autocomplete="name" placeholder="Your name">
@@ -1310,7 +1301,7 @@
   </section>
 
   <!-- ══ HOME FEED ════════════════════════════════════ -->
-  <section class="page active" id="page-thoughts">
+  <section class="page" id="page-thoughts">
 
     <!-- X.com-style tabs -->
     <div class="thoughts-tabs">
@@ -1619,7 +1610,7 @@
     </div>
     <div class="chat-newchat-search">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" class="chat-newchat-input" id="chat-newchat-input" placeholder="Search by name or email…" autocomplete="off">
+      <input type="text" class="chat-newchat-input" id="chat-newchat-input" placeholder="Search by name…" autocomplete="off">
     </div>
     <div class="chat-newchat-results" id="chat-newchat-results">
       <div class="chat-newchat-empty">Type to search for users.</div>
