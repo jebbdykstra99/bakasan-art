@@ -57,33 +57,49 @@ service cloud.firestore {
       return onlyChanged(['unreadCounts','lastMessage','lastMessageAt','lastMessageBy','participantNames']);
     }
 
+    // Public profile docs cannot hide a field. Never persist email, lastSeen,
+    // or location here. Leftover values must be deleted from the Console
+    // after deploy — see scripts/wipe-public-pii.md.
+    function noSensitiveProfile() {
+      return !('email' in request.resource.data)
+        && !('lastSeen' in request.resource.data)
+        && !('location' in request.resource.data);
+    }
+
+    // ── Invite gate ───────────────────────────────────────────────────────────
+    // config/invite.code is readable by get() so the GitHub Pages client can
+    // check it before Auth create. list is denied. Writes are admin-only.
+    // Security is obscurity + rotation: set the code in the Console after
+    // merge. Do not commit a live code.
+    match /config/{docId} {
+      allow get: if docId == 'invite';
+      allow list: if false;
+      allow create, update, delete: if isAdmin();
+    }
+
     // ── Users ─────────────────────────────────────────────────────────────────
     // Public read (needed for chat user search by displayName).
-    // Firestore cannot hide a single field — do not store email/PII here.
-    // Existing email fields must be wiped from the Console after deploy.
-    // Only the owner can write their own document.
+    // Only the owner can write their own document (plus follower-count bumps).
     match /users/{uid} {
       allow read: if true;
       allow create: if request.auth != null
         && request.auth.uid == uid
         && !('role' in request.resource.data)
         && !('admin' in request.resource.data)
-        && !('email' in request.resource.data)
+        && noSensitiveProfile()
         && strMax('displayName', 100)
         && strMax('displayNameLower', 100)
         && strMax('bio', 500)
-        && strMax('location', 100)
         && strMax('website', 200);
       allow update: if request.auth != null && (
         // Owner edits their own profile
         (request.auth.uid == uid
           && !('role' in request.resource.data)
           && !('admin' in request.resource.data)
-          && !('email' in request.resource.data)
+          && noSensitiveProfile()
           && strMax('displayName', 100)
           && strMax('displayNameLower', 100)
           && strMax('bio', 500)
-          && strMax('location', 100)
           && strMax('website', 200))
         ||
         // Follow/unfollow: any signed-in user may bump followersCount by 1
@@ -147,20 +163,48 @@ service cloud.firestore {
 
     // ── Notifications ─────────────────────────────────────────────────────────
     // Owner reads, updates (mark-read), and deletes their own items.
-    // Any authenticated user may create a notification for any other user.
-    // (Rate-limiting is handled at the application layer.)
+    // Create is not "any auth → any uid": fromUid must be the signer, type is
+    // allowlisted, keys are locked, and like/reply may only target the author
+    // of posts/{postId}.
+    function notifKeysOk() {
+      return request.resource.data.keys()
+        .hasOnly(['type','fromUid','fromName','pageId','postId','excerpt','read','createdAt']);
+    }
+
+    function optionalStrMax(f, n) {
+      return !(f in request.resource.data)
+        || (request.resource.data[f] is string && request.resource.data[f].size() <= n);
+    }
+
+    function likeOrReplyToAuthor(recipientUid) {
+      return request.resource.data.type in ['like','reply']
+        && request.resource.data.postId is string
+        && request.resource.data.postId.size() > 0
+        && request.resource.data.postId.size() <= 128
+        && exists(/databases/$(database)/documents/posts/$(request.resource.data.postId))
+        && get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.authorUid == recipientUid
+        && request.auth.uid != recipientUid;
+    }
+
     match /notifications/{uid}/items/{itemId} {
       allow read, update, delete: if request.auth != null
         && request.auth.uid == uid;
 
       allow create: if request.auth != null
-        // Must supply required fields; fromUid must match the creator
         && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.fromName is string
         && request.resource.data.type in ['like','reply','follow','message']
         && request.resource.data.read == false
+        && notifKeysOk()
         && strMax('fromName', 100)
-        && strMax('excerpt', 300)
-        && strMax('pageId', 100);
+        && optionalStrMax('excerpt', 300)
+        && optionalStrMax('pageId', 100)
+        && (
+          likeOrReplyToAuthor(uid)
+          ||
+          (request.resource.data.type in ['follow','message']
+            && request.auth.uid != uid)
+        );
     }
 
     // ── Conversations ─────────────────────────────────────────────────────────

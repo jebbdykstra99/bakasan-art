@@ -1,0 +1,38 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function imageUploadOk() {
+      return request.resource.size < 6 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Post images + profile banner/photo. Paths from app.js:
+    //   posts/{uid}/{timestamp}.{ext}
+    //   posts/{uid}/profile-{timestamp}.{ext}
+    // Public get so signed-out visitors can see feed/profile images already
+    // referenced by Firestore. No directory listing. Write is owner-only.
+    match /posts/{uid}/{allPaths=**} {
+      allow get: if true;
+      allow list: if false;
+      allow write: if isOwner(uid) && imageUploadOk();
+    }
+
+    // Chat attachments: chat/{uid}/{timestamp}.{ext}
+    // Signed-in get (thread participants load these while authenticated).
+    // No unauth list/write.
+    match /chat/{uid}/{allPaths=**} {
+      allow get: if request.auth != null;
+      allow list: if false;
+      allow write: if isOwner(uid) && imageUploadOk();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

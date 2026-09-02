@@ -541,10 +541,9 @@
     if (data.bio) { bioEl.textContent = data.bio; bioEl.style.display = ''; }
     else { bioEl.style.display = 'none'; }
 
-    // Meta row
+    // Meta row — do not render leftover public location (PII on a public doc)
     const metaEl = document.getElementById('profile-meta');
     let metaHtml = '';
-    if (data.location) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escH(data.location)}</span>`;
     if (joinDate) metaHtml += `<span class="profile-meta-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${joinDate}</span>`;
     metaEl.innerHTML = metaHtml;
 
@@ -672,7 +671,6 @@
     const editName = name === 'Member' ? '' : name;
     document.getElementById('profile-edit-name').value     = editName;
     document.getElementById('profile-edit-bio').value      = profileData.bio      || '';
-    document.getElementById('profile-edit-location').value = profileData.location || '';
     document.getElementById('profile-edit-banner-url').value = profileData.bannerUrl || '';
     document.getElementById('profile-edit-photo-url').value  = profileData.photoUrl  || '';
     document.getElementById('profile-bio-count').textContent =
@@ -761,7 +759,6 @@
     }
     const name      = publicDisplayName(rawName || cvUser.displayName);
     const bio       = document.getElementById('profile-edit-bio').value.trim();
-    const location  = document.getElementById('profile-edit-location').value.trim();
     const bannerUrl = document.getElementById('profile-edit-banner-url').value.trim();
     const photoUrl  = document.getElementById('profile-edit-photo-url').value.trim();
 
@@ -770,14 +767,14 @@
       await cvUser.updateProfile({ displayName: name });
     }
 
-    // Update Firestore user doc
+    // Update Firestore user doc — never persist email/lastSeen/location
     try {
       const update = {
         displayName: name,
         displayNameLower: name.toLowerCase(),
-        bio, location, bannerUrl, photoUrl,
+        bio, bannerUrl, photoUrl,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        email: firebase.firestore.FieldValue.delete()
+        ...publicProfilePiiStrip()
       };
       await fbDb.collection('users').doc(cvUser.uid).set(update, { merge: true });
       profileData = { ...profileData, ...update };
@@ -1103,8 +1100,8 @@
       return;
     }
 
-    // Notify recipient
-    notifWrite(chatActiveOther.uid, 'reply', currentPublicName(), 'chat', text);
+    // Notify recipient (type message — not a post reply)
+    notifWrite(chatActiveOther.uid, 'message', currentPublicName(), 'chat', text);
   }
 
   // ── New Chat modal ────────────────────────────────────
@@ -1204,15 +1201,17 @@
     if (type === 'like') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
     if (type === 'reply') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
     if (type === 'follow') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    if (type === 'message') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
     if (type === 'digest') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
     return '';
   }
 
   function notifActionText(n) {
-    if (n.type === 'like')   return `<strong>${escH(n.fromName)}</strong> liked your post`;
-    if (n.type === 'reply')  return `<strong>${escH(n.fromName)}</strong> replied to your post`;
-    if (n.type === 'follow') return `<strong>${escH(n.fromName)}</strong> started following you`;
-    if (n.type === 'digest') return `<strong>${escH(n.fromName || 'Site Activity')}</strong> — daily digest`;
+    if (n.type === 'like')    return `<strong>${escH(n.fromName)}</strong> liked your post`;
+    if (n.type === 'reply')   return `<strong>${escH(n.fromName)}</strong> replied to your post`;
+    if (n.type === 'follow')  return `<strong>${escH(n.fromName)}</strong> started following you`;
+    if (n.type === 'message') return `<strong>${escH(n.fromName)}</strong> sent you a message`;
+    if (n.type === 'digest')  return `<strong>${escH(n.fromName || 'Site Activity')}</strong> — daily digest`;
     return '';
   }
 
@@ -1332,16 +1331,21 @@
     await batch.commit();
   });
 
-  // Helper: write a notification to another user
-  async function notifWrite(toUid, type, fromName, pageId, excerpt) {
+  // Helper: write a notification to another user.
+  // like/reply must include postId so rules can get() posts/{postId}.authorUid.
+  async function notifWrite(toUid, type, fromName, pageId, excerpt, postId) {
     if (!toUid || toUid === cvUser.uid) return; // no self-notifications
-    await fbDb.collection('notifications').doc(toUid).collection('items').add({
-      type, fromUid: cvUser.uid, fromName,
-      pageId: pageId || null,
-      excerpt: excerpt ? excerpt.substring(0, 100) : null,
+    const data = {
+      type,
+      fromUid: cvUser.uid,
+      fromName: publicDisplayName(fromName),
       read: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    };
+    if (pageId) data.pageId = String(pageId).slice(0, 100);
+    if (excerpt) data.excerpt = String(excerpt).slice(0, 100);
+    if (postId) data.postId = String(postId).slice(0, 128);
+    await fbDb.collection('notifications').doc(toUid).collection('items').add(data);
   }
 
   // ── Explore overlay ──────────────────────────────────
@@ -2198,6 +2202,12 @@
   const fbDb      = firebase.firestore();
   const fbStorage = firebase.storage();
 
+  // users/{uid} is public-read. Strip leftover PII on every owner write.
+  function publicProfilePiiStrip() {
+    const del = firebase.firestore.FieldValue.delete();
+    return { email: del, lastSeen: del, location: del };
+  }
+
   // ── Helpers ──────────────────────────────────────────
   function cvGetInitials(name) {
     if (!name) return '?';
@@ -2298,14 +2308,10 @@
     }
 
     // Write/update user profile so they appear in chat search.
-    // Never persist email — users/{uid} is public-read and Firestore
-    // cannot hide a single field. Strip any legacy email on this write.
+    // Never persist email, lastSeen, or location — users/{uid} is public-read.
     if (user) {
       const name = publicDisplayName(user.displayName);
-      const payload = {
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-        email: firebase.firestore.FieldValue.delete()
-      };
+      const payload = publicProfilePiiStrip();
       if (user.displayName && name !== 'Member') {
         payload.displayName = name;
         payload.displayNameLower = name.toLowerCase();
@@ -2365,6 +2371,10 @@
           <button class="conv-modal-submit" id="cv-reg-btn">Create Account</button>
           <div class="conv-modal-divider">or</div>
           <button class="conv-google-btn" id="cv-google-reg">${CV_ICONS.google} Continue with Google</button>
+        </div>
+        <div class="conv-modal-field" id="cv-invite-field">
+          <label for="cv-invite-code">Invite code</label>
+          <input type="text" id="cv-invite-code" autocomplete="off" spellcheck="false" placeholder="Required to register or continue with Google">
         </div>
         <label class="conv-modal-consent" for="cv-age-consent">
           <input type="checkbox" id="cv-age-consent">
@@ -2435,11 +2445,48 @@
       return false;
     }
 
+    async function cvInviteMatches(errEl) {
+      const entered = String((document.getElementById('cv-invite-code') || {}).value || '').trim();
+      if (!entered) {
+        if (errEl) {
+          errEl.textContent = 'An invite code is required to create an account.';
+          errEl.classList.add('show');
+        }
+        return false;
+      }
+      try {
+        const snap = await fbDb.collection('config').doc('invite').get();
+        const expected = snap.exists ? String((snap.data() || {}).code || '').trim() : '';
+        if (!expected) {
+          if (errEl) {
+            errEl.textContent = 'Registration is invite-only and is not open yet.';
+            errEl.classList.add('show');
+          }
+          return false;
+        }
+        if (entered !== expected) {
+          if (errEl) {
+            errEl.textContent = 'That invite code is not valid.';
+            errEl.classList.add('show');
+          }
+          return false;
+        }
+        return true;
+      } catch (e) {
+        if (errEl) {
+          errEl.textContent = 'Could not verify the invite code. Try again.';
+          errEl.classList.add('show');
+        }
+        return false;
+      }
+    }
+
     document.getElementById('cv-reg-btn').addEventListener('click', async () => {
       const name = document.getElementById('cv-reg-name').value.trim();
       const err  = document.getElementById('cv-reg-err');
       err.classList.remove('show');
       if (!cvConsentOk(err)) return;
+      if (!(await cvInviteMatches(err))) return;
       if (!name) { err.textContent = 'Please enter your display name.'; err.classList.add('show'); return; }
       if (name.includes('@')) { err.textContent = 'Please use a display name, not an email address.'; err.classList.add('show'); return; }
       try {
@@ -2453,8 +2500,7 @@
         await fbDb.collection('users').doc(cred.user.uid).set({
           displayName: safe,
           displayNameLower: safe.toLowerCase(),
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-          email: firebase.firestore.FieldValue.delete()
+          ...publicProfilePiiStrip()
         }, { merge: true });
         cvCloseModal();
       } catch(e) { err.textContent = e.message.replace('Firebase: ',''); err.classList.add('show'); }
@@ -2466,6 +2512,7 @@
       const err = document.getElementById(loginVisible ? 'cv-login-err' : 'cv-reg-err');
       err.classList.remove('show');
       if (!cvConsentOk(err)) return;
+      if (!(await cvInviteMatches(err))) return;
       try { await fbAuth.signInWithPopup(gProvider); cvCloseModal(); }
       catch(e) { console.warn('Google sign-in:', e.message); }
     }
@@ -2635,7 +2682,7 @@
         const postSnap = await postRef.get();
         if (postSnap.exists) {
           const pd = postSnap.data();
-          notifWrite(pd.authorUid, 'like', currentPublicName(), pageId, pd.text);
+          notifWrite(pd.authorUid, 'like', currentPublicName(), pageId, pd.text, postId);
         }
       }
     }
@@ -2669,7 +2716,7 @@
         const parentSnap = await postRef.get();
         if (parentSnap.exists) {
           const pd = parentSnap.data();
-          notifWrite(pd.authorUid, 'reply', currentPublicName(), pageId, text);
+          notifWrite(pd.authorUid, 'reply', currentPublicName(), pageId, text, postId);
         }
         rc.remove();
       });

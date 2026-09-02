@@ -6,13 +6,16 @@ Local serve: `python3 -m http.server 8000` from the repo root.
 
 Signed-out visitors without a hash land on `#collection`. `#home` is still the public social feed (it loads real posts after the spinner). The feed is not removed; it is just not the default landing.
 
+Account creation (email register or Google) requires an invite code stored in Firestore `config/invite`. Existing signed-in users stay signed in. Strangers can still view the collection unsigned.
+
 ## Remaining manual steps (after this PR merges)
 
 These cannot be finished in the client repo:
 
-1. **Wipe legacy `email` fields on `users/{uid}`.** Public profile docs were historically written with email. Firestore cannot hide a single field, so existing values stay readable until deleted. Use the Firebase Console or the one-off note in `scripts/wipe-user-emails.md`. Do not commit service-account keys.
-2. **Enable App Check enforcement** in the Firebase Console for project `bakasan-art` (reCAPTCHA v3 is already wired in monitoring mode). The client cannot turn enforcement on.
-3. **Deploy `firestore.rules`** to project `bakasan-art` after merge (GitHub Pages does not publish rules). Conversations, messages, and admins stay auth-gated; profile read stays public because chat search needs `displayName`.
-4. **Collector-name PII** on painting essays or other editorial pages is out of scope for this PR. The biography “Selected Private & Public Collections” identity list has been removed.
+1. **Set the invite code** in Firestore for project `bakasan-art`: create `config/invite` with a string field `code`. Do not commit a live code. Rotate it in the Console. `allow get: if true` / `allow list: if false` / writes admin-only — security is obscurity + rotation. Email sign-in for existing accounts does not need the code. Register and both Google buttons do (Google can create an account). Existing signed-in sessions stay signed in.
+2. **Deploy `firestore.rules` and `storage.rules`** to project `bakasan-art` (`firebase deploy --only firestore:rules,storage` using `firebase.json`). GitHub Pages does not publish rules.
+3. **Wipe leftover public-profile PII** on `users/{uid}`: delete `email`, `lastSeen`, and `location` if present. Firestore cannot hide a field on a public-read document. See `scripts/wipe-public-pii.md`. Do not commit service-account keys.
+4. **HSTS leftover.** GitHub Pages does not send `Strict-Transport-Security` (verified on `https://bakasan.art`). Do not fake it with a meta tag. HSTS requires Cloudflare (or moving off Pages).
+5. **Enable App Check enforcement** in the Firebase Console for project `bakasan-art` (reCAPTCHA v3 is already wired in monitoring mode). The client cannot turn enforcement on.
 
 Contact for the public site is `jebb@subx.it`.
